@@ -1,4 +1,4 @@
-package pl.grzegorz.neat;
+package pl.grzegorz.neat.model.old;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
