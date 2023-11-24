@@ -1,17 +1,16 @@
 package pl.grzegorz.neat.model.service;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import pl.grzegorz.neat.model.entity.RoleEntity;
-import pl.grzegorz.neat.model.entity.UserEntity;
-import pl.grzegorz.neat.model.repository.RoleRepository;
-import pl.grzegorz.neat.model.repository.UserRepository;
+import pl.grzegorz.neat.model.role.RoleEntity;
+import pl.grzegorz.neat.model.user.UserEntity;
+import pl.grzegorz.neat.model.role.RoleRepository;
+import pl.grzegorz.neat.model.user.UserRepository;
+import pl.grzegorz.neat.model.user.UserServiceImpl;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.Collections;

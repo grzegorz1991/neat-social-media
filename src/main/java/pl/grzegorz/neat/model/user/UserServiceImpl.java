@@ -1,13 +1,10 @@
-package pl.grzegorz.neat.model.service;
+package pl.grzegorz.neat.model.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.grzegorz.neat.model.entity.RoleEntity;
-import pl.grzegorz.neat.model.entity.UserEntity;
-import pl.grzegorz.neat.model.repository.RoleRepository;
-import pl.grzegorz.neat.model.repository.UserRepository;
+import pl.grzegorz.neat.model.role.RoleEntity;
+import pl.grzegorz.neat.model.role.RoleRepository;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;

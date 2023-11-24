@@ -1,8 +1,6 @@
-package pl.grzegorz.neat.model.service;
+package pl.grzegorz.neat.model.user;
 
-import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
-import pl.grzegorz.neat.model.entity.UserEntity;
 
 import java.util.List;
 

@@ -1,7 +1,6 @@
-package pl.grzegorz.neat.model.repository;
+package pl.grzegorz.neat.model.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import pl.grzegorz.neat.model.entity.UserEntity;
 
 import java.util.Optional;
 

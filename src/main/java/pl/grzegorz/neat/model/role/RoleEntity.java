@@ -1,7 +1,8 @@
-package pl.grzegorz.neat.model.entity;
+package pl.grzegorz.neat.model.role;
 
 import lombok.Getter;
 import lombok.Setter;
+import pl.grzegorz.neat.model.user.UserEntity;
 
 import javax.persistence.*;
 import java.util.Set;
