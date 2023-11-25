@@ -110,14 +110,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserEntity registerUser(UserEntity user, List<String> roles) {
-        // Implement the logic for user registration, similar to createUser
-        // You may want to perform additional validations, send confirmation emails, etc.
+
         return createUser(user, roles);
 
     }
 
+    @Override
+    public UserEntity registerUser(String username, String email, String password) {
+            UserEntity user = new UserEntity();
+            user.setUsername(username);
+            user.setEmail(email);
+            user.setPassword(password);
 
-        @Override
+        return createUser(user);
+    }
+
+
+    @Override
         @Transactional
         public void updateUserRole(Long userId, List<String> roleNames) {
             UserEntity user = userRepository.findById(userId)

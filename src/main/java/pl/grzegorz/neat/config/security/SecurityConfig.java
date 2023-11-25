@@ -17,6 +17,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/", "/register").permitAll() // Allow access to these paths without authentication
+
+                .antMatchers("/css/**", "/js/**", "/images/**").permitAll() // Allow access to static resources
+                .antMatchers("/public/**").permitAll() // Add other public URLs
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -27,6 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout()
                 .logoutSuccessUrl("/login")
                 .permitAll();
+
 
         http.csrf().disable();
     }
