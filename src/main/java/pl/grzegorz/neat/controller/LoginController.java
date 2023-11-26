@@ -11,17 +11,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoginController {
     @GetMapping("/login")
     public String login() {
+        System.out.println("entered /login endpoint");
         return "login";
     }
 
     @GetMapping("/success")
     public String loginSuccess() {
-        // Get the authenticated user after successful login
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
-
-        // You can perform additional actions upon successful login if needed
-System.out.println("Logged " + username);
+        System.out.println("Logged " + username);
         return "redirect:/"; // Redirect to the home page after successful login
     }
     @GetMapping("/logout")

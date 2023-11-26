@@ -33,9 +33,11 @@ public class RegistrationController {
     @PostMapping("/register")
     public String registerUser(@ModelAttribute("registrationForm") UserRegistrationForm registrationForm) {
         // Process the registration form and save the user
-        userService.registerUser(registrationForm.getUsername(), registrationForm.getEmail(),
-                passwordEncoder.encode(registrationForm.getPassword()));
 
+        String encode = passwordEncoder.encode(registrationForm.getPassword());
+        userService.registerUser(registrationForm.getUsername(), registrationForm.getEmail(),
+                encode);
+            System.out.println(encode + "registerController hashed password");
         // After successful registration, redirect to the login page
         return "redirect:/login";
     }
