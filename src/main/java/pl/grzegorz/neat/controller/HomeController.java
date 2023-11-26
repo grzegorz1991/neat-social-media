@@ -1,18 +1,23 @@
 package pl.grzegorz.neat.controller;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class HomeController {
 
     @GetMapping("/")
-    public String landingPage() {
-        return "index"; // Thymeleaf will resolve this to "src/main/resources/templates/index.html"
+    public String landingPage(Model model, Authentication authentication) {
+        String username = authentication.getName();
+        model.addAttribute("username", username);
+        return "index";
     }
-
-    @GetMapping("/api/public/")
-    public String publicPage(){
-        return "index"; //in case if we want to workaround spring security (backdoor)
+    @GetMapping("/home")
+    public String homePage(Model model, Authentication authentication) {
+        String username = authentication.getName();
+        model.addAttribute("username", username);
+        return "index";
     }
 }

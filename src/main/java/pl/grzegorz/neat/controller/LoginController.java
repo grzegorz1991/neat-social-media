@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoginController {
     @GetMapping("/login")
     public String login() {
-        System.out.println("entered /login endpoint");
         return "login";
     }
 
@@ -19,13 +18,10 @@ public class LoginController {
     public String loginSuccess() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
-        System.out.println("Logged " + username);
         return "redirect:/"; // Redirect to the home page after successful login
     }
     @GetMapping("/logout")
     public String logout() {
-        // You can perform additional actions upon logout if needed
-
         return "redirect:/login?logout"; // Redirect to the login page after logout with a logout parameter
     }
 }

@@ -47,14 +47,13 @@
                         <input type="checkbox" class="form-check-input" name="remember-me"> Remember me
                       </label>
                     </div>
-                    <a href="#" class="forgot-pass">Forgot password</a>
+                    <a href="/construction" class="forgot-pass">Forgot password</a>
+
                   </div>
                   <div class="text-center">
                     <button type="submit" class="btn btn-primary btn-block enter-btn">Login</button>
                   </div>
-                  <p th:if="${param.error == 'username'}" style="color: red;">Username already taken. Please choose a different one.</p>
-                  <p th:if="${param.error == 'email'}" style="color: red;">Email already used. Please use a different email address.</p>
-                  <p th:if="${param.error == null}" style="color: red;">Invalid username or password. Please try again.</p>
+
 
 
 

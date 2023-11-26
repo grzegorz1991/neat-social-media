@@ -22,12 +22,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/register", "/register/terms","/css/**", "/js/**", "/images/**", "/public/**", "/login").permitAll() // Allow access to these paths without authentication
+                .antMatchers("/construction", "/register", "/register/terms","/css/**", "/fonts/**", "/js/**", "/images/**", "/public/**", "/login").permitAll() // Allow access to these paths without authentication
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
                 .loginPage("/login")
-                .defaultSuccessUrl("/success")
+                .defaultSuccessUrl("/home", true)
                 .failureUrl("/login?error=true")
                 .and()
                 .logout()
