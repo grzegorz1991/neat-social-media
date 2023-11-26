@@ -28,22 +28,38 @@ public class RegistrationController {
     public String showRegistrationForm(Model model) {
         // Add an empty UserRegistrationForm to the model
         model.addAttribute("registrationForm", new UserRegistrationForm());
-        return "register"; // Return the name of your registration HTML template
+        return "register";
     }
 
     @GetMapping("/register/terms")
     public String landingPage() {
-        return "termsAndConditions"; // Thymeleaf will resolve this to "src/main/resources/templates/index.html"
+        return "termsAndConditions";
     }
     @PostMapping("/register")
     public String registerUser(@ModelAttribute("registrationForm") UserRegistrationForm registrationForm) {
-        // Process the registration form and save the user
+
+        // Check if the username is already in use
+        if (userService.existsByUsername(registrationForm.getUsername())) {
+
+            System.out.println("usename error");
+            return "redirect:/register?error=username";
+        }
+
+        // Check if the email is already in use
+        if (userService.existsByEmail(registrationForm.getEmail())) {
+            // Set an error message or add a validation error to be displayed on the form
+            // You might want to redirect back to the registration page with an error message
+            System.out.println("email error");
+            return "redirect:/register?error=email";
+        }
+
+
 
         String encode = passwordEncoder.encode(registrationForm.getPassword());
         userService.registerUser(registrationForm.getUsername(), registrationForm.getEmail(),
                 encode);
             System.out.println(encode + "registerController hashed password");
-        // After successful registration, redirect to the login page
+
         return "redirect:/login";
     }
 }

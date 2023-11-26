@@ -28,4 +28,8 @@ public interface UserService {
     UserEntity registerUser(String username, String email, String password);
 
     void updateUserRole(Long userId, List<String> roles);
+
+    boolean existsByUsername(String username);
+
+    boolean existsByEmail(String email);
 }
