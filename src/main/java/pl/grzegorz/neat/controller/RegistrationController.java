@@ -30,6 +30,11 @@ public class RegistrationController {
         model.addAttribute("registrationForm", new UserRegistrationForm());
         return "register"; // Return the name of your registration HTML template
     }
+
+    @GetMapping("/register/terms")
+    public String landingPage() {
+        return "termsAndConditions"; // Thymeleaf will resolve this to "src/main/resources/templates/index.html"
+    }
     @PostMapping("/register")
     public String registerUser(@ModelAttribute("registrationForm") UserRegistrationForm registrationForm) {
         // Process the registration form and save the user
