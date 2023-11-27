@@ -57,7 +57,7 @@ public class RegistrationController {
 
         String encode = passwordEncoder.encode(registrationForm.getPassword());
         userService.registerUser(registrationForm.getUsername(), registrationForm.getEmail(),
-                encode);
+                encode, registrationForm.getName(), registrationForm.getSurname());
             System.out.println(encode + "registerController hashed password");
 
         return "redirect:/login";

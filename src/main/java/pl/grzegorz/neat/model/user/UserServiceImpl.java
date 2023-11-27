@@ -116,12 +116,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserEntity registerUser(String username, String email, String password) {
+    public UserEntity registerUser(String username, String email, String password, String name, String surname) {
         UserEntity user = new UserEntity();
         user.setUsername(username);
         user.setEmail(email);
         user.setPassword(password);
-        System.out.println(password + "USerServiceImpl Hashed password");
+        user.setName(name);
+        user.setSurname(surname);
+
+
         // Clear existing roles
         user.getRoles().clear();
 
@@ -129,7 +132,7 @@ public class UserServiceImpl implements UserService {
         RoleEntity defaultRole = roleRepository.findByName("ROLE_USER")
                 .orElseThrow(() -> new RuntimeException("Default role not found: ROLE_USER"));
         user.getRoles().add(defaultRole);
-        System.out.println(user.getPassword() + "user getpassword hased");
+
         return userRepository.save(user);
     }
 

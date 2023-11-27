@@ -23,11 +23,11 @@ public class UserEntity implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotBlank(message = "Username cannot be blank")
-    @Size(min = 4, max = 255, message = "Username must be between 4 and 255 characters")
+    @Size(min = 1, max = 255, message = "Username must be between 4 and 255 characters")
     @Column(nullable = false, unique = true)
     private String username;
     @NotBlank(message = "Password cannot be blank")
-    @Size(min = 8, message = "Password must be at least 8 characters")
+    @Size(min = 1, message = "Password must be at least 8 characters")
     @Column(nullable = false)
     private String password;
     @NotBlank(message = "Email cannot be blank")

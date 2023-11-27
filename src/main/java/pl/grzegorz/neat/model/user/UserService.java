@@ -25,7 +25,7 @@ public interface UserService {
     //associated with the creation of a new user, possibly involving additional steps related to user registration
     UserEntity registerUser(UserEntity user, List<String> roles);
 
-    UserEntity registerUser(String username, String email, String password);
+    UserEntity registerUser(String username, String email, String password, String name, String surname);
 
     void updateUserRole(Long userId, List<String> roles);
 
