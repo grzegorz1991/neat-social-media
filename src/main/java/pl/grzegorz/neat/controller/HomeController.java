@@ -53,6 +53,7 @@ public class HomeController {
         return "/home/settings";
     }
 
+
     @GetMapping("/home/default-fragment")
     public String getDefaultFragment() {
         return "/home/home-default";

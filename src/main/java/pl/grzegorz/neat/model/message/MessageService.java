@@ -9,8 +9,11 @@ import java.util.List;
 @Service
 public interface MessageService {
 
-    MessageEntity sendMessage(UserEntity sender, UserEntity receiver, String content);
-    List<MessageEntity> getMessages(UserEntity sender, UserEntity receiver);
+   // MessageEntity sendMessage(UserEntity sender, UserEntity receiver, String content);
 
+    MessageEntity sendMessage(UserEntity  sender, UserEntity receiver, String content, String title, boolean isRead);
+
+    List<MessageEntity> getMessages(UserEntity sender, UserEntity receiver);
+    public List<MessageEntity> getMessagesForUser(UserEntity user);
     List<MessageEntity> getAllMessages();
 }

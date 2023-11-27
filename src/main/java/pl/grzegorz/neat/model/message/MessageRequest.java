@@ -4,30 +4,35 @@ import pl.grzegorz.neat.model.user.UserEntity;
 
 public class MessageRequest {
 
-    private UserEntity sender;
-    private UserEntity receiver;
+    private int senderId;
+    private int receiverId;
     private String content;
 
-    public MessageRequest(UserEntity sender, UserEntity receiver, String content) {
-        this.sender = sender;
-        this.receiver = receiver;
+    private String title;
+
+
+    public MessageRequest(Integer senderId, Integer receiverId, String content,  String title) {
+        this.senderId = senderId;
+        this.receiverId = receiverId;
         this.content = content;
+
+        this.title = title;
     }
 
-    public UserEntity getSender() {
-        return sender;
+    public Integer getSenderId() {
+        return senderId;
     }
 
-    public void setSender(UserEntity sender) {
-        this.sender = sender;
+    public void setSenderId(Integer senderId) {
+        this.senderId = senderId;
     }
 
-    public UserEntity getReceiver() {
-        return receiver;
+    public Integer getReceiverId() {
+        return receiverId;
     }
 
-    public void setReceiver(UserEntity receiver) {
-        this.receiver = receiver;
+    public void setReceiverId(Integer receiverId) {
+        this.receiverId = receiverId;
     }
 
     public String getContent() {
@@ -36,5 +41,15 @@ public class MessageRequest {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

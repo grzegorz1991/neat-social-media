@@ -7,9 +7,7 @@
             <!-- Form for updating profile -->
             <form th:action="@{/profile/update}" method="post" th:object="${userProfileForm}">
 
-                <div id="errorMessage" class="alert alert-danger" role="alert" th:if="${#flash.error}">
-                    <span th:text="${#flash.error}"></span>
-                </div>
+
 
                 <div class="form-group">
                     <label for="name">Name</label>

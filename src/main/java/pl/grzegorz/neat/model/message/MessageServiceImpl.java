@@ -17,9 +17,12 @@ public class MessageServiceImpl implements MessageService {
     }
 
 
+
+
     @Override
-    public MessageEntity sendMessage(UserEntity sender, UserEntity receiver, String content) {
-        MessageEntity message = new MessageEntity(sender, receiver, content);
+    public MessageEntity sendMessage(UserEntity sender, UserEntity receiver, String content, String title, boolean isRead) {
+        MessageEntity message = new MessageEntity(sender, receiver, content, title, isRead);
+
         return messageRepository.save(message);
     }
 
@@ -27,7 +30,10 @@ public class MessageServiceImpl implements MessageService {
     public List<MessageEntity> getMessages(UserEntity sender, UserEntity receiver) {
         return messageRepository.findBySenderAndReceiver(sender, receiver);
     }
-
+    @Override
+    public List<MessageEntity> getMessagesForUser(UserEntity user) {
+        return messageRepository.findByReceiver(user);
+    }
     @Override
     public List<MessageEntity> getAllMessages() {
         return messageRepository.findAll();

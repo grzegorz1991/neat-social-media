@@ -31,12 +31,46 @@ public class MessageEntity {
         this.timestamp = LocalDateTime.now();
     }
 
-    public MessageEntity(UserEntity sender, UserEntity receiver, String content) {
+    @Column(nullable = false)
+    private boolean messageRead;
+
+    @Column(nullable = false)
+    private String title;
+
+    public MessageEntity(UserEntity sender, UserEntity receiver, String content, String title, boolean read) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.content = content;
+        this.title = title;
+        this.messageRead = read;
+        this.timestamp = LocalDateTime.now();
+    }
+
+    public MessageEntity(UserEntity sender, UserEntity receiver, String content, LocalDateTime timestamp, boolean messageRead, String title) {
         this.sender = sender;
         this.receiver = receiver;
         this.content = content;
         this.timestamp = LocalDateTime.now();
+        this.messageRead = messageRead;
+        this.title = title;
     }
+
+    public boolean isMessageRead() {
+        return messageRead;
+    }
+
+    public void setMessageRead(boolean messageRead) {
+        this.messageRead = messageRead;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
 
     public Long getId() {
         return id;

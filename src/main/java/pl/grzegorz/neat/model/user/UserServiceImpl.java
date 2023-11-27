@@ -53,6 +53,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserEntity getUserById(int id) {
+        return userRepository.getById((long) id);
+    }
+
+    @Override
     public UserEntity updateUser(UserEntity user) {
 // Check if the user exists
         UserEntity existingUser = userRepository.findById(user.getId())
@@ -62,9 +67,12 @@ public class UserServiceImpl implements UserService {
         validateUpdate(user);
 
         System.out.println(user.getEmail()+ "!!!!!!!!!!!!!!!");
+
         existingUser.setUsername(user.getUsername());
         existingUser.setEmail(user.getEmail());
         existingUser.setName(user.getName());
+        existingUser.setSurname(user.getSurname());
+
         if(user.getPassword() != null) {
             existingUser.setPassword(user.getPassword());
             System.out.println("password changed not null");
