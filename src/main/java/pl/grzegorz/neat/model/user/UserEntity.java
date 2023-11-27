@@ -35,6 +35,15 @@ public class UserEntity implements UserDetails {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @NotBlank(message = "Name cannot be blank")
+    @Column(nullable = false)
+    private String name;
+
+    @NotBlank(message = "Surname cannot be blank")
+    @Column(nullable = false)
+    private String surname;
+
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
@@ -110,5 +119,21 @@ public class UserEntity implements UserDetails {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
 }

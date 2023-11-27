@@ -20,4 +20,14 @@ public class HomeController {
         model.addAttribute("username", username);
         return "index";
     }
+
+    @GetMapping("/home/settings-fragment")
+    public String getSettingsFragment() {
+        return "/home/settings";
+    }
+
+    @GetMapping("/home/default-fragment")
+    public String getDefaultFragment() {
+        return "/home/home-default";
+    }
 }
