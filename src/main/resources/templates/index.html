@@ -344,6 +344,11 @@
       document.addEventListener('DOMContentLoaded', function () {
         loadDefaultContent();
         attachLogoClickListener();
+
+        const errorMessageDiv = document.getElementById('errorMessage');
+        if (errorMessageDiv) {
+          errorMessageDiv.style.display = 'block'; // Show the error message
+        }
       });
 
       //Load settings sub- content when the button is clicked

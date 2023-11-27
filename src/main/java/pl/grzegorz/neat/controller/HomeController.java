@@ -5,17 +5,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import pl.grzegorz.neat.model.user.CustomUserDetails;
+import pl.grzegorz.neat.model.user.UserEntity;
+import pl.grzegorz.neat.model.user.UserProfileForm;
 
 @Controller
 public class HomeController {
 
     @GetMapping("/")
-    public String landingPage(Model model, Authentication authentication) {
-        String username = authentication.getName();
-
-        model.addAttribute("username", username);
-
-        return "index";
+    public String landingPage() {
+        return "redirect:/home";
     }
     @GetMapping("/home")
     public String homePage(Model model, Authentication authentication) {
@@ -38,7 +36,20 @@ public class HomeController {
     }
 
     @GetMapping("/home/settings-fragment")
-    public String getSettingsFragment() {
+    public String getSettingsFragment(Model model, Authentication authentication) {
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        UserEntity user = userDetails.getUser(); // Assuming getUser() is a method in CustomUserDetails returning UserEntity
+
+        UserProfileForm userProfileForm = new UserProfileForm();
+
+        userProfileForm.setName(user.getName());
+        userProfileForm.setSurname(user.getSurname());
+        userProfileForm.setEmail(user.getEmail());
+        userProfileForm.setUsername(user.getUsername());
+
+
+        model.addAttribute("user", user);
+        model.addAttribute("userProfileForm", userProfileForm);
         return "/home/settings";
     }
 

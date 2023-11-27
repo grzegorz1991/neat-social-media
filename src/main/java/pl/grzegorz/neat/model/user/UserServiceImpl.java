@@ -61,11 +61,14 @@ public class UserServiceImpl implements UserService {
         // Perform additional checks or validations before updating
         validateUpdate(user);
 
-
+        System.out.println(user.getEmail()+ "!!!!!!!!!!!!!!!");
         existingUser.setUsername(user.getUsername());
         existingUser.setEmail(user.getEmail());
-
-
+        existingUser.setName(user.getName());
+        if(user.getPassword() != null) {
+            existingUser.setPassword(user.getPassword());
+            System.out.println("password changed not null");
+        }
         return userRepository.save(existingUser);
     }
 
