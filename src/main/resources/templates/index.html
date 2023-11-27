@@ -91,7 +91,7 @@
           </li>
 
         </ul>
-      </nav>
+      </nav>    <!-- 111 -->
       <!-- partial -->
       <div class="container-fluid page-body-wrapper">
         <!-- partial:partials/_navbar.html -->
@@ -239,10 +239,10 @@
               <span class="mdi mdi-format-line-spacing"></span>
             </button>
           </div>
-        </nav>
+        </nav>   <!-- 111 -->
         <!-- partial -->
         <div class="main-panel">
-          <div class="content-wrapper">
+          <div class="content-wrapper" id="dynamicContent">
 
           </div>
           <!-- content-wrapper ends -->
@@ -280,5 +280,22 @@
     <!-- Custom js for this page -->
     <script src="/js/dashboard.js"></script>
     <!-- End custom js for this page -->
+    <script>
+      function loadSettings() {
+        // Fetch the settings content using Thymeleaf's fragment include
+        fetch('/path-to/settings-fragment')
+                .then(response => response.text())
+                .then(data => {
+                  // Inject the loaded content into the dynamicContent div
+                  document.getElementById('dynamicContent').innerHTML = data;
+                })
+                .catch(error => console.error('Error:', error));
+      }
+
+      // Example: Load settings content when the page loads
+      document.addEventListener('DOMContentLoaded', function () {
+        loadSettings();
+      });
+    </script>
   </body>
 </html>
