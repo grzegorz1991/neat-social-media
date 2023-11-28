@@ -6,8 +6,7 @@ public class UserProfileForm {
     private String name;
     private String surname;
     private String email;
-    private String currentPassword;
-    private String newPassword;
+
 
     public String getName() {
         return name;
@@ -46,19 +45,4 @@ public class UserProfileForm {
         this.email = email;
     }
 
-    public String getCurrentPassword() {
-        return currentPassword;
-    }
-
-    public void setCurrentPassword(String currentPassword) {
-        this.currentPassword = currentPassword;
-    }
-
-    public String getNewPassword() {
-        return newPassword;
-    }
-
-    public void setNewPassword(String newPassword) {
-        this.newPassword = newPassword;
-    }
 }
