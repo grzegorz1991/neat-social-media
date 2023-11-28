@@ -2,3 +2,9 @@ Testing for all model classes
 
 validation and error handling
 
+Messages - bold when unread
+
+Messages unfold and show content hen touched
+
+messages delete checkbox
+

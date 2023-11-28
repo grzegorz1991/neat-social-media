@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <div th:replace="fragments/head :: head"></div>
 
 <body>
@@ -394,42 +394,16 @@
     });
     document.getElementById('newMessageDashButtonItem').addEventListener('click', function (event) {
         event.preventDefault();
+        console.log("'newMessageDashButtonItem'");
         loadMessageForm();
     });
     document.getElementById('sentMessageDashButtonItem').addEventListener('click', function (event) {
         event.preventDefault();
+        console.log("sentMessadeDashButtonItem");
         loadSentMessages();
     });
 </script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Attach event listener to form submission
-        document.getElementById('messageForm').addEventListener('submit', function (event) {
-            event.preventDefault(); // Prevent the default form submission behavior
 
-            // Fetch the form data
-            const formData = new FormData(event.target);
-
-            // Perform AJAX request
-            fetch('/send-message', {
-                method: 'POST',
-                body: formData
-            })
-                .then(response => response.text())
-                .then(data => {
-                    // Handle the success response here
-                    console.log(data);
-                    // Optionally, update the UI or show a success message
-                    alert('Message sent successfully');
-                })
-                .catch(error => {
-                    // Handle errors
-                    console.error('Error:', error);
-                    // Optionally, update the UI or show an error message
-                    alert('Error sending message');
-                });
-        });
-    });
 </script>
 </body>
 </html>
