@@ -34,6 +34,12 @@ public class MessageServiceImpl implements MessageService {
     public List<MessageEntity> getMessagesForUser(UserEntity user) {
         return messageRepository.findByReceiver(user);
     }
+
+    @Override
+    public List<MessageEntity> getMessagesFrom(UserEntity user) {
+        return messageRepository.findBySender(user);
+    }
+
     @Override
     public List<MessageEntity> getAllMessages() {
         return messageRepository.findAll();

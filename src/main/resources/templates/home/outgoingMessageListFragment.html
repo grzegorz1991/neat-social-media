@@ -1,0 +1,33 @@
+<div id="messageList">
+    <h2>Messages </h2>
+
+    <div class="col-lg-6 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Message List</h4>
+
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>Sender</th>
+                            <th>Receiver</th>
+                            <th>Title</th>
+                            <th>Timestamp</th>
+
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="message : ${messages}">
+                            <td th:text="${message.sender.name}"></td>
+                            <td th:text="${message.receiver.name}"></td>
+                            <td th:text="${message.title}"></td>
+                            <td th:text="${message.timestamp}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

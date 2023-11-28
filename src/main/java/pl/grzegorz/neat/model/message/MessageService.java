@@ -15,5 +15,7 @@ public interface MessageService {
 
     List<MessageEntity> getMessages(UserEntity sender, UserEntity receiver);
     public List<MessageEntity> getMessagesForUser(UserEntity user);
+
+    public List<MessageEntity> getMessagesFrom(UserEntity user);
     List<MessageEntity> getAllMessages();
 }

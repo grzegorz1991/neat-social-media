@@ -4,28 +4,23 @@ import pl.grzegorz.neat.model.user.UserEntity;
 
 public class MessageRequest {
 
-    private int senderId;
+
     private int receiverId;
     private String content;
 
     private String title;
 
 
-    public MessageRequest(Integer senderId, Integer receiverId, String content,  String title) {
-        this.senderId = senderId;
+
+    public MessageRequest( Integer receiverId, String content,  String title) {
+
         this.receiverId = receiverId;
+
         this.content = content;
 
         this.title = title;
     }
 
-    public Integer getSenderId() {
-        return senderId;
-    }
-
-    public void setSenderId(Integer senderId) {
-        this.senderId = senderId;
-    }
 
     public Integer getReceiverId() {
         return receiverId;

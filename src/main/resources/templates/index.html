@@ -79,7 +79,8 @@
                 </a>
             </li>
             <li class="nav-item menu-items">
-                <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+                <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false"
+                   aria-controls="ui-basic">
               <span class="menu-icon">
                 <i class="mdi mdi-comment-multiple-outline"></i>
               </span>
@@ -88,9 +89,12 @@
                 </a>
                 <div class="collapse" id="ui-basic">
                     <ul class="nav flex-column sub-menu">
-                        <li id="newMessageDashButtonItem"  class="nav-item"> <a class="nav-link" href="#">Create New Message</a></li>
-                        <li id="messageDashButtonItem" class="nav-item"> <a class="nav-link" href="#">Incoming Messages</a></li>
-                        <li id="sentDashButtonItem" class="nav-item"> <a class="nav-link" href="/construction">Outgoing Messages</a></li>
+                        <li id="newMessageDashButtonItem" class="nav-item"><a class="nav-link" href="#">Create New
+                            Message</a></li>
+                        <li id="messageDashButtonItem" class="nav-item"><a class="nav-link" href="#">Incoming
+                            Messages</a></li>
+                        <li id="sentMessageDashButtonItem" class="nav-item"><a class="nav-link" href="#">Outgoing
+                            Messages</a></li>
                     </ul>
                 </div>
             </li>
@@ -280,6 +284,9 @@
 <!-- container-scroller -->
 <!-- plugins:js -->
 <script src="/vendors/js/vendor.bundle.base.js"></script>
+
+<script src="/vendors/select2/select2.min.js"></script>
+<script src="/vendors/typeahead.js/typeahead.bundle.min.js"></script>
 <!-- endinject -->
 <!-- Plugin js for this page -->
 <script src="/vendors/chart.js/Chart.min.js"></script>
@@ -297,11 +304,13 @@
 <!-- endinject -->
 <!-- Custom js for this page -->
 <script src="/js/dashboard.js"></script>
+<script src="/js/file-upload.js"></script>
+<script src="/js/typeahead.js"></script>
+<script src="/js/select2.js"></script>
 <!-- End custom js for this page -->
 
 
 <script>
-
     function loadDefaultContent() {
         fetch('/home/default-fragment')
             .then(response => response.text())
@@ -312,91 +321,114 @@
     }
 
     function loadSettings() {
-        // Fetch the settings content using Thymeleaf's fragment include
         fetch('/home/settings-fragment')
             .then(response => response.text())
             .then(data => {
-                // Inject the loaded content into the dynamicContent div
                 document.getElementById('dynamicContent').innerHTML = data;
             })
             .catch(error => console.error('Error:', error));
     }
+
     function loadMessages() {
-        // Fetch the settings content using Thymeleaf's fragment include
         fetch('/home/messages-fragment')
             .then(response => response.text())
             .then(data => {
-                // Inject the loaded content into the dynamicContent div
                 document.getElementById('dynamicContent').innerHTML = data;
             })
             .catch(error => console.error('Error:', error));
     }
-    function newMessageForm() {
-        // Fetch the settings content using Thymeleaf's fragment include
+    function loadSentMessages() {
+        fetch('/home/messages-sent-fragment')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('dynamicContent').innerHTML = data;
+            })
+            .catch(error => console.error('Error:', error));
+    }
+    function loadMessageForm() {
         fetch('/home/new-messages-fragment')
             .then(response => response.text())
             .then(data => {
-                // Inject the loaded content into the dynamicContent div
                 document.getElementById('dynamicContent').innerHTML = data;
             })
             .catch(error => console.error('Error:', error));
     }
+
     // Function to attach event listener to logo
     function attachLogoClickListener() {
         const logoElement = document.querySelector('.sidebar-brand.brand-logo');
-
         if (logoElement) {
             logoElement.addEventListener('click', function (event) {
-                // Prevent the default link behavior
                 event.preventDefault();
-                // Load default content
                 loadDefaultContent();
             });
         }
     }
 
-
-    // Example: Load settings content when the page loads
+    // Load settings content when the page loads
     document.addEventListener('DOMContentLoaded', function () {
         loadDefaultContent();
         attachLogoClickListener();
-
-        // Check if there is an error parameter in the URL
         const url = new URL(window.location.href);
         const errorParam = url.searchParams.get('error');
-
         if (errorParam) {
-            // Load settings content with error message
             loadSettings(errorParam);
         } else {
-            // Load default content if no error parameter
             loadDefaultContent();
         }
-
-        // Attach event listener to logo
         attachLogoClickListener();
     });
 
-    //Load settings sub- content when the button is clicked
+    //Loading sub- content
     document.getElementById('settingsDropdownItem').addEventListener('click', function (event) {
         event.preventDefault();
         loadSettings();
     });
-
-    //Load settings sub- content when the button is clicked
     document.getElementById('messageDashButtonItem').addEventListener('click', function (event) {
         event.preventDefault();
         loadMessages();
     });
-
-    //Load settings sub- content when the button is clicked
     document.getElementById('settingsDashButtonItem').addEventListener('click', function (event) {
         event.preventDefault();
         loadSettings();
     });
     document.getElementById('newMessageDashButtonItem').addEventListener('click', function (event) {
         event.preventDefault();
-        newMessageForm();
+        loadMessageForm();
+    });
+    document.getElementById('sentMessageDashButtonItem').addEventListener('click', function (event) {
+        event.preventDefault();
+        loadSentMessages();
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Attach event listener to form submission
+        document.getElementById('messageForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission behavior
+
+            // Fetch the form data
+            const formData = new FormData(event.target);
+
+            // Perform AJAX request
+            fetch('/send-message', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.text())
+                .then(data => {
+                    // Handle the success response here
+                    console.log(data);
+                    // Optionally, update the UI or show a success message
+                    alert('Message sent successfully');
+                })
+                .catch(error => {
+                    // Handle errors
+                    console.error('Error:', error);
+                    // Optionally, update the UI or show an error message
+                    alert('Error sending message');
+                });
+        });
     });
 </script>
 </body>
