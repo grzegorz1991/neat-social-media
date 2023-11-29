@@ -1,6 +1,6 @@
 <div class="message-item"> <!-- Your content here --> </div>
 <div class="row">
-    <div class="col-md-20 col-xl-6 grid-margin stretch-card">
+    <div class="col-md-30 col-xl-6 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
                 <div class="d-flex flex-row justify-content-between">
@@ -8,8 +8,6 @@
                     <p class="text-muted mb-1 small">View all</p>
                 </div>
                 <div class="preview-list">
-
-
                     <div class="preview-item border-bottom custom-hover-effect message-item"
                          th:each="message, rowStat : ${messages}">
                         <div class="preview-thumbnail">
@@ -18,20 +16,17 @@
                         <div class="preview-item-content d-flex flex-grow">
                             <div class="flex-grow">
                                 <div class="d-flex d-md-block d-xl-flex justify-content-between">
-                                    <h6 class="preview-subject" th:text="${message.sender.name}"></h6>
-                                    <p class="text-muted text-small" th:text="${message.timestamp}"></p>
-                                    <div class="message-content">
-                                        <p th:text="${message.content}"></p>
-                                    </div>
+                                    <h6 class="preview-subject" th:text=" ${message.sender.name}"></h6>
+                                    <p class="text-muted text-small" th:text="${message.title}"></p>
+                                </div>
+                                <div class="message-content">
+                                    <p th:text="${message.content}"></p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- Add your other columns here as needed -->
-
         </div>
     </div>
 </div>

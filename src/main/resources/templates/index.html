@@ -325,7 +325,8 @@
         }
     });
 </script>
-<script>
+
+<script type="text/javascript">
     document.addEventListener("DOMContentLoaded", function () {
         // Listen for mouseenter and click events on the common ancestor
         document.getElementById("dynamicContent").addEventListener("mouseenter", handleEvent);
@@ -340,7 +341,8 @@
         }
     });
 </script>
-<script>
+
+<script type="text/javascript">
     function loadDefaultContent() {
         fetch('/home/default-fragment')
             .then(response => response.text())
@@ -411,7 +413,7 @@
         attachLogoClickListener();
     });
 
-    //Loading sub- content
+    // Loading sub-content
     document.getElementById('settingsDropdownItem').addEventListener('click', function (event) {
         event.preventDefault();
         loadSettings();
@@ -435,6 +437,5 @@
         loadSentMessages();
     });
 </script>
-
 </body>
 </html>
