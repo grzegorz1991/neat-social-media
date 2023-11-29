@@ -281,6 +281,7 @@
     </div>
     <!-- page-body-wrapper ends -->
 </div>
+
 <!-- container-scroller -->
 <!-- plugins:js -->
 <script src="/vendors/js/vendor.bundle.base.js"></script>
@@ -309,7 +310,36 @@
 <script src="/js/select2.js"></script>
 <!-- End custom js for this page -->
 
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        console.log("DOM content loaded");
 
+        var messageItems = document.querySelectorAll(".message-item");
+
+        console.log("Number of elements found:", messageItems.length);
+
+        if (messageItems.length > 0) {
+            // Rest of your code
+        } else {
+            console.error("No elements found with the class '.message-item'");
+        }
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Listen for mouseenter and click events on the common ancestor
+        document.getElementById("dynamicContent").addEventListener("mouseenter", handleEvent);
+        document.getElementById("dynamicContent").addEventListener("click", handleEvent);
+
+        function handleEvent(event) {
+            // Check if the event target has the class "message-item"
+            if (event.target.classList.contains("message-item")) {
+                // Toggle the "expanded" class on mouseenter and click
+                event.target.classList.toggle("expanded");
+            }
+        }
+    });
+</script>
 <script>
     function loadDefaultContent() {
         fetch('/home/default-fragment')
@@ -337,6 +367,7 @@
             })
             .catch(error => console.error('Error:', error));
     }
+
     function loadSentMessages() {
         fetch('/home/messages-sent-fragment')
             .then(response => response.text())
@@ -345,6 +376,7 @@
             })
             .catch(error => console.error('Error:', error));
     }
+
     function loadMessageForm() {
         fetch('/home/new-messages-fragment')
             .then(response => response.text())
@@ -404,6 +436,5 @@
     });
 </script>
 
-</script>
 </body>
 </html>
