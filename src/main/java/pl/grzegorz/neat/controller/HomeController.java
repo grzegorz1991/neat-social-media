@@ -1,15 +1,23 @@
 package pl.grzegorz.neat.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import pl.grzegorz.neat.model.message.MessageService;
 import pl.grzegorz.neat.model.user.CustomUserDetails;
 import pl.grzegorz.neat.model.user.UserEntity;
 import pl.grzegorz.neat.model.user.UserProfileForm;
+import pl.grzegorz.neat.model.user.UserService;
 
 @Controller
 public class HomeController {
+
+    @Autowired
+    private MessageService messageService;
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/")
     public String landingPage() {
@@ -24,6 +32,12 @@ public class HomeController {
         String surname = userDetails.getSurname();
         String email = userDetails.getEmail();
 
+        UserEntity userByUsername = userService.getUserByUsername(username);
+        int numberofMessages = messageService.getMessagesForUser(userByUsername).size();
+        int numbweofUnreadMessages = messageService.getNumberOfUnreadMessages(userByUsername);
+
+        model.addAttribute("unreadMessagesNumber", numbweofUnreadMessages);
+        model.addAttribute("newMessagesNumber", numberofMessages);
         model.addAttribute("username", username);
         model.addAttribute("name", name);
         model.addAttribute("surname", surname);

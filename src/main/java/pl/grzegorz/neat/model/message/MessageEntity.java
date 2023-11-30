@@ -55,6 +55,16 @@ public class MessageEntity {
         this.title = title;
     }
 
+    @Override
+    public String toString() {
+        return "MessageEntity{" +
+                "id=" + id +
+                ", sender=" + sender +
+                ", receiver=" + receiver +
+                ", title='" + title + '\'' +
+                '}';
+    }
+
     public boolean isMessageRead() {
         return messageRead;
     }

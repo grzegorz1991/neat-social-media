@@ -1,5 +1,6 @@
 package pl.grzegorz.neat.model.message;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import pl.grzegorz.neat.model.message.MessageEntity;
 import pl.grzegorz.neat.model.user.UserEntity;
@@ -18,4 +19,14 @@ public interface MessageService {
 
     public List<MessageEntity> getMessagesFrom(UserEntity user);
     List<MessageEntity> getAllMessages();
+
+    public Page<MessageEntity> getMessages(int page, int pageSize);
+
+    Page<MessageEntity> getMessagesFromUser(int page, int pageSize, UserEntity user);
+
+    public List<MessageEntity> getlat5Messages();
+
+    List<MessageEntity> getUnreadMessages(UserEntity user);
+
+    public int getNumberOfUnreadMessages (UserEntity user);
 }

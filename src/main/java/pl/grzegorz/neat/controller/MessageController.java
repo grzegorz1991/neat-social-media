@@ -1,6 +1,7 @@
 package pl.grzegorz.neat.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -16,7 +17,6 @@ import pl.grzegorz.neat.model.user.UserService;
 import java.util.List;
 
 @Controller
-
 public class MessageController {
 
     @Autowired
@@ -28,7 +28,7 @@ public class MessageController {
     public String newMessagesFragment(Model model, Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         UserEntity currentUser = userDetails.getUser();
-
+        System.out.println(messageService.getlat5Messages());
         List<MessageEntity> messages = messageService.getMessagesForUser(currentUser);
         List<UserEntity> usersList = userService.getAllUsers();
 
@@ -53,21 +53,33 @@ public class MessageController {
 
         model.addAttribute("messages", messages);
         model.addAttribute("user", currentUser);
-
+        System.out.println("messagesFragment");
+        System.out.println(messageService.getMessages(1, 5));
 
         return "home/incomingMessageListFragment";
     }
+    @GetMapping("/retrive-messages")
+    public Page<MessageEntity> getMessages(
 
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int pageSize) {
+
+        System.out.println("Get messages");
+
+        return messageService.getMessages(page, pageSize);
+    }
     @GetMapping("/home/messages-sent-fragment")
-    public String messagesSentFragment(Model model, Authentication authentication) {
+    public String messagesSentFragment(Model model, Authentication authentication, @RequestParam(defaultValue = "0") int page,
+                                       @RequestParam(defaultValue = "5") int pageSize) {
+
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         UserEntity currentUser = userDetails.getUser();
 
-        List<MessageEntity> messages = messageService.getMessagesFrom(currentUser);
+        Page<MessageEntity> messagesPage = messageService.getMessagesFromUser(page, pageSize, currentUser);
+        List<MessageEntity> messages = messagesPage.getContent();
 
         model.addAttribute("messages", messages);
         model.addAttribute("user", currentUser);
-
 
         return "home/outgoingMessageListFragment";
     }

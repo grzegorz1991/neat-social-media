@@ -1,6 +1,26 @@
-
-<div th:fragment="dynamicContent">
+<!-- Dynamic content file -->
+<div th:fragment="dynamicContent" id="dynamicContent">
     <h2>DEFAULT HOME</h2>
     <!-- Your settings content goes here -->
     <p>This is the home page content.</p>
+    <button id="leftButton">Left</button>
+    <button id="rightButton">Right</button>
+
+    <script>
+        // Use DOMContentLoaded event to ensure the content is ready
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get references to the buttons
+            const leftButton = document.getElementById('leftButton');
+            const rightButton = document.getElementById('rightButton');
+
+            // Add event listeners to the buttons
+            leftButton.addEventListener('click', () => {
+                console.log('Left clicked');
+            });
+
+            rightButton.addEventListener('click', () => {
+                console.log('Right clicked');
+            });
+        });
+    </script>
 </div>
