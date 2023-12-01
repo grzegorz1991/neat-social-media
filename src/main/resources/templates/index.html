@@ -274,20 +274,11 @@
         </nav>   <!-- 111 -->
         <!-- partial -->
         <div class="main-panel">
-            <div class="content-wrapper" id="dynamicContent" th:fragment="dynamicContent">
-
+            <div class="content-wrapper" id="dynamicContent">
             </div>
-            <!-- content-wrapper ends -->
-            <!-- partial:partials/_footer.html -->
-            <footer class="footer">
-                <div class="d-sm-flex justify-content-center justify-content-sm-between">
-                    <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Created by Grzegorz Środa  2023</span>
-                    <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center"> My <a
-                            href="https://www.linkedin.com/in/grzegorz-%C5%9Broda-2bab99219/"
-                            target="_blank">LinkedIn</a>  profile </span>
-                </div>
-            </footer>
-            <!-- partial -->
+
+            <div th:replace="fragments/footer :: footer"></div>
+
         </div>
         <!-- main-panel ends -->
     </div>
@@ -315,8 +306,8 @@
 <script src="/js/neat/main.js"></script>
 <script src="/js/neat/showMessageDetails.js"></script>
 <script src="/js/neat/getMessages.js"></script>
-<script src="/js/neat/domContentLoaded.js"></script>
 
+<script src="/js/neat/loadDynamicContent.js"></script>
 
 
 </body>

@@ -5,11 +5,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import pl.grzegorz.neat.model.message.MessageEntity;
 import pl.grzegorz.neat.model.message.MessageService;
 import pl.grzegorz.neat.model.user.CustomUserDetails;
 import pl.grzegorz.neat.model.user.UserEntity;
 import pl.grzegorz.neat.model.user.UserProfileForm;
 import pl.grzegorz.neat.model.user.UserService;
+
+import java.util.List;
 
 @Controller
 public class HomeController {
@@ -66,4 +69,15 @@ public class HomeController {
     public String getDefaultFragment() {
         return "/home/home-default";
     }
+
+
+    @GetMapping("/home/content1")
+    public String getContent1Fragment() {
+        return "/home/content1";
+    }
+    @GetMapping("/home/content2")
+    public String getContent2Fragment() {
+        return "/home/content2";
+    }
+
 }

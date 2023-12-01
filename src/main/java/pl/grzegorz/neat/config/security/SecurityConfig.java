@@ -22,7 +22,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/construction", "/register", "/register/terms","/css/**", "/fonts/**", "/js/**", "/images/**", "/public/**", "/login").permitAll() // Allow access to these paths without authentication
+                .antMatchers("/construction", "/register", "/register/terms","/css/**", "/fonts/**", "/js/**", "/images/**", "/public/**", "/login", "/templates/**").permitAll() // Allow access to these paths without authentication
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
