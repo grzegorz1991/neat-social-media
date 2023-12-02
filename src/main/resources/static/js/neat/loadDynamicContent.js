@@ -46,3 +46,14 @@ function loadAdditionalScripts() {
     };
     document.body.appendChild(script);
 }
+
+function loadAdditionalScriptsOutgoingMessages() {
+    const script = document.createElement('script');
+    script.src = '/js/neat/retriveMessagesPage.js';
+    // Set the onload callback to execute after the script is loaded
+    script.onload = function () {
+        // Optional: Call a function from the loaded script if needed
+        addEventListenersToButtons();
+    };
+    document.body.appendChild(script);
+}

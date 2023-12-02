@@ -1,11 +1,10 @@
 <div id="messageList">
-    <h2>Messages</h2>
-
-    <div class="col-lg-6 grid-margin stretch-card">
+    <div class="col-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Message List</h4>
-
+                <h4 class="card-title">
+                    Sent Messages List
+                </h4>
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead>
@@ -13,8 +12,8 @@
                             <th>Sender</th>
                             <th>Title</th>
                             <th>Id</th>
-
-
+                            <th>Read</th>
+                            <th>Timestamp</th>
                         </tr>
                         </thead>
                         <tbody id="messageTableBody">
@@ -22,125 +21,59 @@
                         <tr th:each="message : ${messages}" th:limit="5">
                             <td th:text="${message.sender.name}"></td>
                             <td th:text="${message.title}"></td>
-
                             <td th:text="${message.id}"></td>
 
-
+                            <td>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" th:checked="${message.isMessageRead}">
+                                </div>
+                            </td>
+                            <td th:text="${message.relativeTime}"></td> <!-- Display the relative time -->
                         </tr>
                         </tbody>
                     </table>
+
                 </div>
+
+            </div>
+            <div class="btn-group" role="group" aria-label="Basic example">
+                <button id="previousButton" type="button" class="btn btn-outline-secondary2 btn-md">Previous</button>
+                <button type="button" class="btn btn-outline-secondary2">1</button>
+                <button type="button" class="btn btn-outline-secondary2">2</button>
+                <button type="button" class="btn btn-outline-secondary2">3</button>
+                <button id="nextButton" type="button" class="btn btn-outline-secondary2 btn-md">Next</button>
             </div>
         </div>
     </div>
-
-    <div class="pagination">
-        <button id="previousButton">Previous</button>
-        <button id="nextButton">Next</button>
-
-    </div>
 </div>
-
 <script>
-    const apiUrl = '/retrive-messages'; // Replace with your API endpoint
+    $(document).ready(function() {
+        var currentPage = parseInt("${currentPage}");
+        var totalPages = parseInt("${totalPages}");
 
-    const limit = 5; // Number of messages to retrieve per page
-    let currentPage = 0; // Current page number
+        $("previousButton").click(function() {
+            if (currentPage > 0) {
+                currentPage--;
+                updatePage();
+            }
+        });
 
-    // Function to retrieve messages for a specific page
-    function getMessages(page) {
-        fetch(`${apiUrl}?page=${page}&pageSize=${limit}`)
-            .then(response => response.json())
-            .then(data => {
-                // Clear the table body
-                const tableBody = document.getElementById('messageTableBody');
-                tableBody.innerHTML = '';
+        $("nextButton").click(function() {
+            if (currentPage < totalPages - 1) {
+                currentPage++;
+                updatePage();
+            }
+        });
 
-                // Append each message to the table
-                data.content.forEach(message => {
-                    const row = document.createElement('tr');
-
-                    // Add click event listener to the row
-                    row.addEventListener('click', () => showMessageDetails(row));
-
-                    const senderCell = document.createElement('td');
-                    senderCell.textContent = message.sender.name;
-
-                    const receiverCell = document.createElement('td');
-                    receiverCell.textContent = message.receiver.name;
-
-                    const titleCell = document.createElement('td');
-                    titleCell.textContent = message.title;
-
-                    const timestampCell = document.createElement('td');
-                    timestampCell.textContent = message.timestamp;
-
-                    row.appendChild(senderCell);
-                    row.appendChild(receiverCell);
-                    row.appendChild(titleCell);
-                    row.appendChild(timestampCell);
-
-                    tableBody.appendChild(row);
-                });
-
-                // Enable or disable the previous/next buttons based on pagination info
-                const previousButton = document.getElementById('previousButton');
-                const nextButton = document.getElementById('nextButton');
-
-                previousButton.disabled = data.first;
-                nextButton.disabled = data.last;
-            })
-            .catch(error => {
-                console.error('Error:', error);
+        function updatePage() {
+            // Perform an AJAX request to retrieve the next or previous page
+            $.ajax({
+                url: "/home/messages-sent-fragment?page=" + currentPage,
+                success: function(data) {
+                    // Update the table with the new messages
+                    $("messageTableBody").html(data);
+                }
             });
-    }
-
-    // Event listener for previous button
-    document.getElementById('previousButton').addEventListener('click', () => {
-        if (currentPage > 0) {
-            currentPage--;
-            console.log("prv button");
-            getMessages(currentPage);
         }
     });
-
-    // Event listener for next button
-    document.getElementById('nextButton').addEventListener('click', () => {
-        currentPage++;
-        console.log("nex button");
-        getMessages(currentPage);
-    });
-
-    // Function to show the message details
-    function showMessageDetails(row) {
-        // Get the message details from the clicked row
-        const sender = row.querySelector("td:nth-child(1)").textContent;
-        const receiver = row.querySelector("td:nth-child(2)").textContent;
-        const title = row.querySelector("td:nth-child(3)").textContent;
-        const timestamp = row.querySelector("td:nth-child(4)").textContent;
-
-        // Create the message details box
-        const messageDetailsBox = document.createElement("div");
-        messageDetailsBox.classList.add("message-details");
-
-        // Populate the message details box with the message data
-        messageDetailsBox.innerHTML = `
-            <h4>Message Details</h4>
-            <p><strong>Sender:</strong> ${sender}</p>
-            <p><strong>Receiver:</strong> ${receiver}</p>
-            <p><strong>Title:</strong> ${title}</p>
-            <p><strong>Timestamp:</strong> ${timestamp}</p>
-        `;
-
-        // Append the message details box to the page
-        document.getElementById("messageList").appendChild(messageDetailsBox);
-    }
 </script>
-
-<style>
-    .message-details {
-        border: 1px solid #ccc;
-        padding: 10px;
-        margin-top: 10px;
-    }
-</style>

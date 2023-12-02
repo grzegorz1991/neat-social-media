@@ -27,6 +27,9 @@ public class MessageEntity {
     @Column(nullable = false)
     private LocalDateTime timestamp;
 
+    private String relativeTime;
+
+
     public MessageEntity() {
         this.timestamp = LocalDateTime.now();
     }
@@ -120,5 +123,13 @@ public class MessageEntity {
 
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getRelativeTime() {
+        return relativeTime;
+    }
+
+    public void setRelativeTime(String relativeTime) {
+        this.relativeTime = relativeTime;
     }
 }

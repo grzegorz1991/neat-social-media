@@ -21156,3 +21156,37 @@ div.tagsinput {
   overflow: hidden;
   transition: max-height 0.3s ease; /* Add a smooth transition effect */
 }
+
+/* CUSTOM BUTTON OUTLINE TO MATCH TABLE */
+.btn-outline-secondary2, .editable-container.editable-inline .editableform .control-group .editable-buttons .editable-cancel {
+  color: #6e7982;
+  border-color: #2c2e33; }
+.btn-outline-secondary2:hover, .editable-container.editable-inline .editableform .control-group .editable-buttons .editable-cancel:hover {
+  color: #212529;
+  background-color: #495057;
+  border-color: #2c2e33; }
+.btn-outline-secondary2:focus, .editable-container.editable-inline .editableform .control-group .editable-buttons .editable-cancel:focus, .btn-outline-secondary.focus, .editable-container.editable-inline .editableform .control-group .editable-buttons .focus.editable-cancel {
+  box-shadow: 0 0 0 0.2rem rgba(228, 234, 236, 0.5); }
+.btn-outline-secondary2.disabled, .editable-container.editable-inline .editableform .control-group .editable-buttons .disabled.editable-cancel, .btn-outline-secondary:disabled, .editable-container.editable-inline .editableform .control-group .editable-buttons .editable-cancel:disabled {
+  color: #495057;
+  background-color: transparent; }
+.btn-outline-secondary2:not(:disabled):not(.disabled):active, .editable-container.editable-inline .editableform .control-group .editable-buttons .editable-cancel:not(:disabled):not(.disabled):active, .btn-outline-secondary:not(:disabled):not(.disabled).active, .editable-container.editable-inline .editableform .control-group .editable-buttons .editable-cancel:not(:disabled):not(.disabled).active,
+.show > .btn-outline-secondary2.dropdown-toggle,
+.editable-container.editable-inline .editableform .control-group .editable-buttons .show > .dropdown-toggle.editable-cancel {
+  color: #212529;
+  background-color: #495057;
+  border-color: #2c2e33; }
+.btn-outline-secondary2:not(:disabled):not(.disabled):active:focus, .editable-container.editable-inline .editableform .control-group .editable-buttons .editable-cancel:not(:disabled):not(.disabled):active:focus, .btn-outline-secondary:not(:disabled):not(.disabled).active:focus, .editable-container.editable-inline .editableform .control-group .editable-buttons .editable-cancel:not(:disabled):not(.disabled).active:focus,
+.show > .btn-outline-secondary2.dropdown-toggle:focus,
+.editable-container.editable-inline .editableform .control-group .editable-buttons .show > .dropdown-toggle.editable-cancel:focus {
+  box-shadow: 0 0 0 0.2rem rgba(228, 234, 236, 0.5); }
+
+.btn-group {
+  position: absolute;
+  top: 25px;
+  right: 25px;
+}
+
+.smaller-row {
+  height: 10px; /* adjust the height value based on your needs */
+}

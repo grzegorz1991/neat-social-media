@@ -14,7 +14,10 @@ import pl.grzegorz.neat.model.user.CustomUserDetails;
 import pl.grzegorz.neat.model.user.UserEntity;
 import pl.grzegorz.neat.model.user.UserService;
 
+import java.time.LocalDateTime;
 import java.util.List;
+
+import static pl.grzegorz.neat.util.RelativeTimeConverter.convertToLocalDateTime;
 
 @Controller
 public class MessageController {
@@ -53,8 +56,7 @@ public class MessageController {
 
         model.addAttribute("messages", messages);
         model.addAttribute("user", currentUser);
-        System.out.println("messagesFragment");
-        System.out.println(messageService.getMessages(1, 5));
+
 
         return "home/incomingMessageListFragment";
     }
@@ -69,17 +71,29 @@ public class MessageController {
         return messageService.getMessages(page, pageSize);
     }
     @GetMapping("/home/messages-sent-fragment")
-    public String messagesSentFragment(Model model, Authentication authentication, @RequestParam(defaultValue = "0") int page,
-                                       @RequestParam(defaultValue = "5") int pageSize) {
-
+    public String messagesSentFragment(
+            Model model,
+            Authentication authentication,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int pageSize)
+    {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         UserEntity currentUser = userDetails.getUser();
 
         Page<MessageEntity> messagesPage = messageService.getMessagesFromUser(page, pageSize, currentUser);
         List<MessageEntity> messages = messagesPage.getContent();
 
+        for (MessageEntity message : messages) {
+            LocalDateTime timestamp = message.getTimestamp();
+            String relativeTime = convertToLocalDateTime(timestamp);
+            message.setRelativeTime(relativeTime);
+        }
+
+
         model.addAttribute("messages", messages);
         model.addAttribute("user", currentUser);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", messagesPage.getTotalPages());
 
         return "home/outgoingMessageListFragment";
     }
