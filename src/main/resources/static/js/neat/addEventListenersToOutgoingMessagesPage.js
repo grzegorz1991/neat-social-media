@@ -71,7 +71,7 @@ function addEventListenersToButtons() {
 
                 $('#currentPageSpan2').text(pageNumber);
                 $('#totalPagesSpan2').text(totalPages);
-
+extracted();
             }
         });
     }

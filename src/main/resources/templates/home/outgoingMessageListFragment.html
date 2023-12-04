@@ -1,3 +1,4 @@
+
 <div id="messageList" class="container">
     <div class="col-12 grid-margin stretch-card">
         <div class="card">
@@ -21,7 +22,7 @@
                         <tbody id="messageTableBody">
                         <tr th:each="message, stat : ${messages}" th:limit="5" class="clickable-row"
                             data-toggle="collapse" th:data-target="'#accordion-' + ${message.id}" th:data-message-id="${message.id}">
-                            <td th:text="${stat.index + 1}"></td>
+                            <td th:text="${(currentPage * 5) + stat.index + 1}"></td>
                             <td th:text="${message.sender.name}"></td>
                             <td th:text="${message.title}"></td>
                             <td>
