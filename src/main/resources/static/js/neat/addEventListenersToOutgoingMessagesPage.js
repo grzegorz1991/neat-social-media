@@ -91,10 +91,14 @@ function extracted() {
         row.addEventListener('click', function () {
             // Get the message details and show them (replace this with your actual logic)
             console.log("clicked");
-            const accordionId = row.nextElementSibling.id;
-            const accordion = document.getElementById(accordionId);
-            accordion.classList.toggle('active');
+            const messageId = row.dataset.messageId;
+            console.log("Clicked on row with message ID: " + messageId);
+
+            // Toggle the collapse element (replace this with your actual logic)
+            const collapseElement = document.getElementById('accordion-' + messageId);
+            $(collapseElement).collapse('toggle');
         });
     });
+
 }
 

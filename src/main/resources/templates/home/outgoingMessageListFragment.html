@@ -1,4 +1,4 @@
-<div id="messageList">
+<div id="messageList" class="container">
     <div class="col-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
@@ -19,7 +19,8 @@
                         </tr>
                         </thead>
                         <tbody id="messageTableBody">
-                        <tr th:each="message, stat : ${messages}" th:limit="5" class="clickable-row">
+                        <tr th:each="message, stat : ${messages}" th:limit="5" class="clickable-row"
+                            data-toggle="collapse" th:data-target="'#accordion-' + ${message.id}" th:data-message-id="${message.id}">
                             <td th:text="${stat.index + 1}"></td>
                             <td th:text="${message.sender.name}"></td>
                             <td th:text="${message.title}"></td>
@@ -31,7 +32,7 @@
                         </tr>
                         <tr>
                             <td colspan="5" style="padding: 0;">
-                                <div th:if="${message != null}" id="accordion-[[${message.id}]]" class="details">
+                                <div th:if="${message != null}" id="accordion-[[${message.id}]]" class="collapse">
                                     <!-- Add your accordion content here -->
                                     <p>Details for Message ID: [[${message.id}]]</p>
                                 </div>
@@ -52,13 +53,4 @@
         </div>
     </div>
 </div>
-<script>
 
-</script>
-
-<style>
-    /* Style for the accordion */
-    .details {
-        display: none;
-    }
-</style>
