@@ -15,6 +15,7 @@ import pl.grzegorz.neat.model.user.UserEntity;
 import pl.grzegorz.neat.model.user.UserService;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 import static pl.grzegorz.neat.util.RelativeTimeConverter.convertToLocalDateTime;
@@ -82,6 +83,7 @@ public class MessageController {
 
         Page<MessageEntity> messagesPage = messageService.getMessagesFromUser(page, pageSize, currentUser);
         List<MessageEntity> messages = messagesPage.getContent();
+
 
         for (MessageEntity message : messages) {
             LocalDateTime timestamp = message.getTimestamp();

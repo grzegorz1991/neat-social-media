@@ -21190,3 +21190,12 @@ div.tagsinput {
 .smaller-row {
   height: 10px; /* adjust the height value based on your needs */
 }
+
+/* Style for the accordion */
+.details {
+  display: none;
+}
+
+.details.active {
+  display: block;
+}

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pl.grzegorz.neat.model.user.UserEntity;
 
@@ -58,7 +59,7 @@ public class MessageServiceImpl implements MessageService {
     }
     @Override
     public Page<MessageEntity> getMessagesFromUser(int page, int pageSize, UserEntity user) {
-        Pageable pageable = PageRequest.of(page, pageSize);
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by("timestamp").descending());
         return messageRepository.findAllBySender(pageable, user);
     }
 

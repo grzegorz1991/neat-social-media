@@ -1,52 +1,64 @@
-
 <div id="messageList">
-
     <div class="col-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">
                     Sent Messages List
                 </h4>
-                <span th:text="${currentPage}"></span> page
-                <span th:text="${totalPages}"></span> total
+                <span id="currentPageSpan" th:text="${currentPage}" style="display: none;"></span>
+                <span id="totalPagesSpan" th:text="${totalPages}" style="display: none;"></span>
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead>
                         <tr>
+                            <th>#</th>
                             <th>Sender</th>
                             <th>Title</th>
-                            <th>Id</th>
-                            <th>Read</th>
+                            <th>Status</th>
                             <th>Timestamp</th>
                         </tr>
                         </thead>
                         <tbody id="messageTableBody">
-                        <!-- Use Thymeleaf to iterate over the messages -->
-                        <tr th:each="message : ${messages}" th:limit="5">
+                        <tr th:each="message, stat : ${messages}" th:limit="5" class="clickable-row">
+                            <td th:text="${stat.index + 1}"></td>
                             <td th:text="${message.sender.name}"></td>
                             <td th:text="${message.title}"></td>
-                            <td th:text="${message.id}"></td>
-
                             <td>
-                                <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" th:checked="${message.isMessageRead}">
+                                <div th:if="${message.isMessageRead}" th:text="Read"></div>
+                                <div th:unless="${message.isMessageRead}" th:text="Unread"></div>
+                            </td>
+                            <td th:text="${message.relativeTime}"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" style="padding: 0;">
+                                <div th:if="${message != null}" id="accordion-[[${message.id}]]" class="details">
+                                    <!-- Add your accordion content here -->
+                                    <p>Details for Message ID: [[${message.id}]]</p>
                                 </div>
                             </td>
-                            <td th:text="${message.relativeTime}"></td> <!-- Display the relative time -->
                         </tr>
                         </tbody>
                     </table>
-
                 </div>
-
             </div>
             <div class="btn-group" role="group" aria-label="Basic example">
                 <button id="previousButton" type="button" class="btn btn-outline-secondary2 btn-md">Previous</button>
-                <button type="button" class="btn btn-outline-secondary2">1</button>
-                <button type="button" class="btn btn-outline-secondary2">2</button>
-                <button type="button" class="btn btn-outline-secondary2">3</button>
+                <p class="text-muted mb-0"> Page &nbsp;</p>
+                <span id="currentPageSpan2" th:text="${currentPage + 1}" class="text-muted mb-0"></span>
+                <p class="text-muted mb-0"> &nbsp;of&nbsp; </p>
+                <span id="totalPagesSpan2" th:text="${totalPages}" class="text-muted mb-0"></span>
                 <button id="nextButton" type="button" class="btn btn-outline-secondary2 btn-md">Next</button>
             </div>
         </div>
     </div>
 </div>
+<script>
+
+</script>
+
+<style>
+    /* Style for the accordion */
+    .details {
+        display: none;
+    }
+</style>
