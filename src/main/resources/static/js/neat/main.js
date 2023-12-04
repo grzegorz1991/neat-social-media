@@ -28,10 +28,13 @@ function loadMessagesFragment() {
 function loadAdditionalScriptsForOutgoingMessagePage() {
     const script = document.createElement('script');
     script.src = '/js/neat/addEventListenersToOutgoingMessagesPage.js';
+
     // Set the onload callback to execute after the script is loaded
     script.onload = function () {
         // Optional: Call a function from the loaded script if needed
         addEventListenersToButtons();
+
+
     };
     document.body.appendChild(script);
 }

@@ -1,10 +1,14 @@
+
 <div id="messageList">
+
     <div class="col-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">
                     Sent Messages List
                 </h4>
+                <span th:text="${currentPage}"></span> page
+                <span th:text="${totalPages}"></span> total
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead>
@@ -46,34 +50,3 @@
         </div>
     </div>
 </div>
-<script>
-    $(document).ready(function() {
-        var currentPage = parseInt("${currentPage}");
-        var totalPages = parseInt("${totalPages}");
-
-        $("previousButton").click(function() {
-            if (currentPage > 0) {
-                currentPage--;
-                updatePage();
-            }
-        });
-
-        $("nextButton").click(function() {
-            if (currentPage < totalPages - 1) {
-                currentPage++;
-                updatePage();
-            }
-        });
-
-        function updatePage() {
-            // Perform an AJAX request to retrieve the next or previous page
-            $.ajax({
-                url: "/home/messages-sent-fragment?page=" + currentPage,
-                success: function(data) {
-                    // Update the table with the new messages
-                    $("messageTableBody").html(data);
-                }
-            });
-        }
-    });
-</script>
