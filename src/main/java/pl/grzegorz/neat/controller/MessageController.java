@@ -71,6 +71,24 @@ public class MessageController {
 
         return messageService.getMessages(page, pageSize);
     }
+
+    @GetMapping("home/messages-get-details-fragment")
+    public String getMessageDetails(Model model, Authentication authentication, @RequestParam(defaultValue = "0") int messageId){
+
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        UserEntity currentUser = userDetails.getUser();
+        MessageEntity messageEntity = messageService.getMessage(messageId);
+
+        LocalDateTime timestamp = messageEntity.getTimestamp();
+        String relativeTime = convertToLocalDateTime(timestamp);
+        messageEntity.setRelativeTime(relativeTime);
+
+        model.addAttribute("messageEntity", messageEntity);
+        model.addAttribute("UserEntity", currentUser);
+        return "home/message-details-fragment";
+    }
+
+
     @GetMapping("/home/messages-sent-fragment")
     public String messagesSentFragment(
             Model model,

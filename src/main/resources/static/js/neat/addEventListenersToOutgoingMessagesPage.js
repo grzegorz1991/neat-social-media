@@ -1,4 +1,3 @@
-
 var currentPageSpan = document.getElementById('currentPageSpan');
 var currentPage = parseInt(currentPageSpan.innerText);
 console.log(currentPage + "Current pafe");
@@ -8,6 +7,7 @@ var totalPages = parseInt(totalPagesSpan.innerText);
 console.log(totalPages + "totalPages");
 
 extracted();
+
 function addEventListenersToButtons() {
 
 
@@ -57,7 +57,7 @@ function addEventListenersToButtons() {
         console.log(currentPage + " Current Page " + totalPages + " Total Pages at update method");
         $.ajax({
             url: "/home/messages-sent-fragment?page=" + currentPage,
-            success: function(data) {
+            success: function (data) {
                 // Parse the HTML response to extract the table body
                 const tableFragment = $(data).find('#messageTableBody');
 
@@ -67,11 +67,11 @@ function addEventListenersToButtons() {
                 // Update the spans with the new values
                 $('#currentPageSpan').text(currentPage);
                 $('#totalPagesSpan').text(totalPages);
-                let pageNumber = currentPage+1;
+                let pageNumber = currentPage + 1;
 
                 $('#currentPageSpan2').text(pageNumber);
                 $('#totalPagesSpan2').text(totalPages);
-extracted();
+                extracted();
             }
         });
     }
@@ -83,22 +83,54 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
+function loadMessagesDetailsFragment(messageId) {
+    fetch('/home/messages-get-details-fragment?messageId=' + messageId)
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('dynamicContent').innerHTML = data;
+            loadAdditionalScriptsForMessageDetailsPage();
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+// Example of loading additional scripts for the message details page
+function loadAdditionalScriptsForMessageDetailsPage() {
+// Add logic to load additional scripts if needed
+    console.log("Loading additional scripts for the message details page");
+
+    // Add a button listener for the "Go Back" button
+    const goBackButton = document.getElementById('goBackToOutgoingMessages');
+
+    if (goBackButton) {
+        goBackButton.addEventListener('click', function () {
+
+            loadSentMessagesFragment();
+        });
+    }
+}
+
+
+
 function extracted() {
     console.log("extracted");
     // Add click event listeners to clickable rows
     const clickableRows = document.querySelectorAll('.clickable-row');
     clickableRows.forEach(function (row) {
         row.addEventListener('click', function () {
-            // Get the message details and show them (replace this with your actual logic)
             console.log("clicked");
             const messageId = row.dataset.messageId;
             console.log("Clicked on row with message ID: " + messageId);
 
-            // Toggle the collapse element (replace this with your actual logic)
-            const collapseElement = document.getElementById('accordion-' + messageId);
-            $(collapseElement).collapse('toggle');
+
+            // Update the URL using the History API
+            const newUrl = "/home/messages-get-details?messageId=" + messageId;
+            window.history.pushState({path: newUrl}, '', newUrl);
+
+            // Load the content for the new URL
+            loadMessagesDetailsFragment(messageId);
+            loadAdditionalScriptsForMessageDetailsPage();
+
         });
     });
 
 }
-

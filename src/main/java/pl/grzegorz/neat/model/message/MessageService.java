@@ -29,4 +29,6 @@ public interface MessageService {
     List<MessageEntity> getUnreadMessages(UserEntity user);
 
     public int getNumberOfUnreadMessages (UserEntity user);
+
+    MessageEntity getMessage (long id);
 }

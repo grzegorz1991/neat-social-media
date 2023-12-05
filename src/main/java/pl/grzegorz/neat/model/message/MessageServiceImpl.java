@@ -98,4 +98,9 @@ public class MessageServiceImpl implements MessageService {
     public int getNumberOfUnreadMessages(UserEntity user) {
         return getUnreadMessages(user).size();
     }
+
+    @Override
+    public MessageEntity getMessage(long id) {
+        return messageRepository.getMessageEntityById(id);
+    }
 }
