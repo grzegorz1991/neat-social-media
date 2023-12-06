@@ -72,18 +72,30 @@ function attachButtonListeners() {
         //Outbox Message Page buttons
         else if (buttonId === "previousOutboxPageButton") {
             console.log("previousOutboxPageButton");
-
             const totalPages = document.querySelector("#totalPagesSpan").textContent;
             const currentPage = document.querySelector("#currentPageSpan").textContent;
             console.log("total:" + totalPages + " current:"+ currentPage);
-
-            handlePreviousButtonClick(currentPage, totalPages);
+            handlePreviousOutboxButtonClick(currentPage, totalPages);
 
         } else if (buttonId === "nextOutboxPageButton") {
             const currentPage = document.querySelector("#currentPageSpan").textContent;
             const totalPages = document.querySelector("#totalPagesSpan").textContent;
-            handleNextButtonClick(currentPage, totalPages);
+            handleNextOutboxButtonClick(currentPage, totalPages);
             console.log("nextOutboxPageButton");
+        }
+        else if (buttonId === "previousInboxPageButton") {
+            console.log("previousInboxPageButton");
+            const totalPages = document.querySelector("#totalPagesSpan").textContent;
+            const currentPage = document.querySelector("#currentPageSpan").textContent;
+            console.log("total:" + totalPages + " current:"+ currentPage + " prevInbosPageButton");
+            handlePreviousInboxButtonClick(currentPage, totalPages);
+
+        } else if (buttonId === "nextInboxPageButton") {
+            const currentPage = document.querySelector("#currentPageSpan").textContent;
+            const totalPages = document.querySelector("#totalPagesSpan").textContent;
+            console.log("nextInbosPageButton");
+            handleNextInboxButtonClick(currentPage, totalPages);
+
         }
     }
 }
@@ -192,24 +204,32 @@ $(document).ready(function () {
     updateUnreadMessagesCount();
 });
 
-function handlePreviousButtonClick(currentPage, totalPages) {
-
+function handlePreviousOutboxButtonClick(currentPage, totalPages) {
     if (currentPage > 0) {
         currentPage--;
         updateOutboxPage(currentPage, totalPages);
-
     }
 }
 
-function handleNextButtonClick(currentPage, totalPages) {
+function handleNextOutboxButtonClick(currentPage, totalPages) {
     if (currentPage < totalPages - 1) {
-        console.log(currentPage + "current Page next button click before");
         currentPage++;
-        console.log(currentPage + "current Page next button click before");
         updateOutboxPage(currentPage, totalPages);
     }
 }
+function handlePreviousInboxButtonClick(currentPage, totalPages) {
+    if (currentPage > 0) {
+        currentPage--;
+        updateInboxPage(currentPage, totalPages);
+    }
+}
 
+function handleNextInboxButtonClick(currentPage, totalPages) {
+    if (currentPage < totalPages - 1) {
+        currentPage++;
+        updateInboxPage(currentPage, totalPages);
+    }
+}
 function updateOutboxPage(currentPage, totalPages) {
 
     // Perform an AJAX request to retrieve the next or previous page
@@ -233,6 +253,34 @@ function updateOutboxPage(currentPage, totalPages) {
             $('#totalPagesSpan2').text(totalPages);
             //
             attachOutboxRowListener();
+        }
+
+    });
+}
+
+function updateInboxPage(currentPage, totalPages) {
+
+    // Perform an AJAX request to retrieve the next or previous page
+    console.log(currentPage + " Current Page " + totalPages + " Total Pages at update method");
+    $.ajax({
+        url: "/home/messages-inbox-fragment?page=" + currentPage,
+        success: function (data) {
+
+            // Parse the HTML response to extract the table body
+            const tableFragment = $(data).find('#messageTableBody');
+
+            // Update the table body with the new messages
+            $("#messageTableBody").html(tableFragment.html());
+            //
+            // Update the spans with the new values
+            $('#currentPageSpan').text(currentPage);
+            $('#totalPagesSpan').text(totalPages);
+            let pageNumber = currentPage + 1;
+            //
+            $('#currentPageSpan2').text(pageNumber);
+            $('#totalPagesSpan2').text(totalPages);
+            //
+            attachInboxRowListener();
         }
 
     });

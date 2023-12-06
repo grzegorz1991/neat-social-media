@@ -21,7 +21,7 @@ public class MessageEntity {
     @JoinColumn(name= "receiver_id" , nullable = false)
     private UserEntity receiver;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "LONGTEXT")
     private String content;
 
     @Column(nullable = false)

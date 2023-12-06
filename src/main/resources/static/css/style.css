@@ -8784,7 +8784,9 @@ pre {
     display: block;
     width: 100%;
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch; }
+    -webkit-overflow-scrolling: touch;
+    white-space: normal;
+  }
     .table-responsive-sm > .table-bordered {
       border: 0; } }
 
@@ -8793,7 +8795,9 @@ pre {
     display: block;
     width: 100%;
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch; }
+    -webkit-overflow-scrolling: touch;
+    white-space: normal;
+  }
     .table-responsive-md > .table-bordered {
       border: 0; } }
 
@@ -8802,7 +8806,9 @@ pre {
     display: block;
     width: 100%;
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch; }
+    -webkit-overflow-scrolling: touch;
+    white-space: normal;
+  }
     .table-responsive-lg > .table-bordered {
       border: 0; } }
 
@@ -8811,7 +8817,9 @@ pre {
     display: block;
     width: 100%;
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch; }
+    -webkit-overflow-scrolling: touch;
+    white-space: normal;
+  }
     .table-responsive-xl > .table-bordered {
       border: 0; } }
 
@@ -8819,7 +8827,8 @@ pre {
   display: block;
   width: 100%;
   overflow-x: auto;
-  -webkit-overflow-scrolling: touch; }
+  -webkit-overflow-scrolling: touch;
+  white-space: normal;}
   .table-responsive > .table-bordered {
     border: 0; }
 
@@ -21202,4 +21211,14 @@ div.tagsinput {
 
 .unread-message {
   font-weight: bold;
+}
+
+/* Add these styles to your existing CSS */
+.table-responsive {
+  overflow-x: auto;
+}
+
+.table-responsive td,
+.table-responsive th {
+  white-space: normal;
 }

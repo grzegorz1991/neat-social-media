@@ -29,10 +29,8 @@ public class RoleInitializer {
 
         if (roleRepository.findByName("ROLE_ADMIN").isEmpty()) {
             roleRepository.save(createRole("ROLE_ADMIN"));
-
         }
 
-        // Add more roles as needed
     }
 
     private RoleEntity createRole(String roleName) {

@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pl.grzegorz.neat.model.message.MessageEntity;
 import pl.grzegorz.neat.model.message.MessageRequest;
 import pl.grzegorz.neat.model.message.MessageService;
@@ -74,15 +75,15 @@ public class MessageController {
 
         return "home/incomingMessageListFragment";
     }
-//    @GetMapping("/retrive-messages")
-//    public Page<MessageEntity> getMessages(
-//            @RequestParam(defaultValue = "0") int page,
-//            @RequestParam(defaultValue = "5") int pageSize) {
-//
-//        System.out.println("Get messages");
-//
-//        return messageService.getMessages(page, pageSize);
-//    }
+    @GetMapping("/retrive-messages")
+    public Page<MessageEntity> getMessages(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int pageSize) {
+
+        System.out.println("Get messages");
+
+        return messageService.getMessages(page, pageSize);
+    }
 
     @GetMapping("home/messages-outbox-details-fragment")
     public String getOutboxMessageDetails(Model model, Authentication authentication, @RequestParam(defaultValue = "0") int messageId) {
@@ -149,22 +150,42 @@ public class MessageController {
         return "home/outgoingMessageListFragment";
     }
 
+//    @PostMapping("/send-message")
+//    public ResponseEntity<?> sendMessageForm(@ModelAttribute MessageRequest messageRequest, Authentication authentication) {
+//        // Additional validation logic can be added
+//        List<UserEntity> usersList = userService.getAllUsers();
+//        UserEntity receiver = userService.getUserById(messageRequest.getReceiverId());
+//        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+//        UserEntity user = userDetails.getUser();
+//        messageService.sendMessage(user, receiver, messageRequest.getContent(), messageRequest.getTitle(), false);
+//        return ResponseEntity.ok("Message sent successfully");
+//    }
+
     @PostMapping("/send-message")
-    public ResponseEntity<?> sendMessageForm(@ModelAttribute MessageRequest messageRequest, Authentication authentication) {
-        // Additional validation logic can be added
-        List<UserEntity> usersList = userService.getAllUsers();
-        UserEntity receiver = userService.getUserById(messageRequest.getReceiverId());
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        UserEntity user = userDetails.getUser();
-        messageService.sendMessage(user, receiver, messageRequest.getContent(), messageRequest.getTitle(), false);
-        return ResponseEntity.ok("Message sent successfully");
+    public String sendMessageForm(@ModelAttribute MessageRequest messageRequest, Authentication authentication, RedirectAttributes redirectAttributes) {
+        try {
+
+            UserEntity receiver = userService.getUserById(messageRequest.getReceiverId());
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            UserEntity user = userDetails.getUser();
+
+            messageService.sendMessage(user, receiver, messageRequest.getContent(), messageRequest.getTitle(), false);
+
+            // Pass the success message as a model attribute
+            redirectAttributes.addFlashAttribute("successMessage", "Message sent successfully");
+        } catch (Exception e) {
+
+        }
+
+        return "redirect:/home";
     }
 
-//    @GetMapping
-//    public ResponseEntity<List<MessageEntity>> getMessages() {
-//        List<MessageEntity> messages = messageService.getAllMessages();
-//        return ResponseEntity.ok(messages);
-//    }
+
+    @GetMapping
+    public ResponseEntity<List<MessageEntity>> getMessages() {
+        List<MessageEntity> messages = messageService.getAllMessages();
+        return ResponseEntity.ok(messages);
+    }
 
 
     @GetMapping("/get-unread-messages-count")
