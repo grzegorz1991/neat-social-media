@@ -1,155 +1,61 @@
-<div class="row">
-    <div class="col-md-20 col-xl-6 grid-margin stretch-card">
+<div id="messageList" class="container">
+    <div class="col-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
-                <div class="preview-list">
-                    <div class="preview-item border-bottom custom-hover-effect message-item"
-                         th:each="message, rowStat : ${messages}">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div class="preview-thumbnail">
-                                <img src="/images/avatar/pngwing.com.png" alt="image" class="rounded-circle"/>
-                            </div>
-                            <div class="preview-item-content d-flex flex-grow">
-                                <div class="flex-grow">
-                                    <div>
-                                        <p><strong>From:</strong> <span th:text="${message.sender.name}"></span></p>
-                                        <p><strong>Title:</strong> <span th:text="${message.title}"></span></p>
-                                    </div>
-                                    <div class="d-flex justify-content-between">
-                                        <p class="text-muted text-small" th:text="${message.timestamp}"></p>
-                                        <button type="button" class="btn btn-link" data-toggle="collapse"
-                                                th:data-target="'#messageContent' + ${rowStat.index}"
-                                                aria-expanded="false" aria-controls="'messageContent' + ${rowStat.index}">
-                                            View Message
-                                        </button>
-                                    </div>
+                <h4 class="card-title">
+                    Inbox Messages
+                </h4>
+                <span id="currentPageSpan" th:text="${currentPage}" style="display: none;"></span>
+                <span id="totalPagesSpan" th:text="${totalPages}" style="display: none;"></span>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Receiver</th>
+                            <th>Title</th>
+                            <th>Status</th>
+                            <th>Timestamp</th>
+                        </tr>
+                        </thead>
+                        <tbody id="messageTableBody">
+                        <tr th:each="message, stat : ${messages}" th:limit="5"
+                            th:data-message-id="${message.id}"
+                            th:class="${message.isMessageRead} ? 'read-message' : 'unread-message'">
+                            <td th:text="${(currentPage * 5) + stat.index + 1}"></td>
+                            <td th:text="${message.receiver.name}"></td>
+                            <td th:text="${message.title}"></td>
+                            <td>
+                                <div th:if="${message.isMessageRead}" th:text="Read"></div>
+                                <div th:unless="${message.isMessageRead}" th:text="Unread"></div>
+                            </td>
+                            <td th:text="${message.relativeTime}"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" style="padding: 0;">
+                                <div th:if="${message != null}" id="accordion-[[${message.id}]]" class="collapse">
+                                    <!-- Add your accordion content here -->
+                                    <p>Details for Message ID: [[${message.id}]]</p>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="collapse" th:id="'messageContent' + ${rowStat.index}">
-                            <div class="message-content">
-                                <p th:text="${message.content}"></p>
-                            </div>
-                        </div>
-                    </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
+            </div>
+            <div class="btn-group" role="group" aria-label="Basic example">
+                <button id="previousOutboxPageButton" type="button" class="btn btn-outline-secondary2 btn-md">Previous
+                </button>
+                <button id="nextOutboxPageButton" type="button" class="btn btn-outline-secondary2 btn-md">Next</button>
+                <button id="goBack" type="button" class="btn btn-outline-secondary2 btn-md">Go Back</button>
+            </div>
+            <div class="text-right">
+                <span class="text-muted mb-1 small">Page&nbsp;</span>
+                <span id="currentPageSpan2" th:text="${currentPage + 1}" class="text-muted mb-1 small"></span>
+                <span class="text-muted mb-1 small">&nbsp;of&nbsp;</span>
+                <span id="totalPagesSpan2" th:text="${totalPages}" class="text-muted mb-1 small"></span>
             </div>
         </div>
     </div>
 </div>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Pagination Example</title>
-    <style>
-        /* Styles for the table */
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-        th, td {
-            text-align: left;
-            padding: 8px;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        /* Styles for the pagination buttons */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
-        .pagination button {
-            margin: 0 5px;
-            padding: 5px 10px;
-            border: none;
-            background-color: #4CAF50;
-            color: white;
-            cursor: pointer;
-        }
-        .pagination button:hover {
-            background-color: #45a049;
-        }
-    </style>
-</head>
-<body>
-<h1>Message Table</h1>
-<table id="messageTable">
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Content</th>
-    </tr>
-    </thead>
-    <tbody id="messageTableBody"></tbody>
-</table>
-<div class="pagination">
-    <button id="previousButton">Previous</button>
-    <button id="nextButton">Next</button>
-</div>
 
-<script>
-    const apiUrl = '/messages'; // Replace with your API endpoint
-
-    const limit = 5; // Number of messages to retrieve per page
-    let currentPage = 0; // Current page number
-
-    // Function to retrieve messages for a specific page
-    function getMessages(page) {
-        fetch(`${apiUrl}?page=${page}&pageSize=${limit}`)
-            .then(response => response.json())
-            .then(data => {
-                // Clear the table body
-                const tableBody = document.getElementById('messageTableBody');
-                tableBody.innerHTML = '';
-
-                // Append each message to the table
-                data.content.forEach(message => {
-                    const row = document.createElement('tr');
-                    const idCell = document.createElement('td');
-                    const contentCell = document.createElement('td');
-
-                    idCell.textContent = message.id;
-                    contentCell.textContent = message.content;
-
-                    row.appendChild(idCell);
-                    row.appendChild(contentCell);
-
-                    tableBody.appendChild(row);
-                });
-
-                // Enable or disable the previous/next buttons based on pagination info
-                const previousButton = document.getElementById('previousButton');
-                const nextButton = document.getElementById('nextButton');
-
-                previousButton.disabled = data.first;
-                nextButton.disabled = data.last;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    }
-
-    // Event listener for previous button
-    document.getElementById('previousButton').addEventListener('click', () => {
-        if (currentPage > 0) {
-            currentPage--;
-            getMessages(currentPage);
-        }
-    });
-
-    // Event listener for next button
-    document.getElementById('nextButton').addEventListener('click', () => {
-        currentPage++;
-        getMessages(currentPage);
-    });
-
-    // Initial page load
-    getMessages(currentPage);
-</script>
-</body>
-</html>

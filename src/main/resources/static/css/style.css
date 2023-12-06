@@ -21199,3 +21199,7 @@ div.tagsinput {
 .details.active {
   display: block;
 }
+
+.unread-message {
+  font-weight: bold;
+}

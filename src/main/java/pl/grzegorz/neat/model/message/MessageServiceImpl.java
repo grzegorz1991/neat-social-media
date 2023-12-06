@@ -9,9 +9,8 @@ import org.springframework.stereotype.Service;
 import pl.grzegorz.neat.model.user.UserEntity;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MessageServiceImpl implements MessageService {
@@ -64,24 +63,22 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public List<MessageEntity> getlat5Messages() {
-        List<MessageEntity> list = messageRepository.findAll();
-
-        // Step 1: Sort the list based on timestamp
-        Collections.sort(list, Comparator.comparing(MessageEntity::getTimestamp));
-
-        // Step 2: Create a new list to store the 5 messages with smallest timestamps
-        List<MessageEntity> smallestTimestampMessages = new ArrayList<>();
-
-        // Step 3: Add the first 5 messages to the new list
-        for (int i = 0; i < Math.min(5, list.size()); i++) {
-            smallestTimestampMessages.add(list.get(i));
-        }
-
-        // Step 4: Return the new list
-        return smallestTimestampMessages;
-
+    public Page<MessageEntity> getMessagesForUser(int page, int pageSize, UserEntity user) {
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by("timestamp").descending());
+        return messageRepository.findAllByReceiver(pageable, user);
     }
+
+//    @Override
+//    public List<MessageEntity> getlat5Messages() {
+//        List<MessageEntity> list = messageRepository.findAll();
+//        Collections.sort(list, Comparator.comparing(MessageEntity::getTimestamp));
+//        List<MessageEntity> smallestTimestampMessages = new ArrayList<>();
+//        for (int i = 0; i < Math.min(5, list.size()); i++) {
+//            smallestTimestampMessages.add(list.get(i));
+//        }
+//        return smallestTimestampMessages;
+//
+//    }
 
     @Override
     public List<MessageEntity> getUnreadMessages(UserEntity user) {
@@ -103,4 +100,14 @@ public class MessageServiceImpl implements MessageService {
     public MessageEntity getMessage(long id) {
         return messageRepository.getMessageEntityById(id);
     }
+
+    @Override
+    public void markMessageAsRead(long messageId) {
+        Optional<MessageEntity> optionalMessage = messageRepository.findById(messageId);
+        optionalMessage.ifPresent(message -> {
+            message.setMessageRead(true);
+            messageRepository.save(message);
+        });
+    }
 }
+

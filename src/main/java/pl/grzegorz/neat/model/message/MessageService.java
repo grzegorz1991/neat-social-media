@@ -24,11 +24,16 @@ public interface MessageService {
 
     Page<MessageEntity> getMessagesFromUser(int page, int pageSize, UserEntity user);
 
-    public List<MessageEntity> getlat5Messages();
+    Page<MessageEntity> getMessagesForUser(int page, int pageSize, UserEntity user);
+
+  //  public List<MessageEntity> getlat5Messages();
 
     List<MessageEntity> getUnreadMessages(UserEntity user);
 
     public int getNumberOfUnreadMessages (UserEntity user);
 
     MessageEntity getMessage (long id);
+
+
+    void markMessageAsRead(long messageId);
 }

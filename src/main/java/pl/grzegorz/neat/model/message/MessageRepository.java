@@ -18,6 +18,10 @@ public interface MessageRepository extends JpaRepository<MessageEntity, Long> {
     Page<MessageEntity> findAll(Pageable pageable);
 
     Page<MessageEntity> findAllBySender(Pageable pageable, UserEntity user);
+
+    Page<MessageEntity> findAllByReceiver(Pageable pageable,UserEntity user);
     MessageEntity getMessageEntityById(Long id);
+
+
 
 }
