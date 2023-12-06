@@ -44,12 +44,15 @@
                 </div>
             </div>
             <div class="btn-group" role="group" aria-label="Basic example">
-                <button id="previousButton" type="button" class="btn btn-outline-secondary2 btn-md">Previous</button>
-                <p class="text-muted mb-0"> Page &nbsp;</p>
-                <span id="currentPageSpan2" th:text="${currentPage + 1}" class="text-muted mb-0"></span>
-                <p class="text-muted mb-0"> &nbsp;of&nbsp; </p>
-                <span id="totalPagesSpan2" th:text="${totalPages}" class="text-muted mb-0"></span>
-                <button id="nextButton" type="button" class="btn btn-outline-secondary2 btn-md">Next</button>
+                <button id="previousOutboxPageButton" type="button" class="btn btn-outline-secondary2 btn-md">Previous</button>
+                <button id="nextOutboxPageButton" type="button" class="btn btn-outline-secondary2 btn-md">Next</button>
+                <button id="goBack" type="button" class="btn btn-outline-secondary2 btn-md">Go Back</button>
+            </div>
+            <div class="text-right">
+                <span class="text-muted mb-1 small">Page&nbsp;</span>
+                <span id="currentPageSpan2" th:text="${currentPage + 1}" class="text-muted mb-1 small"></span>
+                <span class="text-muted mb-1 small">&nbsp;of&nbsp;</span>
+                <span id="totalPagesSpan2" th:text="${totalPages}" class="text-muted mb-1 small"></span>
             </div>
         </div>
     </div>

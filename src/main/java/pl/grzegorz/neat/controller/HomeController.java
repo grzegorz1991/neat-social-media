@@ -45,8 +45,6 @@ public class HomeController {
         model.addAttribute("name", name);
         model.addAttribute("surname", surname);
         model.addAttribute("email", email);
-
-
         return "index";
     }
 
@@ -68,16 +66,6 @@ public class HomeController {
     @GetMapping("/home/default-fragment")
     public String getDefaultFragment() {
         return "/home/home-default";
-    }
-
-
-    @GetMapping("/home/content1")
-    public String getContent1Fragment() {
-        return "/home/content1";
-    }
-    @GetMapping("/home/content2")
-    public String getContent2Fragment() {
-        return "/home/content2";
     }
 
 }

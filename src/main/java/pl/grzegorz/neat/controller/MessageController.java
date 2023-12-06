@@ -15,7 +15,6 @@ import pl.grzegorz.neat.model.user.UserEntity;
 import pl.grzegorz.neat.model.user.UserService;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 
 import static pl.grzegorz.neat.util.RelativeTimeConverter.convertToLocalDateTime;
@@ -28,7 +27,7 @@ public class MessageController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/home/new-messages-fragment")
+    @GetMapping("/home/new-message-fragment")
     public String newMessagesFragment(Model model, Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         UserEntity currentUser = userDetails.getUser();
@@ -89,12 +88,12 @@ public class MessageController {
     }
 
 
-    @GetMapping("/home/messages-sent-fragment")
+    @GetMapping("/home/messages-outbox-fragment")
     public String messagesSentFragment(
             Model model,
             Authentication authentication,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int pageSize)
+            @RequestParam(defaultValue = "6") int pageSize)
     {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         UserEntity currentUser = userDetails.getUser();
