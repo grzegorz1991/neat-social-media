@@ -1,10 +1,7 @@
 package pl.grzegorz.neat.model.message;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import pl.grzegorz.neat.model.user.UserEntity;
 
@@ -23,8 +20,6 @@ public class MessageServiceImpl implements MessageService {
     }
 
 
-
-
     @Override
     public MessageEntity sendMessage(UserEntity sender, UserEntity receiver, String content, String title, boolean isRead) {
         MessageEntity message = new MessageEntity(sender, receiver, content, title, isRead);
@@ -36,6 +31,7 @@ public class MessageServiceImpl implements MessageService {
     public List<MessageEntity> getMessages(UserEntity sender, UserEntity receiver) {
         return messageRepository.findBySenderAndReceiver(sender, receiver);
     }
+
     @Override
     public List<MessageEntity> getMessagesForUser(UserEntity user) {
         return messageRepository.findByReceiver(user);
@@ -56,6 +52,7 @@ public class MessageServiceImpl implements MessageService {
         Pageable pageable = PageRequest.of(page, pageSize);
         return messageRepository.findAll(pageable);
     }
+
     @Override
     public Page<MessageEntity> getMessagesFromUser(int page, int pageSize, UserEntity user) {
         Pageable pageable = PageRequest.of(page, pageSize, Sort.by("timestamp").descending());
@@ -85,12 +82,13 @@ public class MessageServiceImpl implements MessageService {
         List<MessageEntity> messagesForUser = getMessagesForUser(user);
         List<MessageEntity> onlyUnreadMessages = new ArrayList<>();
         for (int i = 0; i < messagesForUser.size(); i++) {
-            if(!(messagesForUser.get(i).isMessageRead())){
+            if (!(messagesForUser.get(i).isMessageRead())) {
                 onlyUnreadMessages.add(messagesForUser.get(i));
             }
         }
         return onlyUnreadMessages;
     }
+
     @Override
     public int getNumberOfUnreadMessages(UserEntity user) {
         return getUnreadMessages(user).size();
@@ -130,8 +128,22 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public Page<MessageEntity> getNonRecipentArchivedMessagesForUser(int page, int pageSize, UserEntity user) {
-        return messageRepository.findByRecipentArchivedFalseAndUserOrderByTimestampDesc(user, PageRequest.of(page, pageSize));
+        return messageRepository.findNonArchivedMessagesForUser(user, PageRequest.of(page, pageSize));
     }
 
+    @Override
+    public Page<MessageEntity> getNonSenderArchivedMessagesForUser(int page, int pageSize, UserEntity user) {
+        return messageRepository.findNonArchivedMessagesFromUser(user, PageRequest.of(page, pageSize));
+    }
+
+    @Override
+    public Page<MessageEntity> getArchivedMessagesBySender(int page, int pageSize, UserEntity user) {
+        return messageRepository.findArchivedMessagesBySender(user, PageRequest.of(page, pageSize));
+    }
+
+    @Override
+    public Page<MessageEntity> getArchivedMessagesByReceiver(int page, int pageSize, UserEntity user) {
+        return messageRepository.findArchivedMessagesByReceiver(user, PageRequest.of(page, pageSize));
+    }
 }
 

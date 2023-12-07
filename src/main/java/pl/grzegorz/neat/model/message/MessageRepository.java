@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import pl.grzegorz.neat.model.message.MessageEntity;
 import pl.grzegorz.neat.model.user.UserEntity;
 
@@ -23,5 +24,18 @@ public interface MessageRepository extends JpaRepository<MessageEntity, Long> {
     Page<MessageEntity> findAllByReceiver(Pageable pageable,UserEntity user);
     MessageEntity getMessageEntityById(Long id);
 
-    Page<MessageEntity> findByRecipentArchivedFalseAndUserOrderByTimestampDesc(UserEntity user, Pageable pageable);
+//    @Query("SELECT m FROM MessageEntity m WHERE m.user = ?1 AND m.recipentArchived = false ORDER BY m.timestamp DESC")
+//    Page<MessageEntity> findNonArchivedMessagesForUser(UserEntity user, Pageable pageable);
+
+    @Query("SELECT m FROM MessageEntity m WHERE m.receiver = :user AND m.recipentArchived = false ORDER BY m.timestamp DESC")
+    Page<MessageEntity> findNonArchivedMessagesForUser(UserEntity user, Pageable pageable);
+
+    @Query("SELECT m FROM MessageEntity m WHERE m.sender = :user AND m.senderArchived = false ORDER BY m.timestamp DESC")
+    Page<MessageEntity> findNonArchivedMessagesFromUser(UserEntity user, Pageable pageable);
+
+    @Query("SELECT m FROM MessageEntity m WHERE m.sender = :user AND m.senderArchived = true ORDER BY m.timestamp DESC")
+    Page<MessageEntity> findArchivedMessagesBySender(UserEntity user, Pageable pageable);
+
+    @Query("SELECT m FROM MessageEntity m WHERE m.receiver = :user AND m.recipentArchived = true ORDER BY m.timestamp DESC")
+    Page<MessageEntity> findArchivedMessagesByReceiver(UserEntity user, Pageable pageable);
 }
