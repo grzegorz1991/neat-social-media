@@ -38,6 +38,12 @@ public class MessageEntity {
     private boolean messageRead;
 
     @Column(nullable = false)
+    private boolean senderArchived;
+
+    @Column(nullable = false)
+    private boolean recipentArchived;
+
+    @Column(nullable = false)
     private String title;
 
     public MessageEntity(UserEntity sender, UserEntity receiver, String content, String title, boolean read) {
@@ -47,6 +53,8 @@ public class MessageEntity {
         this.title = title;
         this.messageRead = read;
         this.timestamp = LocalDateTime.now();
+        this.recipentArchived = false;
+        this.senderArchived = false;
     }
 
     public MessageEntity(UserEntity sender, UserEntity receiver, String content, LocalDateTime timestamp, boolean messageRead, String title) {
@@ -56,6 +64,8 @@ public class MessageEntity {
         this.timestamp = LocalDateTime.now();
         this.messageRead = messageRead;
         this.title = title;
+        this.recipentArchived = false;
+        this.senderArchived = false;
     }
 
     @Override
@@ -66,6 +76,22 @@ public class MessageEntity {
                 ", receiver=" + receiver +
                 ", title='" + title + '\'' +
                 '}';
+    }
+
+    public boolean isSenderArchived() {
+        return senderArchived;
+    }
+
+    public void setSenderArchived(boolean senderArchived) {
+        this.senderArchived = senderArchived;
+    }
+
+    public boolean isRecipentArchived() {
+        return recipentArchived;
+    }
+
+    public void setRecipentArchived(boolean recipentArchived) {
+        this.recipentArchived = recipentArchived;
     }
 
     public boolean isMessageRead() {

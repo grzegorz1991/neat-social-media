@@ -2,12 +2,14 @@ package pl.grzegorz.neat.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import pl.grzegorz.neat.model.message.ArchiveMessageDTO;
 import pl.grzegorz.neat.model.message.MessageEntity;
 import pl.grzegorz.neat.model.message.MessageRequest;
 import pl.grzegorz.neat.model.message.MessageService;
@@ -60,7 +62,9 @@ public class MessageController {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         UserEntity currentUser = userDetails.getUser();
 
-        Page<MessageEntity> messagesPage = messageService.getMessagesForUser(page, pageSize, currentUser);
+        Page<MessageEntity> messagesPage = messageService.getNonRecipentArchivedMessagesForUser(page, pageSize, currentUser);
+
+        //Page<MessageEntity> messagesPage = messageService.getMessagesForUser(page, pageSize, currentUser);
         List<MessageEntity> incomingMessages = messagesPage.getContent();
 
         for (MessageEntity message : incomingMessages) {
@@ -76,15 +80,6 @@ public class MessageController {
 
 
         return "home/incomingMessageListFragment";
-    }
-    @GetMapping("/retrive-messages")
-    public Page<MessageEntity> getMessages(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int pageSize) {
-
-        System.out.println("Get messages");
-
-        return messageService.getMessages(page, pageSize);
     }
 
     @GetMapping("home/messages-outbox-details-fragment")
@@ -114,12 +109,9 @@ public class MessageController {
             messageService.markMessageAsRead(messageId);
             System.out.println("Message " + messageId + " marked as read");
         }
-
-
         LocalDateTime timestamp = messageEntity.getTimestamp();
         String relativeTime = convertToLocalDateTime(timestamp);
         messageEntity.setRelativeTime(relativeTime);
-
 
         model.addAttribute("messageEntity", messageEntity);
         model.addAttribute("UserEntity", currentUser);
@@ -152,27 +144,15 @@ public class MessageController {
         return "home/outgoingMessageListFragment";
     }
 
-//    @PostMapping("/send-message")
-//    public ResponseEntity<?> sendMessageForm(@ModelAttribute MessageRequest messageRequest, Authentication authentication) {
-//        // Additional validation logic can be added
-//        List<UserEntity> usersList = userService.getAllUsers();
-//        UserEntity receiver = userService.getUserById(messageRequest.getReceiverId());
-//        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-//        UserEntity user = userDetails.getUser();
-//        messageService.sendMessage(user, receiver, messageRequest.getContent(), messageRequest.getTitle(), false);
-//        return ResponseEntity.ok("Message sent successfully");
-//    }
-
     @PostMapping("/send-message")
     @ResponseBody
+    @CrossOrigin
     public ResponseEntity<Map<String, Object>> sendMessageForm(@ModelAttribute MessageRequest messageRequest, Authentication authentication, RedirectAttributes redirectAttributes) {
         Map<String, Object> response = new HashMap<>();
         try {
-
             UserEntity receiver = userService.getUserById(messageRequest.getReceiverId());
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             UserEntity user = userDetails.getUser();
-
             messageService.sendMessage(user, receiver, messageRequest.getContent(), messageRequest.getTitle(), false);
 
             System.out.println("successfully sent message");
@@ -185,17 +165,15 @@ public class MessageController {
             response.put("success", false);
             response.put("message", "Failed to send message");
         }
-
         return ResponseEntity.ok(response);
     }
 
-
-    @GetMapping
-    public ResponseEntity<List<MessageEntity>> getMessages() {
-        List<MessageEntity> messages = messageService.getAllMessages();
-        return ResponseEntity.ok(messages);
+    @PostMapping("/home/archive-message/")
+    public ResponseEntity<String> handleArchiveMessageRequest(@RequestBody ArchiveMessageDTO archiveMessageDTO) {
+        long messageId = archiveMessageDTO.getMessageId();
+        messageService.archiveMessageByReceipent(messageId);
+        return ResponseEntity.ok("Message archived successfully");
     }
-
 
     @GetMapping("/get-unread-messages-count")
     @ResponseBody

@@ -109,5 +109,29 @@ public class MessageServiceImpl implements MessageService {
             messageRepository.save(message);
         });
     }
+
+    @Override
+    public void archiveMessageBySender(long messageId) {
+        Optional<MessageEntity> optionalMessage = messageRepository.findById(messageId);
+        optionalMessage.ifPresent(message -> {
+            message.setSenderArchived(true);
+            messageRepository.save(message);
+        });
+    }
+
+    @Override
+    public void archiveMessageByReceipent(long messageId) {
+        Optional<MessageEntity> optionalMessage = messageRepository.findById(messageId);
+        optionalMessage.ifPresent(message -> {
+            message.setRecipentArchived(true);
+            messageRepository.save(message);
+        });
+    }
+
+    @Override
+    public Page<MessageEntity> getNonRecipentArchivedMessagesForUser(int page, int pageSize, UserEntity user) {
+        return messageRepository.findByRecipentArchivedFalseAndUserOrderByTimestampDesc(user, PageRequest.of(page, pageSize));
+    }
+
 }
 

@@ -1,6 +1,7 @@
 package pl.grzegorz.neat.model.message;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import pl.grzegorz.neat.model.message.MessageEntity;
@@ -22,6 +23,5 @@ public interface MessageRepository extends JpaRepository<MessageEntity, Long> {
     Page<MessageEntity> findAllByReceiver(Pageable pageable,UserEntity user);
     MessageEntity getMessageEntityById(Long id);
 
-
-
+    Page<MessageEntity> findByRecipentArchivedFalseAndUserOrderByTimestampDesc(UserEntity user, Pageable pageable);
 }

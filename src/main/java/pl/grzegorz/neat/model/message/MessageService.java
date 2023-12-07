@@ -10,14 +10,16 @@ import java.util.List;
 @Service
 public interface MessageService {
 
-   // MessageEntity sendMessage(UserEntity sender, UserEntity receiver, String content);
+    // MessageEntity sendMessage(UserEntity sender, UserEntity receiver, String content);
 
-    MessageEntity sendMessage(UserEntity  sender, UserEntity receiver, String content, String title, boolean isRead);
+    MessageEntity sendMessage(UserEntity sender, UserEntity receiver, String content, String title, boolean isRead);
 
     List<MessageEntity> getMessages(UserEntity sender, UserEntity receiver);
+
     public List<MessageEntity> getMessagesForUser(UserEntity user);
 
     public List<MessageEntity> getMessagesFrom(UserEntity user);
+
     List<MessageEntity> getAllMessages();
 
     public Page<MessageEntity> getMessages(int page, int pageSize);
@@ -26,14 +28,20 @@ public interface MessageService {
 
     Page<MessageEntity> getMessagesForUser(int page, int pageSize, UserEntity user);
 
-  //  public List<MessageEntity> getlat5Messages();
+    //  public List<MessageEntity> getlat5Messages();
 
     List<MessageEntity> getUnreadMessages(UserEntity user);
 
-    public int getNumberOfUnreadMessages (UserEntity user);
+    public int getNumberOfUnreadMessages(UserEntity user);
 
-    MessageEntity getMessage (long id);
+    MessageEntity getMessage(long id);
 
 
     void markMessageAsRead(long messageId);
+
+    void archiveMessageBySender(long messageId);
+
+    void archiveMessageByReceipent(long messageId);
+
+    public Page<MessageEntity> getNonRecipentArchivedMessagesForUser(int page, int pageSize, UserEntity user);
 }

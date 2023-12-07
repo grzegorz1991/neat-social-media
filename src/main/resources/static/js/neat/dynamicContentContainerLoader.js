@@ -76,7 +76,7 @@ function attachButtonListeners() {
             console.log("previousOutboxPageButton");
             const totalPages = document.querySelector("#totalPagesSpan").textContent;
             const currentPage = document.querySelector("#currentPageSpan").textContent;
-            console.log("total:" + totalPages + " current:"+ currentPage);
+            console.log("total:" + totalPages + " current:" + currentPage);
             handlePreviousOutboxButtonClick(currentPage, totalPages);
 
         } else if (buttonId === "nextOutboxPageButton") {
@@ -84,12 +84,11 @@ function attachButtonListeners() {
             const totalPages = document.querySelector("#totalPagesSpan").textContent;
             handleNextOutboxButtonClick(currentPage, totalPages);
             console.log("nextOutboxPageButton");
-        }
-        else if (buttonId === "previousInboxPageButton") {
+        } else if (buttonId === "previousInboxPageButton") {
             console.log("previousInboxPageButton");
             const totalPages = document.querySelector("#totalPagesSpan").textContent;
             const currentPage = document.querySelector("#currentPageSpan").textContent;
-            console.log("total:" + totalPages + " current:"+ currentPage + " prevInbosPageButton");
+            console.log("total:" + totalPages + " current:" + currentPage + " prevInbosPageButton");
             handlePreviousInboxButtonClick(currentPage, totalPages);
 
         } else if (buttonId === "nextInboxPageButton") {
@@ -98,7 +97,15 @@ function attachButtonListeners() {
             console.log("nextInbosPageButton");
             handleNextInboxButtonClick(currentPage, totalPages);
 
+        } else if (buttonId === "reply") {
+
+            console.log("reply button");
+        } else if (buttonId === "archiveIncomingMessage") {
+            console.log("archiveIncomingMessage");
+            const messageId = $('#archiveIncomingMessage').data('message-id');
+            showArchiveConfirmation(messageId);
         }
+
     }
 }
 
@@ -219,6 +226,7 @@ function handleNextOutboxButtonClick(currentPage, totalPages) {
         updateOutboxPage(currentPage, totalPages);
     }
 }
+
 function handlePreviousInboxButtonClick(currentPage, totalPages) {
     if (currentPage > 0) {
         currentPage--;
@@ -232,6 +240,7 @@ function handleNextInboxButtonClick(currentPage, totalPages) {
         updateInboxPage(currentPage, totalPages);
     }
 }
+
 function updateOutboxPage(currentPage, totalPages) {
 
     // Perform an AJAX request to retrieve the next or previous page
@@ -290,10 +299,8 @@ function updateInboxPage(currentPage, totalPages) {
 
 function handleFormSubmission(event) {
     event.preventDefault(); // Prevent the form from submitting normally
-
     // Get the form data
     const formData = new FormData(event.target);
-
     // Make a request to the server to send the form data
     fetch('/send-message', {
         method: 'POST',
@@ -313,7 +320,7 @@ function handleFormSubmission(event) {
                     icon: 'success',
                     color: "#495057",
                     background: "#495057",
-                   // footer: '<a href="' + data.redirectUrl + '">Message was sent succesfully</a>'
+                    // footer: '<a href="' + data.redirectUrl + '">Message was sent succesfully</a>'
                 }).then(() => {
                     window.location.href = data.redirectUrl;
                 });
@@ -325,4 +332,58 @@ function handleFormSubmission(event) {
             // Display an error message if there's an error with the request
             Swal.fire('Error', 'An error occurred.', 'error');
         });
+}
+
+function showArchiveConfirmation(messageId) {
+    // Show SweetAlert2 popup
+    Swal.fire({
+        position: top,
+        title: 'Are you sure?',
+        text: 'You won\'t be able to revert this!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, archive it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // If the user confirms, make an AJAX request to the controller endpoint
+            console.log("confirmed");
+            archiveMessage(messageId);
+        }
+    });
+}
+
+// Function to make an AJAX request to the controller endpoint
+function archiveMessage(messageId) {
+    fetch('/home/archive-message/',
+     {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+
+        },
+         body: JSON.stringify({ messageId }),
+     })
+        .then(response => {
+            if (response.ok) {
+                console.log('Message archived successfully');
+                showSuccessConfirmation();
+            } else {
+                console.error('Error:', response.status);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
+
+function showSuccessConfirmation() {
+    Swal.fire({
+        position: 'top',
+        title: 'Success!',
+        text: 'Message archived successfully.',
+        icon: 'success',
+    });
 }
