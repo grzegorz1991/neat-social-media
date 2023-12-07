@@ -28,7 +28,9 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById('sentMessageDashButtonItem').addEventListener("click", () => {
         loadDynamicContent('/home/messages-outbox-fragment');
     });
-
+    document.getElementById('homeDashButtonItem').addEventListener("click", () => {
+        loadDynamicContent('/home/default-fragment');
+    });
 
 
 });
@@ -284,4 +286,43 @@ function updateInboxPage(currentPage, totalPages) {
         }
 
     });
+}
+
+function handleFormSubmission(event) {
+    event.preventDefault(); // Prevent the form from submitting normally
+
+    // Get the form data
+    const formData = new FormData(event.target);
+
+    // Make a request to the server to send the form data
+    fetch('/send-message', {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Display the customized success notification
+                Swal.fire({
+                    position: "top",
+                    title: 'Success',
+                    text: data.message,
+                    showConfirmButton: false,
+                    timer: 1500,
+                    timerProgressBar: true,
+                    icon: 'success',
+                    color: "#495057",
+                    background: "#495057",
+                   // footer: '<a href="' + data.redirectUrl + '">Message was sent succesfully</a>'
+                }).then(() => {
+                    window.location.href = data.redirectUrl;
+                });
+            } else {
+                Swal.fire('Error', data.message, 'error');
+            }
+        })
+        .catch(error => {
+            // Display an error message if there's an error with the request
+            Swal.fire('Error', 'An error occurred.', 'error');
+        });
 }

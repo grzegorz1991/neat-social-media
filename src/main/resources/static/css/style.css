@@ -21222,3 +21222,29 @@ div.tagsinput {
 .table-responsive th {
   white-space: normal;
 }
+/* SweetAlert custom CSS */
+
+/* Custom styles for the confirm button */
+.btn-custom-confirm {
+
+  background-color: #495057;
+}
+
+/* Custom styles for the popup */
+.custom-popup-class {
+  border: 2px solid #4CAF50;
+  border-radius: 10px;
+}
+
+/* Custom styles for the title */
+.custom-title-class {
+  color: #4CAF50;
+}
+
+/* Custom styles for the content */
+.custom-content-class {
+  color: #333;
+}
+.custom-background-class {
+  background-color: #495057; /* Set your desired background color */
+}

@@ -7,7 +7,7 @@
                     New Message
                 </h4>
 
-                <form id="messageForm" class="forms-sample" th:action="@{/send-message}" method="post">
+                <form id="messageForm" class="forms-sample" th:action="@{/send-message}" method="post" onsubmit="handleFormSubmission(event)">
                     <div class="form-group">
                         <label for="selectRecipient">Recipient</label>
                         <select class="form-control form-control-sm" id="selectRecipient" name="receiverId"

@@ -16,7 +16,9 @@ import pl.grzegorz.neat.model.user.UserEntity;
 import pl.grzegorz.neat.model.user.UserService;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static pl.grzegorz.neat.util.RelativeTimeConverter.convertToLocalDateTime;
 
@@ -162,7 +164,9 @@ public class MessageController {
 //    }
 
     @PostMapping("/send-message")
-    public String sendMessageForm(@ModelAttribute MessageRequest messageRequest, Authentication authentication, RedirectAttributes redirectAttributes) {
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> sendMessageForm(@ModelAttribute MessageRequest messageRequest, Authentication authentication, RedirectAttributes redirectAttributes) {
+        Map<String, Object> response = new HashMap<>();
         try {
 
             UserEntity receiver = userService.getUserById(messageRequest.getReceiverId());
@@ -171,13 +175,18 @@ public class MessageController {
 
             messageService.sendMessage(user, receiver, messageRequest.getContent(), messageRequest.getTitle(), false);
 
-            // Pass the success message as a model attribute
-            redirectAttributes.addFlashAttribute("successMessage", "Message sent successfully");
-        } catch (Exception e) {
+            System.out.println("successfully sent message");
+            response.put("success", true);
+            response.put("message", "Message sent successfully");
+            response.put("redirectUrl", "/home");
 
+        } catch (Exception e) {
+            System.out.println("something went wrong with message");
+            response.put("success", false);
+            response.put("message", "Failed to send message");
         }
 
-        return "redirect:/home";
+        return ResponseEntity.ok(response);
     }
 
 
