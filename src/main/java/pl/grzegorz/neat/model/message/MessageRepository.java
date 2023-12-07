@@ -38,4 +38,7 @@ public interface MessageRepository extends JpaRepository<MessageEntity, Long> {
 
     @Query("SELECT m FROM MessageEntity m WHERE m.receiver = :user AND m.recipentArchived = true ORDER BY m.timestamp DESC")
     Page<MessageEntity> findArchivedMessagesByReceiver(UserEntity user, Pageable pageable);
+
+    @Query("SELECT m FROM MessageEntity m WHERE m.receiver = :user AND m.messageRead = false ORDER BY m.timestamp DESC")
+    Page<MessageEntity> findTop5UnreadMessages(UserEntity user, Pageable pageable);
 }

@@ -65,18 +65,6 @@ public class MessageServiceImpl implements MessageService {
         return messageRepository.findAllByReceiver(pageable, user);
     }
 
-//    @Override
-//    public List<MessageEntity> getlat5Messages() {
-//        List<MessageEntity> list = messageRepository.findAll();
-//        Collections.sort(list, Comparator.comparing(MessageEntity::getTimestamp));
-//        List<MessageEntity> smallestTimestampMessages = new ArrayList<>();
-//        for (int i = 0; i < Math.min(5, list.size()); i++) {
-//            smallestTimestampMessages.add(list.get(i));
-//        }
-//        return smallestTimestampMessages;
-//
-//    }
-
     @Override
     public List<MessageEntity> getUnreadMessages(UserEntity user) {
         List<MessageEntity> messagesForUser = getMessagesForUser(user);
@@ -144,6 +132,12 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public Page<MessageEntity> getArchivedMessagesByReceiver(int page, int pageSize, UserEntity user) {
         return messageRepository.findArchivedMessagesByReceiver(user, PageRequest.of(page, pageSize));
+    }
+
+    @Override
+    public List<MessageEntity> getTop5UnreadMessages(UserEntity user) {
+        Page<MessageEntity> unreadMessagesPage = messageRepository.findTop5UnreadMessages(user, PageRequest.of(0, 5));
+        return unreadMessagesPage.getContent();
     }
 }
 

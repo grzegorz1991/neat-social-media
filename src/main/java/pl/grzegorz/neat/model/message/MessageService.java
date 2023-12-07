@@ -51,4 +51,6 @@ public interface MessageService {
     Page<MessageEntity> getArchivedMessagesBySender(int page, int pageSize, UserEntity user);
 
     Page<MessageEntity> getArchivedMessagesByReceiver(int page, int pageSize, UserEntity user);
+
+    List<MessageEntity> getTop5UnreadMessages(UserEntity user);
 }

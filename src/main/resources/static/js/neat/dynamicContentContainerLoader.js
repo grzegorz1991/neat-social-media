@@ -3,6 +3,7 @@ const pageHistory = [];
 
 document.addEventListener("DOMContentLoaded", function () {
     attachLogoClickListener();
+    updateUnreadMessagesDropdown();
     loadDynamicContent('/home/default-fragment');
 
     document.getElementById('showInboxPage').addEventListener("click", () => {
@@ -156,6 +157,7 @@ function loadDynamicContent(endpoint) {
             attachOutboxRowListener();
             attachInboxRowListener();
             updateUnreadMessagesCount();
+            updateUnreadMessagesDropdown();
         })
         .catch(error => {
             console.error("Error loading dynamic content:", error);
@@ -189,6 +191,32 @@ function goBack() {
     } else {
         console.log("No previous page in history");
     }
+
+}
+
+function updateUnreadMessagesDropdown() {
+    console.log("updateUnreadMessages dropdown");
+
+    $.get('/get-latest-unread-messages', function (data) {
+
+        $('.preview-list').empty();
+
+        // Update the rows with the latest unread messages
+        data.forEach(function (message) {
+            var row = '<div class="dropdown-item preview-item" data-message-id="' + message.messageId + '">'+
+                '<div class="preview-thumbnail">' +
+                '<img src="/images/faces/face3.jpg" alt="image" class="rounded-circle profile-pic">' +
+                '</div>' +
+                '<div class="preview-item-content">' +
+                '<p class="preview-subject ellipsis mb-1">' + message.title + '</p>' +
+                '<p class="text-muted mb-0">' + message.relativeTime + '</p>' +
+                '</div>' +
+                '</div>';
+
+            $('.preview-list').append(row);
+        });
+        attachLatestMessagesRowListener();
+    });
 
 }
 
@@ -357,18 +385,19 @@ function showArchiveConfirmation(messageId) {
 // Function to make an AJAX request to the controller endpoint
 function archiveMessage(messageId) {
     fetch('/home/archive-message/',
-     {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
 
-        },
-         body: JSON.stringify({ messageId }),
-     })
+            },
+            body: JSON.stringify({messageId}),
+        })
         .then(response => {
             if (response.ok) {
                 console.log('Message archived successfully');
                 showSuccessConfirmation();
+
             } else {
                 console.error('Error:', response.status);
             }
@@ -385,5 +414,26 @@ function showSuccessConfirmation() {
         title: 'Success!',
         text: 'Message archived successfully.',
         icon: 'success',
+    }).then(() => {
+        goBack();
     });
+}
+
+function attachLatestMessagesRowListener() {
+    console.log("attachLatestMessagesRowListener");
+    // Add click event listeners to clickable rows in the latest messages list
+    const latestMessagesRows = document.querySelectorAll('.preview-item');
+    latestMessagesRows.forEach(function (row) {
+        row.addEventListener('click', function () {
+            console.log("lates message row click add" + row.id);
+            handleLatestMessagesRowClick(row);
+
+        });
+    });
+}
+
+function handleLatestMessagesRowClick(row) {
+    const messageId = row.dataset.messageId;
+    console.log(messageId + "message Id");
+   loadInboxMessagesDetailsFragment(messageId);
 }
