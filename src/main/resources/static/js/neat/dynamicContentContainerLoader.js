@@ -3,39 +3,8 @@ const pageHistory = [];
 
 document.addEventListener("DOMContentLoaded", function () {
 
-
-
-    //updateUnreadMessagesDropdown();
     attachEventListeners();
     loadDynamicContent('/home/home-fragment');
-
-
-    // document.getElementById('showInboxPage').addEventListener("click", () => {
-    //     loadDynamicContent('/home/messages-inbox-fragment');
-    // });
-    //
-    // document.getElementById('settingsDropdownItem').addEventListener("click", () => {
-    //     loadDynamicContent('/home/settings-fragment');
-    // });
-    //
-    // document.getElementById('inboxMessageDashButtonItem').addEventListener("click", () => {
-    //     loadDynamicContent('/home/messages-inbox-fragment');
-    // });
-    //
-    // document.getElementById('settingsDashButtonItem').addEventListener("click", () => {
-    //     loadDynamicContent('/home/settings-fragment');
-    // });
-    //
-    // document.getElementById('newMessageDashButtonItem').addEventListener("click", () => {
-    //     loadDynamicContent('/home/new-message-fragment');
-    // });
-    //
-    // document.getElementById('sentMessageDashButtonItem').addEventListener("click", () => {
-    //     loadDynamicContent('/home/messages-outbox-fragment');
-    // });
-    // document.getElementById('homeDashButtonItem').addEventListener("click", () => {
-    //     loadDynamicContent('/home/default-fragment');
-    // });
 });
 
 function attachEventListeners() {
@@ -45,7 +14,7 @@ function attachEventListeners() {
 
 function attachNavigationListeners() {
     const navigationItems = [
-        ['showInbox', 'inboxMessageDash'],
+        ['showInbox', 'showInboxDash'],
         ['settingsDropdown', 'settingsDash'],
         'newMessageDash',
         'sentMessageDash',
@@ -170,7 +139,7 @@ function loadDynamicContent(endpoint) {
             attachOutboxRowListener();
             attachInboxRowListener();
             updateUnreadMessagesCount();
-            updateUnreadMessagesDropdown();
+           // updateUnreadMessagesDropdown();
         })
         .catch(error => {
             console.error("Error loading dynamic content:", error);
@@ -178,13 +147,13 @@ function loadDynamicContent(endpoint) {
 }
 
 function loadOutboxMessagesDetailsFragment(messageId) {
-    const endpoint = '/home/messages-outbox-details-fragment';
+    const endpoint = '/home/message-outbox-details-fragment';
     const fullEndpoint = messageId ? `${endpoint}?messageId=${messageId}` : endpoint;
     return loadDynamicContent(fullEndpoint);
 }
 
 function loadInboxMessagesDetailsFragment(messageId) {
-    const endpoint = '/home/messages-inbox-details-fragment';
+    const endpoint = '/home/message-inbox-details-fragment';
     const fullEndpoint = messageId ? `${endpoint}?messageId=${messageId}` : endpoint;
     return loadDynamicContent(fullEndpoint);
 }
@@ -368,7 +337,7 @@ function handleFormSubmission(event) {
             if (data.success) {
                 // Display the customized success notification
                 Swal.fire({
-                    position: "top",
+
                     title: 'Success',
                     text: data.message,
                     showConfirmButton: false,
@@ -401,7 +370,9 @@ function showArchiveConfirmation(messageId) {
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, archive it!'
+        confirmButtonText: 'Yes, archive it!',
+        color: "#495057",
+        background: "#495057",
     }).then((result) => {
         if (result.isConfirmed) {
             // If the user confirms, make an AJAX request to the controller endpoint
@@ -437,10 +408,15 @@ function archiveMessage(messageId) {
 
 function showSuccessConfirmation() {
     Swal.fire({
-        position: 'top',
+
         title: 'Success!',
         text: 'Message archived successfully.',
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true,
         icon: 'success',
+        color: "#495057",
+        background: "#495057"
     }).then(() => {
         goBack();
     });

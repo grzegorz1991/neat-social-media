@@ -21,7 +21,6 @@ public class RoleInitializer {
 
     @PostConstruct
     private void initializeRoles() {
-        System.out.println("roles initialized");
         // Check if roles exist, and initialize if not
         if (roleRepository.findByName("ROLE_USER").isEmpty()) {
             roleRepository.save(createRole("ROLE_USER"));

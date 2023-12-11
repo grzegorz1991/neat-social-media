@@ -1,6 +1,6 @@
 package pl.grzegorz.neat.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -23,17 +23,21 @@ import static pl.grzegorz.neat.util.RelativeTimeConverter.convertToLocalDateTime
 @Controller
 public class HomeController {
 
-    @Autowired
-    private MessageService messageService;
-    @Autowired
-    private UserService userService;
+
+    private final MessageService messageService;
+    private final UserService userService;
+
+    public HomeController(MessageService messageService, UserService userService) {
+        this.messageService = messageService;
+        this.userService = userService;
+    }
 
     @GetMapping("/")
     public String landingPage() {
         return "redirect:/home";
     }
     @GetMapping("/home")
-    public String homePage(Model model, Authentication authentication) {
+    public String getHomePage(Model model, Authentication authentication) {
 
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         String username = userDetails.getUsername();
@@ -60,7 +64,7 @@ public class HomeController {
         model.addAttribute("name", name);
         model.addAttribute("surname", surname);
         model.addAttribute("email", email);
-        System.out.println("/home");
+
         return "index";
     }
 
@@ -90,24 +94,25 @@ public class HomeController {
         UserEntity user = userDetails.getUser();
 
         List<MessageEntity> latestUnreadMessages = messageService.getTop5UnreadMessages(user);
-        System.out.println(latestUnreadMessages.size() + "size of the unread messages");
-        for (MessageEntity message : latestUnreadMessages) {
-            LocalDateTime timestamp = message.getTimestamp();
-            String relativeTime = convertToLocalDateTime(timestamp);
-            message.setRelativeTime(relativeTime);
-        }
+        setRelativeTime(latestUnreadMessages);
+
         // Convert MessageEntity to MessageDTO if needed
         List<MessageDTO> latestUnreadMessagesDTO = latestUnreadMessages.stream()
                 .map(message -> new MessageDTO(message.getId(), message.getTitle(), message.getTimestamp(), message.getRelativeTime(), message.getSender(), message.isMessageRead()))
                 .collect(Collectors.toList());
-        System.out.println("/get-latest-unread-messages");
+
         return ResponseEntity.ok(latestUnreadMessagesDTO);
     }
 
     @GetMapping("/home/home-fragment")
     public String getDefaultFragment() {
-        System.out.println("/home/default-fragment");
         return "/home/home-default";
     }
-
+    private void setRelativeTime(List<MessageEntity> messages) {
+        for (MessageEntity message : messages) {
+            LocalDateTime timestamp = message.getTimestamp();
+            String relativeTime = convertToLocalDateTime(timestamp);
+            message.setRelativeTime(relativeTime);
+        }
+    }
 }

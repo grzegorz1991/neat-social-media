@@ -1,8 +1,6 @@
 package pl.grzegorz.neat.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -27,6 +25,15 @@ import static pl.grzegorz.neat.util.RelativeTimeConverter.convertToLocalDateTime
 @Controller
 public class MessageController {
 
+    private static final String NEW_MESSAGE_FRAGMENT = "/home/newmessage-fragment";
+    private static final String INCOMING_MESSAGE_FRAGMENT = "/home/showinbox-fragment";
+    private static final String OUTGOING_MESSAGE_FRAGMENT = "/home/sentmessage-fragment";
+    private static final String OUTBOX_DETAILS_FRAGMENT = "home/message-outbox-details-fragment";
+    private static final String INBOX_DETAILS_FRAGMENT = "home/message-inbox-details-fragment";
+    private static final String HOME_REDIRECT = "redirect:/home/showinbox-fragment";
+
+
+
     private final MessageService messageService;
     private final UserService userService;
 
@@ -35,8 +42,8 @@ public class MessageController {
         this.userService = userService;
     }
 
-    @GetMapping("/home/newmessage-fragment")
-    public String newMessagesFragment(Model model, Authentication authentication) {
+    @GetMapping(NEW_MESSAGE_FRAGMENT)
+    public String getNewMessageFragment(Model model, Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         UserEntity currentUser = userDetails.getUser();
 
@@ -52,10 +59,10 @@ public class MessageController {
         model.addAttribute("user", currentUser);
         model.addAttribute("users", usersList);
 
-        return "home/newMessage";
+        return NEW_MESSAGE_FRAGMENT;
     }
 
-    @GetMapping("/home/showinbox-fragment")
+    @GetMapping(INCOMING_MESSAGE_FRAGMENT)
     public String getMessagesInboxFragment(
             Model model,
             Authentication authentication,
@@ -71,9 +78,7 @@ public class MessageController {
         List<MessageEntity> incomingMessages = messagesPage.getContent();
 
         for (MessageEntity message : incomingMessages) {
-            LocalDateTime timestamp = message.getTimestamp();
-            String relativeTime = convertToLocalDateTime(timestamp);
-            message.setRelativeTime(relativeTime);
+            setRelativeTime(message);
         }
 
         model.addAttribute("messages", incomingMessages);
@@ -81,53 +86,10 @@ public class MessageController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", messagesPage.getTotalPages());
 
-
-        return "home/incomingMessageListFragment";
+        return INCOMING_MESSAGE_FRAGMENT;
     }
 
-    @GetMapping("/home/inboxmessage-fragment")
-    public String getMessagesInboxDashFragment() {
-        return "redirect:/home/showinbox-fragment";
-    }
-
-
-    @GetMapping("home/messages-outbox-details-fragment")
-    public String getOutboxMessageDetails(Model model, Authentication authentication, @RequestParam(defaultValue = "0") int messageId) {
-
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        UserEntity currentUser = userDetails.getUser();
-        MessageEntity messageEntity = messageService.getMessage(messageId);
-
-        LocalDateTime timestamp = messageEntity.getTimestamp();
-        String relativeTime = convertToLocalDateTime(timestamp);
-        messageEntity.setRelativeTime(relativeTime);
-
-        model.addAttribute("messageEntity", messageEntity);
-        model.addAttribute("UserEntity", currentUser);
-        return "home/message-outbox-details-fragment";
-    }
-
-    @GetMapping("home/messages-inbox-details-fragment")
-    public String getInboxMessageDetails(Model model, Authentication authentication, @RequestParam(defaultValue = "0") int messageId) {
-
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        UserEntity currentUser = userDetails.getUser();
-        MessageEntity messageEntity = messageService.getMessage(messageId);
-
-        if (!messageEntity.isMessageRead()) {
-            messageService.markMessageAsRead(messageId);
-            System.out.println("Message " + messageId + " marked as read");
-        }
-        LocalDateTime timestamp = messageEntity.getTimestamp();
-        String relativeTime = convertToLocalDateTime(timestamp);
-        messageEntity.setRelativeTime(relativeTime);
-
-        model.addAttribute("messageEntity", messageEntity);
-        model.addAttribute("UserEntity", currentUser);
-        return "home/message-inbox-details-fragment";
-    }
-
-    @GetMapping("/home/sentmessage-fragment")
+    @GetMapping(OUTGOING_MESSAGE_FRAGMENT)
     public String messagesSentFragment(
             Model model,
             Authentication authentication,
@@ -140,9 +102,7 @@ public class MessageController {
         List<MessageEntity> messages = messagesPage.getContent();
 
         for (MessageEntity message : messages) {
-            LocalDateTime timestamp = message.getTimestamp();
-            String relativeTime = convertToLocalDateTime(timestamp);
-            message.setRelativeTime(relativeTime);
+            setRelativeTime(message);
         }
 
         model.addAttribute("messages", messages);
@@ -150,8 +110,46 @@ public class MessageController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", messagesPage.getTotalPages());
 
-        return "home/outgoingMessageListFragment";
+        return OUTGOING_MESSAGE_FRAGMENT;
     }
+
+
+    @GetMapping(OUTBOX_DETAILS_FRAGMENT)
+    public String getOutboxMessageDetails(Model model, Authentication authentication, @RequestParam(defaultValue = "0") int messageId) {
+
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        UserEntity currentUser = userDetails.getUser();
+        MessageEntity messageEntity = messageService.getMessage(messageId);
+
+        LocalDateTime timestamp = messageEntity.getTimestamp();
+        String relativeTime = convertToLocalDateTime(timestamp);
+        messageEntity.setRelativeTime(relativeTime);
+
+        model.addAttribute("messageEntity", messageEntity);
+        model.addAttribute("UserEntity", currentUser);
+        return OUTBOX_DETAILS_FRAGMENT;
+    }
+
+    @GetMapping(INBOX_DETAILS_FRAGMENT)
+    public String getInboxMessageDetails(Model model, Authentication authentication, @RequestParam(defaultValue = "0") int messageId) {
+
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        UserEntity currentUser = userDetails.getUser();
+        MessageEntity messageEntity = messageService.getMessage(messageId);
+
+        if (!messageEntity.isMessageRead()) {
+            messageService.markMessageAsRead(messageId);
+        }
+        LocalDateTime timestamp = messageEntity.getTimestamp();
+        String relativeTime = convertToLocalDateTime(timestamp);
+        messageEntity.setRelativeTime(relativeTime);
+
+        model.addAttribute("messageEntity", messageEntity);
+        model.addAttribute("UserEntity", currentUser);
+        return INBOX_DETAILS_FRAGMENT;
+    }
+
+
 
     @PostMapping("/send-message")
     @ResponseBody
@@ -164,13 +162,13 @@ public class MessageController {
             UserEntity user = userDetails.getUser();
             messageService.sendMessage(user, receiver, messageRequest.getContent(), messageRequest.getTitle(), false);
 
-            System.out.println("successfully sent message");
+
             response.put("success", true);
             response.put("message", "Message sent successfully");
             response.put("redirectUrl", "/home");
 
         } catch (Exception e) {
-            System.out.println("something went wrong with message");
+
             response.put("success", false);
             response.put("message", "Failed to send message");
         }
@@ -194,5 +192,9 @@ public class MessageController {
 
         return ResponseEntity.ok(unreadMessagesCount);
     }
-
+    private void setRelativeTime(MessageEntity messageEntity) {
+        LocalDateTime timestamp = messageEntity.getTimestamp();
+        String relativeTime = convertToLocalDateTime(timestamp);
+        messageEntity.setRelativeTime(relativeTime);
+    }
 }
