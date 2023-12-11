@@ -63,8 +63,7 @@ function attachButtonClickListeners() {
         if (buttonId === "goBack") {
             console.log("goBack button");
             goBack();
-        }
-        else if (buttonId === "previousOutboxPageButton") {
+        } else if (buttonId === "previousOutboxPageButton") {
             const totalPages = document.querySelector("#totalPagesSpan").textContent;
             const currentPage = document.querySelector("#currentPageSpan").textContent;
             handlePreviousOutboxButtonClick(currentPage, totalPages);
@@ -95,37 +94,19 @@ function attachButtonClickListeners() {
     }
 }
 
-function attachOutboxRowListener() {
 
-    const clickableRows = document.querySelectorAll('.clickable-row');
-    clickableRows.forEach(function (row) {
-        row.addEventListener('click', function () {
-            handleOutboxRowClick(row);
+function attachRowListener(selector, clickHandler) {
+    const clickableRows = document.querySelectorAll(selector);
+    console.log("row listener attached to " + clickHandler);
+    clickableRows.forEach(row => {
+        row.addEventListener('click', () => {
+            clickHandler(row);
         });
     });
-
-    function handleOutboxRowClick(row) {
-        const messageId = row.dataset.messageId;
-        console.log("Clicked on outbox row with message ID: " + messageId);
-        loadOutboxMessagesDetailsFragment(messageId);
-    }
 }
-function attachInboxRowListener() {
-    console.log("attachRowListener");
-    // Add click event listeners to clickable rows
-    const clickableRows = document.querySelectorAll('.read-message, .unread-message');
-    clickableRows.forEach(function (row) {
-        row.addEventListener('click', function () {
-            handleInboxRowClick(row);
-        });
-    });
 
-    function handleInboxRowClick(row) {
-        const messageId = row.dataset.messageId;
-        console.log("Clicked on inbox row with message ID: " + messageId);
-        loadInboxMessagesDetailsFragment(messageId);
-    }
-}
+
+
 
 
 function loadDynamicContent(endpoint) {
@@ -136,14 +117,28 @@ function loadDynamicContent(endpoint) {
         .then(content => {
             document.getElementById("dynamicContentContainer").innerHTML = content;
             attachButtonClickListeners();
-            attachOutboxRowListener();
-            attachInboxRowListener();
+            attachRowListener('.clickable-row, .outbox-row', handleOutboxRowClick);
+            attachRowListener('.read-message, .unread-message', handleInboxRowClick);
+
+
             updateUnreadMessagesCount();
-           // updateUnreadMessagesDropdown();
+            // updateUnreadMessagesDropdown();
         })
         .catch(error => {
             console.error("Error loading dynamic content:", error);
         });
+}
+
+function handleInboxRowClick(row) {
+    const messageId = row.dataset.messageId;
+    console.log("Clicked on inbox row with message ID: " + messageId);
+    loadInboxMessagesDetailsFragment(messageId);
+}
+
+function handleOutboxRowClick(row) {
+    const messageId = row.dataset.messageId;
+    console.log("Clicked on outbox row with message ID: " + messageId);
+    loadOutboxMessagesDetailsFragment(messageId);
 }
 
 function loadOutboxMessagesDetailsFragment(messageId) {
