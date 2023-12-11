@@ -3,53 +3,82 @@ const pageHistory = [];
 
 document.addEventListener("DOMContentLoaded", function () {
 
-    attachLogoClickListener();
-    updateUnreadMessagesDropdown();
-    loadDynamicContent('/home/default-fragment');
 
-    document.getElementById('showInboxPage').addEventListener("click", () => {
-        loadDynamicContent('/home/messages-inbox-fragment');
-    });
 
-    document.getElementById('settingsDropdownItem').addEventListener("click", () => {
-        loadDynamicContent('/home/settings-fragment');
-    });
+    //updateUnreadMessagesDropdown();
+    attachEventListeners();
+    loadDynamicContent('/home/home-fragment');
 
-    document.getElementById('inboxMessageDashButtonItem').addEventListener("click", () => {
-        loadDynamicContent('/home/messages-inbox-fragment');
-    });
 
-    document.getElementById('settingsDashButtonItem').addEventListener("click", () => {
-        loadDynamicContent('/home/settings-fragment');
-    });
-
-    document.getElementById('newMessageDashButtonItem').addEventListener("click", () => {
-        loadDynamicContent('/home/new-message-fragment');
-    });
-
-    document.getElementById('sentMessageDashButtonItem').addEventListener("click", () => {
-        loadDynamicContent('/home/messages-outbox-fragment');
-    });
-    document.getElementById('homeDashButtonItem').addEventListener("click", () => {
-        loadDynamicContent('/home/default-fragment');
-    });
+    // document.getElementById('showInboxPage').addEventListener("click", () => {
+    //     loadDynamicContent('/home/messages-inbox-fragment');
+    // });
+    //
+    // document.getElementById('settingsDropdownItem').addEventListener("click", () => {
+    //     loadDynamicContent('/home/settings-fragment');
+    // });
+    //
+    // document.getElementById('inboxMessageDashButtonItem').addEventListener("click", () => {
+    //     loadDynamicContent('/home/messages-inbox-fragment');
+    // });
+    //
+    // document.getElementById('settingsDashButtonItem').addEventListener("click", () => {
+    //     loadDynamicContent('/home/settings-fragment');
+    // });
+    //
+    // document.getElementById('newMessageDashButtonItem').addEventListener("click", () => {
+    //     loadDynamicContent('/home/new-message-fragment');
+    // });
+    //
+    // document.getElementById('sentMessageDashButtonItem').addEventListener("click", () => {
+    //     loadDynamicContent('/home/messages-outbox-fragment');
+    // });
+    // document.getElementById('homeDashButtonItem').addEventListener("click", () => {
+    //     loadDynamicContent('/home/default-fragment');
+    // });
 });
 
+function attachEventListeners() {
+    attachLogoClickListener();
+    attachNavigationListeners();
+}
+
+function attachNavigationListeners() {
+    const navigationItems = [
+        ['showInbox', 'inboxMessageDash'],
+        ['settingsDropdown', 'settingsDash'],
+        'newMessageDash',
+        'sentMessageDash',
+        'homeDash'
+    ];
+
+    navigationItems.forEach(item => {
+        const elements = Array.isArray(item) ? item.map(subItem => document.getElementById(subItem)) : [document.getElementById(item)];
+
+        elements.forEach(element => {
+            if (element) {
+                element.addEventListener('click', () => {
+                    const endpoint = Array.isArray(item) ?
+                        `/home/${element.id.replace('Dash', '').toLowerCase()}-fragment` :
+                        `/home/${item.replace('Dash', '').toLowerCase()}-fragment`;
+
+                    console.log('Clicked on:', endpoint);
+                    loadDynamicContent(endpoint);
+                });
+            }
+        });
+    });
+}
+
 function attachLogoClickListener() {
-    const bigLogoElement = document.querySelector('.sidebar-brand.brand-logo');
-    const smallLogoElement = document.querySelector('.sidebar-brand.brand-logo-mini');
-    if (bigLogoElement) {
-        bigLogoElement.addEventListener('click', function (event) {
+    const logoElements = document.querySelectorAll('.sidebar-brand.brand-logo, .sidebar-brand.brand-logo-mini, .navbar-brand.brand-logo-mini');
+
+    logoElements.forEach(element => {
+        element.addEventListener('click', function (event) {
             event.preventDefault();
-            loadDynamicContent('/home/default-fragment');
+            loadDynamicContent('/home/home-fragment');
         });
-    }
-    if (smallLogoElement) {
-        smallLogoElement.addEventListener('click', function (event) {
-            event.preventDefault();
-            loadDynamicContent('/home/default-fragment');
-        });
-    }
+    });
 }
 
 function attachButtonClickListeners() {

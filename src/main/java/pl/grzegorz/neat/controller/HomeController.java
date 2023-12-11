@@ -64,7 +64,7 @@ public class HomeController {
         return "index";
     }
 
-    @GetMapping("/home/settings-fragment")
+    @GetMapping("/home/settingsdropdown-fragment")
     public String getSettingsFragment(Model model, Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         UserEntity user = userDetails.getUser();
@@ -77,6 +77,13 @@ public class HomeController {
         model.addAttribute("userProfileForm", userProfileForm);
         return "/home/settings";
     }
+    @GetMapping("/home/settings-fragment")
+    public String getSettingsDashFragment() {
+
+        return "redirect:/home/settingsdropdown-fragment";
+    }
+
+
     @GetMapping("/get-latest-unread-messages")
     public ResponseEntity<List<MessageDTO>> getLatestUnreadMessages(Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -97,7 +104,7 @@ public class HomeController {
         return ResponseEntity.ok(latestUnreadMessagesDTO);
     }
 
-    @GetMapping("/home/default-fragment")
+    @GetMapping("/home/home-fragment")
     public String getDefaultFragment() {
         System.out.println("/home/default-fragment");
         return "/home/home-default";

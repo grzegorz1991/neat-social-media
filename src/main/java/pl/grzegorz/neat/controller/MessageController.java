@@ -27,12 +27,15 @@ import static pl.grzegorz.neat.util.RelativeTimeConverter.convertToLocalDateTime
 @Controller
 public class MessageController {
 
-    @Autowired
-    private MessageService messageService;
-    @Autowired
-    private UserService userService;
+    private final MessageService messageService;
+    private final UserService userService;
 
-    @GetMapping("/home/new-message-fragment")
+    public MessageController(MessageService messageService, UserService userService) {
+        this.messageService = messageService;
+        this.userService = userService;
+    }
+
+    @GetMapping("/home/newmessage-fragment")
     public String newMessagesFragment(Model model, Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         UserEntity currentUser = userDetails.getUser();
@@ -52,7 +55,7 @@ public class MessageController {
         return "home/newMessage";
     }
 
-    @GetMapping("/home/messages-inbox-fragment")
+    @GetMapping("/home/showinbox-fragment")
     public String getMessagesInboxFragment(
             Model model,
             Authentication authentication,
@@ -81,6 +84,12 @@ public class MessageController {
 
         return "home/incomingMessageListFragment";
     }
+
+    @GetMapping("/home/inboxmessage-fragment")
+    public String getMessagesInboxDashFragment() {
+        return "redirect:/home/showinbox-fragment";
+    }
+
 
     @GetMapping("home/messages-outbox-details-fragment")
     public String getOutboxMessageDetails(Model model, Authentication authentication, @RequestParam(defaultValue = "0") int messageId) {
@@ -118,7 +127,7 @@ public class MessageController {
         return "home/message-inbox-details-fragment";
     }
 
-    @GetMapping("/home/messages-outbox-fragment")
+    @GetMapping("/home/sentmessage-fragment")
     public String messagesSentFragment(
             Model model,
             Authentication authentication,
