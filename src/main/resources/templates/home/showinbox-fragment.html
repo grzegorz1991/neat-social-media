@@ -19,10 +19,10 @@
                         </tr>
                         </thead>
                         <tbody id="messageTableBody">
-                        <tr th:each="message, stat : ${messages}" th:limit="5"
+                        <tr th:each="message, stat : ${messages}" th:limit="6"
                             th:data-message-id="${message.id}"
                             th:class="${message.isMessageRead} ? 'read-message' : 'unread-message'">
-                            <td th:text="${(currentPage * 5) + stat.index + 1}"></td>
+                            <td th:text="${(currentPage * 6) + stat.index + 1}"></td>
                             <td th:text="${message.receiver.name}"></td>
                             <td th:text="${message.title}"></td>
                             <td>

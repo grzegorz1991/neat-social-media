@@ -1,10 +1,13 @@
 const pageHistory = [];
-
+const API_BASE_URL = '/home';
 
 document.addEventListener("DOMContentLoaded", function () {
 
     attachEventListeners();
     loadDynamicContent('/home/home-fragment');
+
+
+
 });
 
 function attachEventListeners() {
@@ -28,8 +31,8 @@ function attachNavigationListeners() {
             if (element) {
                 element.addEventListener('click', () => {
                     const endpoint = Array.isArray(item) ?
-                        `/home/${element.id.replace('Dash', '').toLowerCase()}-fragment` :
-                        `/home/${item.replace('Dash', '').toLowerCase()}-fragment`;
+                        `${API_BASE_URL}/${element.id.replace('Dash', '').toLowerCase()}-fragment` :
+                        `${API_BASE_URL}/${item.replace('Dash', '').toLowerCase()}-fragment`;
 
                     console.log('Clicked on:', endpoint);
                     loadDynamicContent(endpoint);
@@ -97,16 +100,12 @@ function attachButtonClickListeners() {
 
 function attachRowListener(selector, clickHandler) {
     const clickableRows = document.querySelectorAll(selector);
-    console.log("row listener attached to " + clickHandler);
     clickableRows.forEach(row => {
         row.addEventListener('click', () => {
             clickHandler(row);
         });
     });
 }
-
-
-
 
 
 function loadDynamicContent(endpoint) {
@@ -122,7 +121,7 @@ function loadDynamicContent(endpoint) {
 
 
             updateUnreadMessagesCount();
-            // updateUnreadMessagesDropdown();
+            updateUnreadMessagesDropdown();
         })
         .catch(error => {
             console.error("Error loading dynamic content:", error);
@@ -169,48 +168,102 @@ function goBack() {
     }
 }
 
+
 function updateUnreadMessagesDropdown() {
-    console.log("updateUnreadMessages dropdown");
+    console.log("Updating unread messages dropdown");
 
-    $.get('/get-latest-unread-messages', function (data) {
-        console.log("Data received:", data);  // Add this log to check the data
+    // Make an AJAX request to get the latest unread messages
+    $.get('/get-latest-unread-messages')
+        .done(function (data) {
+            console.log("Data received:", data);
 
-        var messagesContainer = $('#messagesContainer');
-        var existingMessages = messagesContainer.find('.preview-container');
+            // Select the messages container
+            var messagesContainer = $('#messageContainer');
 
-        // Check if the content needs an update
-        if (true) {
             // Clear the existing messages in the container
             messagesContainer.empty();
-            console.log("empty the container");
-            // Update the rows with the latest unread messages
-            data.forEach(function (message) {
-                var row = '<div class="dropdown-item preview-item" data-message-id="' + message.messageId + '">' +
-                    '<div class="preview-thumbnail">' +
-                    '<img src="/images/faces/face3.jpg" alt="image" class="rounded-circle profile-pic">' +
-                    '</div>' +
-                    '<div class="preview-item-content">' +
-                    '<p class="preview-subject ellipsis mb-1">' + message.title + '</p>' +
-                    '<p class="text-muted mb-0">' + message.relativeTime + '</p>' +
-                    '</div>' +
-                    '</div>';
+            console.log("Cleared the container");
 
-                messagesContainer.append(row);
-            });
+            // Check if there are any unread messages
+            if (data.length > 0) {
+                // Update the rows with the latest unread messages
+                data.forEach(function (message) {
+                    var row = `
+                        <div class="dropdown-item preview-item" data-message-id="${message.messageId}">
+                            <div class="preview-container">
+                                <div class="preview-thumbnail">
+                                    <img src="/images/faces/face3.jpg" alt="image" class="rounded-circle profile-pic">
+                                </div>
+                                <div class="preview-item-content">
+                                    <p class="preview-subject ellipsis mb-1">${message.title}</p>
+                                    <p class="text-muted mb-0">${message.relativeTime}</p>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                        </div>`;
 
-            // Attach event listeners after appending new elements
-            attachLatestMessagesRowListener();
-        }
+                    messagesContainer.append(row);
+                });
 
-        // Remove read messages from the container
-        data.forEach(function (message) {
-            if (message.read) {
-                console.log("message :" + message.messageId + " is read and will be deleted");
-                messagesContainer.find('[data-message-id="' + message.messageId + '"]').remove();
+                // Attach event listeners after appending new elements
+                attachLatestMessagesRowListener();
             }
+
+            // Remove read messages from the container
+            data.forEach(function (message) {
+                if (message.read) {
+                    console.log("Message " + message.messageId + " is read and will be removed");
+                    messagesContainer.find('[data-message-id="' + message.messageId + '"]').remove();
+                }
+            });
+        })
+        .fail(function (error) {
+            console.error("Error fetching unread messages:", error);
         });
-    });
 }
+
+// function updateUnreadMessagesDropdown() {
+//     console.log("updateUnreadMessages dropdown");
+//
+//     $.get('/get-latest-unread-messages', function (data) {
+//         console.log("Data received:", data);  // Add this log to check the data
+//
+//         var messagesContainer = $('#messagesContainer');
+//         var existingMessages = messagesContainer.find('.preview-container');
+//
+//         // Check if the content needs an update
+//         if (true) {
+//             // Clear the existing messages in the container
+//             messagesContainer.empty();
+//             console.log("empty the container");
+//             // Update the rows with the latest unread messages
+//             data.forEach(function (message) {
+//                 var row = '<div class="dropdown-item preview-item" data-message-id="' + message.messageId + '">' +
+//                     '<div class="preview-thumbnail">' +
+//                     '<img src="/images/faces/face3.jpg" alt="image" class="rounded-circle profile-pic">' +
+//                     '</div>' +
+//                     '<div class="preview-item-content">' +
+//                     '<p class="preview-subject ellipsis mb-1">' + message.title + '</p>' +
+//                     '<p class="text-muted mb-0">' + message.relativeTime + '</p>' +
+//                     '</div>' +
+//                     '</div>';
+//
+//                 messagesContainer.append(row);
+//             });
+//
+//             // Attach event listeners after appending new elements
+//             attachLatestMessagesRowListener();
+//         }
+//
+//         // Remove read messages from the container
+//         data.forEach(function (message) {
+//             if (message.read) {
+//                 console.log("message :" + message.messageId + " is read and will be deleted");
+//                 messagesContainer.find('[data-message-id="' + message.messageId + '"]').remove();
+//             }
+//         });
+//     });
+// }
 
 function updateUnreadMessagesCount() {
     console.log("updateMessageCound");
@@ -232,6 +285,14 @@ function updateUnreadMessagesCount() {
 $(document).ready(function () {
     updateUnreadMessagesCount();
     updateUnreadMessagesDropdown();
+    console.log("ready dollar doc");
+    const messageDropdown = $('#messageDropdown');
+
+    // Use Bootstrap's show.bs.dropdown event
+    messageDropdown.on('click', function () {
+        console.log("Dropdown is about to be shown");
+        updateUnreadMessagesDropdown();
+    });
 });
 
 function handlePreviousOutboxButtonClick(currentPage, totalPages) {
@@ -267,7 +328,7 @@ function updateOutboxPage(currentPage, totalPages) {
     // Perform an AJAX request to retrieve the next or previous page
     console.log(currentPage + " Current Page " + totalPages + " Total Pages at update method");
     $.ajax({
-        url: "/home/messages-outbox-fragment?page=" + currentPage,
+        url: "/home/sentmessage-fragment?page=" + currentPage,
         success: function (data) {
 
             // Parse the HTML response to extract the table body
@@ -295,7 +356,7 @@ function updateInboxPage(currentPage, totalPages) {
     // Perform an AJAX request to retrieve the next or previous page
     console.log(currentPage + " Current Page " + totalPages + " Total Pages at update method");
     $.ajax({
-        url: "/home/messages-inbox-fragment?page=" + currentPage,
+        url: "/home/showinbox-fragment?page=" + currentPage,
         success: function (data) {
 
             // Parse the HTML response to extract the table body
@@ -433,3 +494,7 @@ function handleLatestMessagesRowClick(row) {
     console.log(messageId + "message Id");
     loadInboxMessagesDetailsFragment(messageId);
 }
+
+
+
+
