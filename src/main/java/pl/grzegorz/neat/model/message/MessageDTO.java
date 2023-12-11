@@ -12,15 +12,24 @@ public class MessageDTO {
     private String relativeTime;
     private UserEntity sender;
 
-    public MessageDTO(Long id, String title, LocalDateTime timestamp, String relativeTime, UserEntity sender) {
+    private boolean read;
+
+    public MessageDTO(Long id, String title, LocalDateTime timestamp, String relativeTime, UserEntity sender, boolean read) {
         this.messageId = id;
         this.title = title;
         this.timestamp = timestamp;
         this.relativeTime = relativeTime;
         this.sender = sender;
+        this.read = read;
     }
 
+    public boolean isRead() {
+        return read;
+    }
 
+    public void setRead(boolean read) {
+        this.read = read;
+    }
 
     public String getRelativeTime() {
         return relativeTime;

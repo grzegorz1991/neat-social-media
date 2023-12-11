@@ -60,6 +60,7 @@ public class HomeController {
         model.addAttribute("name", name);
         model.addAttribute("surname", surname);
         model.addAttribute("email", email);
+        System.out.println("/home");
         return "index";
     }
 
@@ -82,7 +83,7 @@ public class HomeController {
         UserEntity user = userDetails.getUser();
 
         List<MessageEntity> latestUnreadMessages = messageService.getTop5UnreadMessages(user);
-
+        System.out.println(latestUnreadMessages.size() + "size of the unread messages");
         for (MessageEntity message : latestUnreadMessages) {
             LocalDateTime timestamp = message.getTimestamp();
             String relativeTime = convertToLocalDateTime(timestamp);
@@ -90,14 +91,15 @@ public class HomeController {
         }
         // Convert MessageEntity to MessageDTO if needed
         List<MessageDTO> latestUnreadMessagesDTO = latestUnreadMessages.stream()
-                .map(message -> new MessageDTO(message.getId(), message.getTitle(), message.getTimestamp(), message.getRelativeTime(), message.getSender()))
+                .map(message -> new MessageDTO(message.getId(), message.getTitle(), message.getTimestamp(), message.getRelativeTime(), message.getSender(), message.isMessageRead()))
                 .collect(Collectors.toList());
-
+        System.out.println("/get-latest-unread-messages");
         return ResponseEntity.ok(latestUnreadMessagesDTO);
     }
 
     @GetMapping("/home/default-fragment")
     public String getDefaultFragment() {
+        System.out.println("/home/default-fragment");
         return "/home/home-default";
     }
 

@@ -2,6 +2,7 @@ const pageHistory = [];
 
 
 document.addEventListener("DOMContentLoaded", function () {
+
     attachLogoClickListener();
     updateUnreadMessagesDropdown();
     loadDynamicContent('/home/default-fragment');
@@ -32,8 +33,6 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById('homeDashButtonItem').addEventListener("click", () => {
         loadDynamicContent('/home/default-fragment');
     });
-
-
 });
 
 function attachLogoClickListener() {
@@ -53,56 +52,44 @@ function attachLogoClickListener() {
     }
 }
 
-function attachButtonListeners() {
-    // Attach button listeners to the dynamically loaded content
+function attachButtonClickListeners() {
     document.querySelectorAll("#dynamicContentContainer button").forEach(button => {
         button.addEventListener("click", function (event) {
-            // Handle the button click
             handleButtonClick(event.target);
         });
     });
 
-    // Function to handle button clicks
     function handleButtonClick(button) {
         const buttonId = button.id;
 
         if (buttonId === "goBack") {
             console.log("goBack button");
             goBack();
-        } else if (buttonId === "cancelButton") {
-            // Do something when the cancel button is clicked
         }
-        //Outbox Message Page buttons
         else if (buttonId === "previousOutboxPageButton") {
-            console.log("previousOutboxPageButton");
             const totalPages = document.querySelector("#totalPagesSpan").textContent;
             const currentPage = document.querySelector("#currentPageSpan").textContent;
-            console.log("total:" + totalPages + " current:" + currentPage);
             handlePreviousOutboxButtonClick(currentPage, totalPages);
 
         } else if (buttonId === "nextOutboxPageButton") {
             const currentPage = document.querySelector("#currentPageSpan").textContent;
             const totalPages = document.querySelector("#totalPagesSpan").textContent;
             handleNextOutboxButtonClick(currentPage, totalPages);
-            console.log("nextOutboxPageButton");
+
         } else if (buttonId === "previousInboxPageButton") {
-            console.log("previousInboxPageButton");
             const totalPages = document.querySelector("#totalPagesSpan").textContent;
             const currentPage = document.querySelector("#currentPageSpan").textContent;
-            console.log("total:" + totalPages + " current:" + currentPage + " prevInbosPageButton");
             handlePreviousInboxButtonClick(currentPage, totalPages);
 
         } else if (buttonId === "nextInboxPageButton") {
             const currentPage = document.querySelector("#currentPageSpan").textContent;
             const totalPages = document.querySelector("#totalPagesSpan").textContent;
-            console.log("nextInbosPageButton");
             handleNextInboxButtonClick(currentPage, totalPages);
 
         } else if (buttonId === "reply") {
-
             console.log("reply button");
+
         } else if (buttonId === "archiveIncomingMessage") {
-            console.log("archiveIncomingMessage");
             const messageId = $('#archiveIncomingMessage').data('message-id');
             showArchiveConfirmation(messageId);
         }
@@ -111,7 +98,7 @@ function attachButtonListeners() {
 }
 
 function attachOutboxRowListener() {
-    console.log("attachRowListener");
+
     const clickableRows = document.querySelectorAll('.clickable-row');
     clickableRows.forEach(function (row) {
         row.addEventListener('click', function () {
@@ -125,7 +112,6 @@ function attachOutboxRowListener() {
         loadOutboxMessagesDetailsFragment(messageId);
     }
 }
-
 function attachInboxRowListener() {
     console.log("attachRowListener");
     // Add click event listeners to clickable rows
@@ -145,15 +131,13 @@ function attachInboxRowListener() {
 
 
 function loadDynamicContent(endpoint) {
-
-    // Save the current endpoint to the history
     pageHistory.push(endpoint);
 
     fetch(endpoint)
         .then(response => response.text())
         .then(content => {
             document.getElementById("dynamicContentContainer").innerHTML = content;
-            attachButtonListeners();
+            attachButtonClickListeners();
             attachOutboxRowListener();
             attachInboxRowListener();
             updateUnreadMessagesCount();
@@ -180,7 +164,6 @@ function goBack() {
     if (pageHistory.length > 1) {
         const currentEndpoint = pageHistory.pop();
         const previousEndpoint = pageHistory[pageHistory.length - 1];
-
         // Check if the current page is the same as the previous page
         if (currentEndpoint !== previousEndpoint) {
             loadDynamicContent(previousEndpoint);
@@ -191,33 +174,49 @@ function goBack() {
     } else {
         console.log("No previous page in history");
     }
-
 }
 
 function updateUnreadMessagesDropdown() {
     console.log("updateUnreadMessages dropdown");
 
     $.get('/get-latest-unread-messages', function (data) {
+        console.log("Data received:", data);  // Add this log to check the data
 
-        $('.preview-list').empty();
+        var messagesContainer = $('#messagesContainer');
+        var existingMessages = messagesContainer.find('.preview-container');
 
-        // Update the rows with the latest unread messages
+        // Check if the content needs an update
+        if (true) {
+            // Clear the existing messages in the container
+            messagesContainer.empty();
+            console.log("empty the container");
+            // Update the rows with the latest unread messages
+            data.forEach(function (message) {
+                var row = '<div class="dropdown-item preview-item" data-message-id="' + message.messageId + '">' +
+                    '<div class="preview-thumbnail">' +
+                    '<img src="/images/faces/face3.jpg" alt="image" class="rounded-circle profile-pic">' +
+                    '</div>' +
+                    '<div class="preview-item-content">' +
+                    '<p class="preview-subject ellipsis mb-1">' + message.title + '</p>' +
+                    '<p class="text-muted mb-0">' + message.relativeTime + '</p>' +
+                    '</div>' +
+                    '</div>';
+
+                messagesContainer.append(row);
+            });
+
+            // Attach event listeners after appending new elements
+            attachLatestMessagesRowListener();
+        }
+
+        // Remove read messages from the container
         data.forEach(function (message) {
-            var row = '<div class="dropdown-item preview-item" data-message-id="' + message.messageId + '">'+
-                '<div class="preview-thumbnail">' +
-                '<img src="/images/faces/face3.jpg" alt="image" class="rounded-circle profile-pic">' +
-                '</div>' +
-                '<div class="preview-item-content">' +
-                '<p class="preview-subject ellipsis mb-1">' + message.title + '</p>' +
-                '<p class="text-muted mb-0">' + message.relativeTime + '</p>' +
-                '</div>' +
-                '</div>';
-
-            $('.preview-list').append(row);
+            if (message.read) {
+                console.log("message :" + message.messageId + " is read and will be deleted");
+                messagesContainer.find('[data-message-id="' + message.messageId + '"]').remove();
+            }
         });
-        attachLatestMessagesRowListener();
     });
-
 }
 
 function updateUnreadMessagesCount() {
@@ -239,6 +238,7 @@ function updateUnreadMessagesCount() {
 // Call the function when the page loads
 $(document).ready(function () {
     updateUnreadMessagesCount();
+    updateUnreadMessagesDropdown();
 });
 
 function handlePreviousOutboxButtonClick(currentPage, totalPages) {
@@ -382,7 +382,6 @@ function showArchiveConfirmation(messageId) {
     });
 }
 
-// Function to make an AJAX request to the controller endpoint
 function archiveMessage(messageId) {
     fetch('/home/archive-message/',
         {
@@ -407,7 +406,6 @@ function archiveMessage(messageId) {
         });
 }
 
-
 function showSuccessConfirmation() {
     Swal.fire({
         position: 'top',
@@ -421,13 +419,11 @@ function showSuccessConfirmation() {
 
 function attachLatestMessagesRowListener() {
     console.log("attachLatestMessagesRowListener");
-    // Add click event listeners to clickable rows in the latest messages list
     const latestMessagesRows = document.querySelectorAll('.preview-item');
     latestMessagesRows.forEach(function (row) {
         row.addEventListener('click', function () {
             console.log("lates message row click add" + row.id);
             handleLatestMessagesRowClick(row);
-
         });
     });
 }
@@ -435,5 +431,5 @@ function attachLatestMessagesRowListener() {
 function handleLatestMessagesRowClick(row) {
     const messageId = row.dataset.messageId;
     console.log(messageId + "message Id");
-   loadInboxMessagesDetailsFragment(messageId);
+    loadInboxMessagesDetailsFragment(messageId);
 }

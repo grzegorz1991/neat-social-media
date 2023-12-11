@@ -10,11 +10,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class NeatApplication {
 
 	public static void main(String[] args) {
-
-
-
 		SpringApplication.run(NeatApplication.class, args);
 	}
+
 
 
 }

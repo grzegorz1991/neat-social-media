@@ -23,7 +23,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/construction", "/register", "/register/terms","/css/**", "/fonts/**", "/js/**", "/images/**", "/public/**", "/login", "/templates/**").permitAll() // Allow access to these paths without authentication
+                .antMatchers( "/", "/construction", "/register", "/register/terms","/css/**", "/fonts/**", "/js/**", "/images/**", "/public/**", "/login", "/templates/**", "/static/**").permitAll() // Allow access to these paths without authentication
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
