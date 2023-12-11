@@ -1,0 +1,33 @@
+<div id="newMessageForm" class="container">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+
+                <h4 class="card-title">
+                    New Message
+                </h4>
+
+                <form id="messageForm" class="forms-sample" th:action="@{/send-message}" method="post" onsubmit="handleFormSubmission(event)">
+                    <div class="form-group">
+                        <label for="selectRecipient">Recipient</label>
+                        <select class="form-control form-control-sm" id="selectRecipient" name="receiverId"
+                                style="width: 100%">
+                            <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.name}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputTitle">Title</label>
+                        <input type="text" class="form-control" id="inputTitle" name="title" placeholder="Title">
+                    </div>
+                    <div class="form-group">
+                        <label for="textareaContent">Content</label>
+                        <textarea class="form-control" id="textareaContent" name="content" rows="4"
+                                  placeholder="Content"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary mr-2">Send Message</button>
+                    <button class="btn btn-dark">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
