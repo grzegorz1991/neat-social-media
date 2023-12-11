@@ -2,12 +2,8 @@ const pageHistory = [];
 const API_BASE_URL = '/home';
 
 document.addEventListener("DOMContentLoaded", function () {
-
     attachEventListeners();
     loadDynamicContent('/home/home-fragment');
-
-
-
 });
 
 function attachEventListeners() {
@@ -21,7 +17,8 @@ function attachNavigationListeners() {
         ['settingsDropdown', 'settingsDash'],
         'newMessageDash',
         'sentMessageDash',
-        'homeDash'
+        'homeDash',
+        'archivedMessageDash'
     ];
 
     navigationItems.forEach(item => {
@@ -34,7 +31,7 @@ function attachNavigationListeners() {
                         `${API_BASE_URL}/${element.id.replace('Dash', '').toLowerCase()}-fragment` :
                         `${API_BASE_URL}/${item.replace('Dash', '').toLowerCase()}-fragment`;
 
-                    console.log('Clicked on:', endpoint);
+
                     loadDynamicContent(endpoint);
                 });
             }
@@ -64,7 +61,6 @@ function attachButtonClickListeners() {
         const buttonId = button.id;
 
         if (buttonId === "goBack") {
-            console.log("goBack button");
             goBack();
         } else if (buttonId === "previousOutboxPageButton") {
             const totalPages = document.querySelector("#totalPagesSpan").textContent;
@@ -110,7 +106,7 @@ function attachRowListener(selector, clickHandler) {
 
 function loadDynamicContent(endpoint) {
     pageHistory.push(endpoint);
-
+    console.log(endpoint);
     fetch(endpoint)
         .then(response => response.text())
         .then(content => {
@@ -130,13 +126,13 @@ function loadDynamicContent(endpoint) {
 
 function handleInboxRowClick(row) {
     const messageId = row.dataset.messageId;
-    console.log("Clicked on inbox row with message ID: " + messageId);
+
     loadInboxMessagesDetailsFragment(messageId);
 }
 
 function handleOutboxRowClick(row) {
     const messageId = row.dataset.messageId;
-    console.log("Clicked on outbox row with message ID: " + messageId);
+
     loadOutboxMessagesDetailsFragment(messageId);
 }
 
@@ -170,19 +166,18 @@ function goBack() {
 
 
 function updateUnreadMessagesDropdown() {
-    console.log("Updating unread messages dropdown");
 
     // Make an AJAX request to get the latest unread messages
     $.get('/get-latest-unread-messages')
         .done(function (data) {
-            console.log("Data received:", data);
+
 
             // Select the messages container
             var messagesContainer = $('#messageContainer');
 
             // Clear the existing messages in the container
             messagesContainer.empty();
-            console.log("Cleared the container");
+
 
             // Check if there are any unread messages
             if (data.length > 0) {
@@ -212,7 +207,7 @@ function updateUnreadMessagesDropdown() {
             // Remove read messages from the container
             data.forEach(function (message) {
                 if (message.read) {
-                    console.log("Message " + message.messageId + " is read and will be removed");
+
                     messagesContainer.find('[data-message-id="' + message.messageId + '"]').remove();
                 }
             });
@@ -222,51 +217,8 @@ function updateUnreadMessagesDropdown() {
         });
 }
 
-// function updateUnreadMessagesDropdown() {
-//     console.log("updateUnreadMessages dropdown");
-//
-//     $.get('/get-latest-unread-messages', function (data) {
-//         console.log("Data received:", data);  // Add this log to check the data
-//
-//         var messagesContainer = $('#messagesContainer');
-//         var existingMessages = messagesContainer.find('.preview-container');
-//
-//         // Check if the content needs an update
-//         if (true) {
-//             // Clear the existing messages in the container
-//             messagesContainer.empty();
-//             console.log("empty the container");
-//             // Update the rows with the latest unread messages
-//             data.forEach(function (message) {
-//                 var row = '<div class="dropdown-item preview-item" data-message-id="' + message.messageId + '">' +
-//                     '<div class="preview-thumbnail">' +
-//                     '<img src="/images/faces/face3.jpg" alt="image" class="rounded-circle profile-pic">' +
-//                     '</div>' +
-//                     '<div class="preview-item-content">' +
-//                     '<p class="preview-subject ellipsis mb-1">' + message.title + '</p>' +
-//                     '<p class="text-muted mb-0">' + message.relativeTime + '</p>' +
-//                     '</div>' +
-//                     '</div>';
-//
-//                 messagesContainer.append(row);
-//             });
-//
-//             // Attach event listeners after appending new elements
-//             attachLatestMessagesRowListener();
-//         }
-//
-//         // Remove read messages from the container
-//         data.forEach(function (message) {
-//             if (message.read) {
-//                 console.log("message :" + message.messageId + " is read and will be deleted");
-//                 messagesContainer.find('[data-message-id="' + message.messageId + '"]').remove();
-//             }
-//         });
-//     });
-// }
-
 function updateUnreadMessagesCount() {
-    console.log("updateMessageCound");
+
     $.get('/get-unread-messages-count', function (data) {
         // Update the content of the span with the received data
         $('#unreadMessagesCount').text(data);
@@ -285,12 +237,12 @@ function updateUnreadMessagesCount() {
 $(document).ready(function () {
     updateUnreadMessagesCount();
     updateUnreadMessagesDropdown();
-    console.log("ready dollar doc");
+
     const messageDropdown = $('#messageDropdown');
 
     // Use Bootstrap's show.bs.dropdown event
     messageDropdown.on('click', function () {
-        console.log("Dropdown is about to be shown");
+
         updateUnreadMessagesDropdown();
     });
 });
@@ -326,7 +278,7 @@ function handleNextInboxButtonClick(currentPage, totalPages) {
 function updateOutboxPage(currentPage, totalPages) {
 
     // Perform an AJAX request to retrieve the next or previous page
-    console.log(currentPage + " Current Page " + totalPages + " Total Pages at update method");
+
     $.ajax({
         url: "/home/sentmessage-fragment?page=" + currentPage,
         success: function (data) {
@@ -345,7 +297,9 @@ function updateOutboxPage(currentPage, totalPages) {
             $('#currentPageSpan2').text(pageNumber);
             $('#totalPagesSpan2').text(totalPages);
             //
-            attachOutboxRowListener();
+            attachRowListener('.clickable-row, .outbox-row', handleOutboxRowClick);
+            attachRowListener('.read-message, .unread-message', handleInboxRowClick);
+
         }
 
     });
@@ -354,7 +308,7 @@ function updateOutboxPage(currentPage, totalPages) {
 function updateInboxPage(currentPage, totalPages) {
 
     // Perform an AJAX request to retrieve the next or previous page
-    console.log(currentPage + " Current Page " + totalPages + " Total Pages at update method");
+
     $.ajax({
         url: "/home/showinbox-fragment?page=" + currentPage,
         success: function (data) {
@@ -373,7 +327,9 @@ function updateInboxPage(currentPage, totalPages) {
             $('#currentPageSpan2').text(pageNumber);
             $('#totalPagesSpan2').text(totalPages);
             //
-            attachInboxRowListener();
+            attachRowListener('.clickable-row, .outbox-row', handleOutboxRowClick);
+            attachRowListener('.read-message, .unread-message', handleInboxRowClick);
+
         }
 
     });
@@ -432,7 +388,7 @@ function showArchiveConfirmation(messageId) {
     }).then((result) => {
         if (result.isConfirmed) {
             // If the user confirms, make an AJAX request to the controller endpoint
-            console.log("confirmed");
+
             archiveMessage(messageId);
         }
     });
@@ -479,11 +435,11 @@ function showSuccessConfirmation() {
 }
 
 function attachLatestMessagesRowListener() {
-    console.log("attachLatestMessagesRowListener");
+
     const latestMessagesRows = document.querySelectorAll('.preview-item');
     latestMessagesRows.forEach(function (row) {
         row.addEventListener('click', function () {
-            console.log("lates message row click add" + row.id);
+
             handleLatestMessagesRowClick(row);
         });
     });
@@ -491,7 +447,7 @@ function attachLatestMessagesRowListener() {
 
 function handleLatestMessagesRowClick(row) {
     const messageId = row.dataset.messageId;
-    console.log(messageId + "message Id");
+
     loadInboxMessagesDetailsFragment(messageId);
 }
 

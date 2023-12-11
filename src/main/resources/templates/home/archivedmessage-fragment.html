@@ -1,0 +1,61 @@
+<div id="messageList" class="container">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+
+                <h4 class="card-title">
+                    Sent Messages
+                </h4>
+
+                <span id="currentPageSpan" th:text="${currentPage}" style="display: none;"></span>
+                <span id="totalPagesSpan" th:text="${totalPages}" style="display: none;"></span>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Receiver</th>
+                            <th>Title</th>
+                            <th>Status</th>
+                            <th>Timestamp</th>
+                        </tr>
+                        </thead>
+                        <tbody id="messageTableBody">
+                        <tr th:each="message, stat : ${messages}" th:limit="6" class="outbox-row"
+                            data-toggle="collapse" th:data-target="'#accordion-' + ${message.id}" th:data-message-id="${message.id}">
+                            <td th:text="${(currentPage * 6) + stat.index + 1}"></td>
+                            <td th:text="${message.receiver.name}"></td>
+                            <td th:text="${message.title}"></td>
+                            <td>
+                                <div th:if="${message.isMessageRead}" th:text="Delivered"></div>
+                                <div th:unless="${message.isMessageRead}" th:text="Sent"></div>
+                            </td>
+                            <td th:text="${message.relativeTime}"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" style="padding: 0;">
+                                <div th:if="${message != null}" id="accordion-[[${message.id}]]" class="collapse">
+                                    <!-- Add your accordion content here -->
+                                    <p>Details for Message ID: [[${message.id}]]</p>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="btn-group" role="group" aria-label="Basic example">
+                <button id="previousOutboxPageButton" type="button" class="btn btn-outline-secondary2 btn-md">Previous</button>
+                <button id="nextOutboxPageButton" type="button" class="btn btn-outline-secondary2 btn-md">Next</button>
+                <button id="goBack" type="button" class="btn btn-outline-secondary2 btn-md">Go Back</button>
+            </div>
+            <div class="text-right">
+                <span class="text-muted mb-1 small">Page&nbsp;</span>
+                <span id="currentPageSpan2" th:text="${currentPage + 1}" class="text-muted mb-1 small"></span>
+                <span class="text-muted mb-1 small">&nbsp;of&nbsp;</span>
+                <span id="totalPagesSpan2" th:text="${totalPages}" class="text-muted mb-1 small"></span>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -30,9 +30,7 @@ public class MessageController {
     private static final String OUTGOING_MESSAGE_FRAGMENT = "/home/sentmessage-fragment";
     private static final String OUTBOX_DETAILS_FRAGMENT = "home/message-outbox-details-fragment";
     private static final String INBOX_DETAILS_FRAGMENT = "home/message-inbox-details-fragment";
-    private static final String HOME_REDIRECT = "redirect:/home/showinbox-fragment";
-
-
+    private static final String ARCHIVED_MESSAGE_FRAGMENT = "/home/archivedmessage-fragment";
 
     private final MessageService messageService;
     private final UserService userService;
@@ -111,6 +109,30 @@ public class MessageController {
         model.addAttribute("totalPages", messagesPage.getTotalPages());
 
         return OUTGOING_MESSAGE_FRAGMENT;
+    }
+
+    @GetMapping(ARCHIVED_MESSAGE_FRAGMENT)
+    public String archivedMessageFragment(
+            Model model,
+            Authentication authentication,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "6") int pageSize) {
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        UserEntity currentUser = userDetails.getUser();
+
+        Page<MessageEntity> messagesPage = messageService.getMessagesFromUser(page, pageSize, currentUser);
+        List<MessageEntity> messages = messagesPage.getContent();
+
+        for (MessageEntity message : messages) {
+            setRelativeTime(message);
+        }
+
+        model.addAttribute("messages", messages);
+        model.addAttribute("user", currentUser);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", messagesPage.getTotalPages());
+
+        return ARCHIVED_MESSAGE_FRAGMENT;
     }
 
 
