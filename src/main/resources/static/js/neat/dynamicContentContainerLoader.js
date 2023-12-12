@@ -1,6 +1,8 @@
 const pageHistory = [];
 const API_BASE_URL = '/home';
 
+var users = [];
+
 document.addEventListener("DOMContentLoaded", function () {
     attachEventListeners();
     loadDynamicContent('/home/home-fragment');
@@ -9,6 +11,8 @@ document.addEventListener("DOMContentLoaded", function () {
 function attachEventListeners() {
     attachLogoClickListener();
     attachNavigationListeners();
+    initializeRecipientTypeahead();
+    fetchUserList();
 }
 
 function attachNavigationListeners() {
@@ -115,7 +119,7 @@ function loadDynamicContent(endpoint) {
             attachRowListener('.clickable-row, .outbox-row', handleOutboxRowClick);
             attachRowListener('.read-message, .unread-message', handleInboxRowClick);
 
-
+            fetchUserList();
             updateUnreadMessagesCount();
             updateUnreadMessagesDropdown();
         })
@@ -454,5 +458,49 @@ function handleLatestMessagesRowClick(row) {
 }
 
 
+// Function to initialize Typeahead.js
+function initializeRecipientTypeahead() {
+    console.log(users);
+    var usersBloodhound = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('username'),
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        local: users
+    });
+
+    $('#recipientTypeahead .typeahead').typeahead({
+        hint: true,
+        highlight: true,
+        minLength: 1
+    }, {
+        name: 'users',
+        displayKey: 'username',
+        source: usersBloodhound
+    });
+
+    // Event handler when a suggestion is selected
+    $('#recipientTypeahead .typeahead').on('typeahead:select', function (event, suggestion) {
+        // Convert the selected user's ID to an integer
+        var recipientId = parseInt(suggestion.id);
+        // Update the hidden input with the converted ID
+        $('#hiddenReceiverId').val(recipientId.toString());
+        console.log("Receiver ID: " + recipientId);
+    });
+}
 
 
+// Move the initializeRecipientTypeahead call inside the success callback
+function fetchUserList() {
+    $.ajax({
+        url: '/get-user-list',
+        method: 'GET',
+        dataType: 'json',
+        success: function (data) {
+            // Update the users variable with the fetched data
+            users = data;
+            initializeRecipientTypeahead(); // Reinitialize Typeahead.js with updated data
+        },
+        error: function (error) {
+            console.error('Error fetching user list:', error);
+        }
+    });
+}

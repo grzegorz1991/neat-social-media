@@ -12,7 +12,7 @@ public class MessageRequest {
 
 
 
-    public MessageRequest( Integer receiverId, String content,  String title) {
+    public MessageRequest( int receiverId, String content,  String title) {
 
         this.receiverId = receiverId;
 
@@ -22,11 +22,11 @@ public class MessageRequest {
     }
 
 
-    public Integer getReceiverId() {
+    public int getReceiverId() {
         return receiverId;
     }
 
-    public void setReceiverId(Integer receiverId) {
+    public void setReceiverId(int receiverId) {
         this.receiverId = receiverId;
     }
 

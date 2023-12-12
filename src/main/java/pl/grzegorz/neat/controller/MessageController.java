@@ -12,6 +12,7 @@ import pl.grzegorz.neat.model.message.MessageEntity;
 import pl.grzegorz.neat.model.message.MessageRequest;
 import pl.grzegorz.neat.model.message.MessageService;
 import pl.grzegorz.neat.model.user.CustomUserDetails;
+import pl.grzegorz.neat.model.user.UserDTO;
 import pl.grzegorz.neat.model.user.UserEntity;
 import pl.grzegorz.neat.model.user.UserService;
 
@@ -219,5 +220,12 @@ public class MessageController {
         LocalDateTime timestamp = messageEntity.getTimestamp();
         String relativeTime = convertToLocalDateTime(timestamp);
         messageEntity.setRelativeTime(relativeTime);
+    }
+
+    @GetMapping("/get-user-list")
+    public ResponseEntity<List<UserDTO>> getUserList() {
+        List<UserDTO> userList = userService.getAllUsersDTO(); // Adjust the method based on your service layer
+        System.out.println(userList);
+        return ResponseEntity.ok(userList);
     }
 }
