@@ -47,7 +47,9 @@ public class HomeController {
 
         UserEntity userByUsername = userService.getUserByUsername(username);
         int numberofMessages = messageService.getMessagesForUser(userByUsername).size();
+        int inboxSize = messageService.getAllNonArchivedMessagesByReceiver(userByUsername).size();
         int numbweofUnreadMessages = messageService.getNumberOfUnreadMessages(userByUsername);
+        String avatarURL = userByUsername.getImagePath();
 
         List<MessageEntity> unreadList =messageService.getTop5UnreadMessages( userByUsername);
 
@@ -56,10 +58,10 @@ public class HomeController {
             String relativeTime = convertToLocalDateTime(timestamp);
             message.setRelativeTime(relativeTime);
         }
-
+        model.addAttribute("avatar", avatarURL);
         model.addAttribute("unread5MessageList", unreadList);
         model.addAttribute("unreadMessagesNumber", numbweofUnreadMessages);
-        model.addAttribute("newMessagesNumber", numberofMessages);
+        model.addAttribute("newMessagesNumber", inboxSize);
         model.addAttribute("username", username);
         model.addAttribute("name", name);
         model.addAttribute("surname", surname);

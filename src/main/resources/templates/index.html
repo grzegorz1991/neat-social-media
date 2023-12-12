@@ -17,7 +17,8 @@
                 <div class="profile-desc">
                     <div class="profile-pic">
                         <div class="count-indicator">
-                            <img class="img-xs rounded-circle " src="/images/avatar/pngwing.com.png" alt="">
+
+                            <img class="img-xs rounded-circle" th:src="${avatar}" alt="">
                             <span class="count bg-success"></span>
                         </div>
                         <div class="profile-name">
@@ -65,7 +66,7 @@
                             Messages</a></li>
                         <li id="sentMessageDash" class="nav-item"><a class="nav-link" href="#">Outgoing
                             Messages</a></li>
-                        <li id="archiveMessageDash" class="nav-item"><a class="nav-link" href="#">Archive</a></li>
+                        <li id="archivedMessageDash" class="nav-item"><a class="nav-link" href="#">Archive</a></li>
                     </ul>
                 </div>
             </li>
@@ -128,7 +129,8 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link" id="profileDropdown" href="#" data-toggle="dropdown">
                             <div class="navbar-profile">
-                                <img class="img-xs rounded-circle" src="/images/avatar/pngwing.com.png" alt="">
+                                <img class="img-xs rounded-circle" th:src="${avatar}" alt="">
+
                                 <p class="mb-0 d-none d-sm-block navbar-profile-name"><span
                                         th:text="${username}"></span></p>
 

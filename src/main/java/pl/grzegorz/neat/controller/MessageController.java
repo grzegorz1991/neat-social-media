@@ -69,6 +69,7 @@ public class MessageController {
 
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         UserEntity currentUser = userDetails.getUser();
+        int inboxSize = messageService.getAllNonArchivedMessagesByReceiver(currentUser).size();
 
         Page<MessageEntity> messagesPage = messageService.getNonRecipentArchivedMessagesForUser(page, pageSize, currentUser);
 
@@ -78,7 +79,7 @@ public class MessageController {
         for (MessageEntity message : incomingMessages) {
             setRelativeTime(message);
         }
-
+        model.addAttribute("inboxSize", inboxSize);
         model.addAttribute("messages", incomingMessages);
         model.addAttribute("user", currentUser);
         model.addAttribute("currentPage", page);
@@ -120,7 +121,7 @@ public class MessageController {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         UserEntity currentUser = userDetails.getUser();
 
-        Page<MessageEntity> messagesPage = messageService.getMessagesFromUser(page, pageSize, currentUser);
+        Page<MessageEntity> messagesPage = messageService.getArchivedMessagesByReceiver(page, pageSize, currentUser);
         List<MessageEntity> messages = messagesPage.getContent();
 
         for (MessageEntity message : messages) {

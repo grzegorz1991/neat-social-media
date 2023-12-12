@@ -185,15 +185,17 @@ function updateUnreadMessagesDropdown() {
                 data.forEach(function (message) {
                     var row = `
                         <div class="dropdown-item preview-item" data-message-id="${message.messageId}">
-                            <div class="preview-container">
+                            
                                 <div class="preview-thumbnail">
-                                    <img src="/images/faces/face3.jpg" alt="image" class="rounded-circle profile-pic">
+                                    
+                                    <img src="${message.sender.imagePath}" alt="imaget" class="rounded-circle profile-pic">
                                 </div>
                                 <div class="preview-item-content">
                                     <p class="preview-subject ellipsis mb-1">${message.title}</p>
                                     <p class="text-muted mb-0">${message.relativeTime}</p>
+                                    
                                 </div>
-                            </div>
+                            
                             <div class="dropdown-divider"></div>
                         </div>`;
 

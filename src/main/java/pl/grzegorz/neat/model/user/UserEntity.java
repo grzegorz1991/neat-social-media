@@ -50,7 +50,21 @@ public class UserEntity implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
+
+
+
+
     private Set<RoleEntity> roles = new HashSet<>(); // Ensure roles is never null
+    @Column(columnDefinition = "VARCHAR(255) DEFAULT '/images/avatar/avatar1.png'")
+    private String imagePath;
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
 
     public Set<RoleEntity> getRoles() {
         return roles;

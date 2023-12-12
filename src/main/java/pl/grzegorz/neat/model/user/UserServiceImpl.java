@@ -134,6 +134,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(password);
         user.setName(name);
         user.setSurname(surname);
+        user.setImagePath("/images/avatar/avatar1.png");
 
 
         // Clear existing roles

@@ -4,7 +4,7 @@
             <div class="card-body">
 
                 <h4 class="card-title">
-                    Sent Messages
+                    Archived Messages
                 </h4>
 
                 <span id="currentPageSpan" th:text="${currentPage}" style="display: none;"></span>
@@ -14,7 +14,8 @@
                         <thead>
                         <tr>
                             <th>#</th>
-                            <th>Receiver</th>
+
+                            <th>Sender</th>
                             <th>Title</th>
                             <th>Status</th>
                             <th>Timestamp</th>
@@ -22,13 +23,15 @@
                         </thead>
                         <tbody id="messageTableBody">
                         <tr th:each="message, stat : ${messages}" th:limit="6" class="outbox-row"
-                            data-toggle="collapse" th:data-target="'#accordion-' + ${message.id}" th:data-message-id="${message.id}">
+                            data-toggle="collapse" th:data-target="'#accordion-' + ${message.id}"
+                            th:data-message-id="${message.id}">
                             <td th:text="${(currentPage * 6) + stat.index + 1}"></td>
-                            <td th:text="${message.receiver.name}"></td>
+
+                            <td th:text="${message.sender.name}"></td>
                             <td th:text="${message.title}"></td>
                             <td>
-                                <div th:if="${message.isMessageRead}" th:text="Delivered"></div>
-                                <div th:unless="${message.isMessageRead}" th:text="Sent"></div>
+                                <div th:if="${message.isMessageRead}" th:text="Read"></div>
+                                <div th:unless="${message.isMessageRead}" th:text="Unread"></div>
                             </td>
                             <td th:text="${message.relativeTime}"></td>
                         </tr>
@@ -45,7 +48,8 @@
                 </div>
             </div>
             <div class="btn-group" role="group" aria-label="Basic example">
-                <button id="previousOutboxPageButton" type="button" class="btn btn-outline-secondary2 btn-md">Previous</button>
+                <button id="previousOutboxPageButton" type="button" class="btn btn-outline-secondary2 btn-md">Previous
+                </button>
                 <button id="nextOutboxPageButton" type="button" class="btn btn-outline-secondary2 btn-md">Next</button>
                 <button id="goBack" type="button" class="btn btn-outline-secondary2 btn-md">Go Back</button>
             </div>

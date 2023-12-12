@@ -139,5 +139,10 @@ public class MessageServiceImpl implements MessageService {
         Page<MessageEntity> unreadMessagesPage = messageRepository.findTop5UnreadMessages(user, PageRequest.of(0, 5));
         return unreadMessagesPage.getContent();
     }
+
+    @Override
+    public List<MessageEntity> getAllNonArchivedMessagesByReceiver(UserEntity user) {
+        return messageRepository.findAllNonArchivedMessagesByReceiver(user);
+    }
 }
 
