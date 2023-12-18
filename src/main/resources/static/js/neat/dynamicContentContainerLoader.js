@@ -4,6 +4,7 @@ const API_BASE_URL = '/home';
 var users = [];
 
 document.addEventListener("DOMContentLoaded", function () {
+
     attachEventListeners();
     loadDynamicContent('/home/home-fragment');
 });
@@ -13,6 +14,8 @@ function attachEventListeners() {
     attachNavigationListeners();
     initializeRecipientTypeahead();
     fetchUserList();
+
+
 }
 
 function attachNavigationListeners() {
@@ -22,7 +25,9 @@ function attachNavigationListeners() {
         'newMessageDash',
         'sentMessageDash',
         'homeDash',
-        'archivedMessageDash'
+        'archivedMessageDash',
+        'newAcquaintanceDash' ,
+        'seeAcquaintanceDash'
     ];
 
     navigationItems.forEach(item => {
@@ -133,6 +138,7 @@ function loadDynamicContent(endpoint) {
             fetchUserList();
             updateUnreadMessagesCount();
             updateUnreadMessagesDropdown();
+            filterSearchFunction();
         })
         .catch(error => {
             console.error("Error loading dynamic content:", error);
@@ -482,7 +488,6 @@ function handleLatestMessagesRowClick(row) {
 
 // Function to initialize Typeahead.js
 function initializeRecipientTypeahead() {
-    console.log(users);
     var usersBloodhound = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('username'),
         queryTokenizer: Bloodhound.tokenizers.whitespace,

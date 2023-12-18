@@ -8,6 +8,7 @@ import pl.grzegorz.neat.model.role.RoleRepository;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -60,14 +61,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserEntity updateUser(UserEntity user) {
-// Check if the user exists
         UserEntity existingUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + user.getId()));
 
-        // Perform additional checks or validations before updating
         validateUpdate(user);
-
-        System.out.println(user.getEmail()+ "!!!!!!!!!!!!!!!");
 
         existingUser.setUsername(user.getUsername());
         existingUser.setEmail(user.getEmail());
@@ -76,7 +73,6 @@ public class UserServiceImpl implements UserService {
 
         if(user.getPassword() != null) {
             existingUser.setPassword(user.getPassword());
-            System.out.println("password changed not null");
         }
         return userRepository.save(existingUser);
     }
@@ -185,6 +181,34 @@ public class UserServiceImpl implements UserService {
         return users.stream()
                 .map(user -> new UserDTO(user.getId(), user.getUsername()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void addFriend(UserEntity user, UserEntity friend) {
+        user.getFriends().add(friend);
+        friend.getFriends().add(user);
+
+        userRepository.save(user);
+        userRepository.save(friend);
+    }
+
+    @Override
+    public void removeFriend(UserEntity user, UserEntity friend) {
+        user.getFriends().remove(friend);
+        friend.getFriends().remove(user);
+
+        userRepository.save(user);
+        userRepository.save(friend);
+    }
+
+    @Override
+    public Set<UserEntity> getFriends(UserEntity user) {
+        return user.getFriends();
+    }
+
+    @Override
+    public boolean areFriends(UserEntity user, UserEntity friend) {
+        return user.getFriends().contains(friend) && friend.getFriends().contains(user);
     }
 }
 
