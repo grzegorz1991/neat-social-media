@@ -35,8 +35,8 @@ function filterSearchFunction() {
     var rows = table.find('tbody tr');
 
     rows.each(function () {
-        var usernameCell = $(this).find('td:first-child'); // Assuming the username is in the first column
-        var username = usernameCell.text().toUpperCase();
+        var userColumn = $(this).find('td:nth-child(2)'); // Assuming the "User" column is the second column
+        var username = userColumn.find('span').text().toUpperCase();
 
         if (username.indexOf(filter) > -1) {
             $(this).show();
