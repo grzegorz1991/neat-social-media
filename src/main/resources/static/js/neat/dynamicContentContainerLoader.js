@@ -87,12 +87,22 @@ function attachButtonClickListeners() {
             handleNextInboxButtonClick(currentPage, totalPages);
 
         } else if (buttonId === "reply") {
-            console.log("reply button");
+            var recipientId = $('#reply').data('recipient-id');
+            console.log("Reply button clicked with recipient: " + recipientId);
+            loadDynamicContent(`/home/replyMessage-fragment?reply=${recipientId}`);
+
 
         } else if (buttonId === "archiveIncomingMessage") {
             const messageId = $('#archiveIncomingMessage').data('message-id');
-            showArchiveConfirmation(messageId);
+            showArchiveConfirmation(messageId , "receiver");
+
+        } else if (buttonId === "archiveOutgoingMessage"){
+            const messageId = $('#archiveOutgoingMessage').data('message-id');
+            showArchiveConfirmation(messageId, "sender");
         }
+
+
+
 
     }
 }
@@ -107,8 +117,9 @@ function attachRowListener(selector, clickHandler) {
     });
 }
 
-
 function loadDynamicContent(endpoint) {
+
+
     pageHistory.push(endpoint);
     console.log(endpoint);
     fetch(endpoint)
@@ -118,7 +129,7 @@ function loadDynamicContent(endpoint) {
             attachButtonClickListeners();
             attachRowListener('.clickable-row, .outbox-row', handleOutboxRowClick);
             attachRowListener('.read-message, .unread-message', handleInboxRowClick);
-
+            attachRowListener('.archive-row', handleArchiveRowClick);
             fetchUserList();
             updateUnreadMessagesCount();
             updateUnreadMessagesDropdown();
@@ -130,14 +141,25 @@ function loadDynamicContent(endpoint) {
 
 function handleInboxRowClick(row) {
     const messageId = row.dataset.messageId;
-
     loadInboxMessagesDetailsFragment(messageId);
+    console.log("inbox row clicked");
 }
 
 function handleOutboxRowClick(row) {
     const messageId = row.dataset.messageId;
+   loadOutboxMessagesDetailsFragment(messageId);
+    console.log("outbox row clicked");
+}
+function handleArchiveRowClick(row) {
+    const messageId = row.dataset.messageId;
+    loadArchivedMessagesDetailsFragment(messageId);
+    console.log("archive row clicked");
+}
 
-    loadOutboxMessagesDetailsFragment(messageId);
+function loadArchivedMessagesDetailsFragment(messageId) {
+    const endpoint = '/home/message-archived-details-fragment';
+    const fullEndpoint = messageId ? `${endpoint}?messageId=${messageId}` : endpoint;
+    return loadDynamicContent(fullEndpoint);
 }
 
 function loadOutboxMessagesDetailsFragment(messageId) {
@@ -378,7 +400,7 @@ function handleFormSubmission(event) {
         });
 }
 
-function showArchiveConfirmation(messageId) {
+function showArchiveConfirmation(messageId, archiveTarget  ) {
     // Show SweetAlert2 popup
     Swal.fire({
         position: top,
@@ -395,12 +417,12 @@ function showArchiveConfirmation(messageId) {
         if (result.isConfirmed) {
             // If the user confirms, make an AJAX request to the controller endpoint
 
-            archiveMessage(messageId);
+            archiveMessage(messageId, archiveTarget );
         }
     });
 }
 
-function archiveMessage(messageId) {
+function archiveMessage(messageId, archiveTarget ) {
     fetch('/home/archive-message/',
         {
             method: 'POST',
@@ -408,7 +430,7 @@ function archiveMessage(messageId) {
                 'Content-Type': 'application/json',
 
             },
-            body: JSON.stringify({messageId}),
+            body: JSON.stringify({messageId, archiveTarget}),
         })
         .then(response => {
             if (response.ok) {

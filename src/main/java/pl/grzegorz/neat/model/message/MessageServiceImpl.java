@@ -2,6 +2,7 @@ package pl.grzegorz.neat.model.message;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import pl.grzegorz.neat.model.user.UserEntity;
 
@@ -106,7 +107,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public void archiveMessageByReceipent(long messageId) {
+    public void archiveMessageByReceiver(long messageId) {
         Optional<MessageEntity> optionalMessage = messageRepository.findById(messageId);
         optionalMessage.ifPresent(message -> {
             message.setRecipentArchived(true);
@@ -129,6 +130,7 @@ public class MessageServiceImpl implements MessageService {
         return messageRepository.findArchivedMessagesBySender(user, PageRequest.of(page, pageSize));
     }
 
+
     @Override
     public Page<MessageEntity> getArchivedMessagesByReceiver(int page, int pageSize, UserEntity user) {
         return messageRepository.findArchivedMessagesByReceiver(user, PageRequest.of(page, pageSize));
@@ -143,6 +145,16 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public List<MessageEntity> getAllNonArchivedMessagesByReceiver(UserEntity user) {
         return messageRepository.findAllNonArchivedMessagesByReceiver(user);
+    }
+
+    @Override
+    public Page<MessageEntity> getAllNonArchivedMessagesBySender(int page, int pageSize,UserEntity user) {
+        return messageRepository.findAllNonArchivedMessagesBySender(user, PageRequest.of(page, pageSize));
+    }
+
+    @Override
+    public Page<MessageEntity> getArchivedMessagesByUser(int page, int pageSize, UserEntity user) {
+        return messageRepository.findArchivedMessagesByUser(user, PageRequest.of(page, pageSize));
     }
 }
 

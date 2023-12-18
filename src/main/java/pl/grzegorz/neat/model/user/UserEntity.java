@@ -54,6 +54,8 @@ public class UserEntity implements UserDetails {
 
 
 
+
+
     private Set<RoleEntity> roles = new HashSet<>(); // Ensure roles is never null
     @Column(columnDefinition = "VARCHAR(255) DEFAULT '/images/avatar/avatar1.png'")
     private String imagePath;
@@ -108,8 +110,7 @@ public class UserEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Return the user's roles as authorities
-        // You may need to customize this based on your application's logic
+
         return getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName()))
                 .collect(Collectors.toList());

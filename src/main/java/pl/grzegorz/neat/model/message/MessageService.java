@@ -1,6 +1,8 @@
 package pl.grzegorz.neat.model.message;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import pl.grzegorz.neat.model.message.MessageEntity;
 import pl.grzegorz.neat.model.user.UserEntity;
@@ -41,7 +43,7 @@ public interface MessageService {
 
     void archiveMessageBySender(long messageId);
 
-    void archiveMessageByReceipent(long messageId);
+    void archiveMessageByReceiver(long messageId);
 
     public Page<MessageEntity> getNonRecipentArchivedMessagesForUser(int page, int pageSize, UserEntity user);
 
@@ -52,7 +54,11 @@ public interface MessageService {
 
     Page<MessageEntity> getArchivedMessagesByReceiver(int page, int pageSize, UserEntity user);
 
+    Page<MessageEntity> getArchivedMessagesByUser(int page, int pageSize, UserEntity user);
+
     List<MessageEntity> getAllNonArchivedMessagesByReceiver(UserEntity user);
+
+    Page<MessageEntity> getAllNonArchivedMessagesBySender(int page, int pageSize, UserEntity user);
 
     List<MessageEntity> getTop5UnreadMessages(UserEntity user);
 }

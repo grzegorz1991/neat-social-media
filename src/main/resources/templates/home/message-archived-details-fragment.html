@@ -4,7 +4,7 @@
     <div class="col-lg-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Message Ibox Details</h4>
+                <h4 class="card-title">Archived Message Details</h4>
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
@@ -35,21 +35,19 @@
                         </tbody>
                     </table>
                 </div>
-
                 <div class="btn-group" role="group" aria-label="Basic example">
                     <button id="goBack" type="button" class="btn btn-outline-secondary2 btn-md">Go Back</button>
-                    <button id="reply" type="button" class="btn btn-outline-secondary2 btn-md"
-                            th:data-recipient-id="${messageEntity.receiver.id}">
-                        Reply
-                    </button>
-
-                    <button id="archiveIncomingMessage" type="button" class="btn btn-outline-secondary2 btn-md"
-                            th:if="${!messageEntity.recipentArchived}" th:data-message-id="${messageEntity.id}">
-                        Archive
-                    </button>
-
                 </div>
+
             </div>
         </div>
     </div>
+
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+
+
 </div>

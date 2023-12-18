@@ -16,24 +16,35 @@
                             <th>#</th>
 
                             <th>Sender</th>
+                            <th>Receiver</th>
                             <th>Title</th>
                             <th>Status</th>
                             <th>Timestamp</th>
+                            <th> Box </th>
                         </tr>
                         </thead>
                         <tbody id="messageTableBody">
-                        <tr th:each="message, stat : ${messages}" th:limit="6" class="outbox-row"
+                        <tr th:each="message, stat : ${messages}" th:limit="6" class="archive-row"
                             data-toggle="collapse" th:data-target="'#accordion-' + ${message.id}"
                             th:data-message-id="${message.id}">
                             <td th:text="${(currentPage * 6) + stat.index + 1}"></td>
 
                             <td th:text="${message.sender.name}"></td>
+                            <td th:text="${message.receiver.name}"></td>
                             <td th:text="${message.title}"></td>
                             <td>
                                 <div th:if="${message.isMessageRead}" th:text="Read"></div>
                                 <div th:unless="${message.isMessageRead}" th:text="Unread"></div>
                             </td>
                             <td th:text="${message.relativeTime}"></td>
+                            <td>
+                                <div th:if="${message.senderArchived and message.sender.id == user.id}">
+                                    Outbox
+                                </div>
+                                <div th:unless="${message.senderArchived and message.sender.id == user.id}">
+                                    Inbox
+                                </div>
+                            </td>
                         </tr>
                         <tr>
                             <td colspan="5" style="padding: 0;">
