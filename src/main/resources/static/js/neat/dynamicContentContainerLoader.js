@@ -28,7 +28,8 @@ function attachNavigationListeners() {
         'archivedMessageDash',
         'newAcquaintanceDash' ,
         'seeAcquaintanceDash',
-        'notificationsDash'
+        'notificationsDash',
+        'notifications'
     ];
 
     navigationItems.forEach(item => {

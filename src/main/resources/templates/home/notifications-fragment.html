@@ -19,8 +19,8 @@
                         </thead>
                         <tbody id="notificationTableBody">
                         <tr th:each="notification, stat : ${notificationList}" th:limit="6"
-                            th:data-notification-id="${notification.id}"
-                            th:class="${notification.isRead} ? 'read-notification' : 'unread-notification'">
+                            th:data-notification-id="${notification.id}">
+
                             <td th:text="${stat.index + 1}"></td>
                             <td th:text="${notification.message}"></td>
 
