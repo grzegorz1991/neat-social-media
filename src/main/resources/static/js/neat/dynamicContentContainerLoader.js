@@ -27,7 +27,8 @@ function attachNavigationListeners() {
         'homeDash',
         'archivedMessageDash',
         'newAcquaintanceDash' ,
-        'seeAcquaintanceDash'
+        'seeAcquaintanceDash',
+        'notificationsDash'
     ];
 
     navigationItems.forEach(item => {
@@ -274,6 +275,8 @@ function updateUnreadNotificationsDropdown() {
     // Make an AJAX request to get the latest unread notifications
     $.get('/get-latest-unread-notifications')
         .done(function (data) {
+
+
             // Select the notifications container
             var notificationsContainer = $('#notificationContainer');
 
@@ -284,11 +287,12 @@ function updateUnreadNotificationsDropdown() {
             if (data.length > 0) {
                 // Update the rows with the latest unread notifications
                 data.forEach(function (notification) {
+                    var iconClass = getBellIconClass(notification.notificationType);
                     var row = `
                         <a class="dropdown-item preview-item" data-notification-id="${notification.id}">
                             <div class="preview-thumbnail">
                                 <div class="preview-icon bg-dark rounded-circle">
-                                    <i class="mdi mdi-bell"></i>
+                                    <i class="${iconClass}"></i>
                                 </div>
                             </div>
                             <div class="preview-item-content">
@@ -309,7 +313,17 @@ function updateUnreadNotificationsDropdown() {
             console.error("Error fetching unread notifications:", error);
         });
 }
-
+function getBellIconClass(notificationType) {
+    switch (notificationType) {
+        case 'ALERT':
+            return 'mdi mdi-alert-circle-outline';
+        case 'INFORMATION':
+            return 'mdi mdi-information-outline';
+        // Add more cases for other enum values as needed
+        default:
+            return 'mdi mdi-newspaper';
+    }
+}
 
 function updateUnreadMessagesCount() {
 

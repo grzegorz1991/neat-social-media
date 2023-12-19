@@ -57,7 +57,8 @@ public class NotificationServiceImpl  implements NotificationService{
 
     @Override
     public NotificationEntity createFriendRequestNotification(UserEntity sender, UserEntity recipient) {
-        NotificationEntity notification = new NotificationEntity(sender, recipient, NotificationEntity.FriendRequestStatus.PENDING);
+        NotificationEntity notification = new NotificationEntity(sender, recipient, NotificationEntity.FriendRequestStatus.PENDING, NotificationEntity.NotificationType.ALERT);
+
         return notificationRepository.save(notification);
     }
 

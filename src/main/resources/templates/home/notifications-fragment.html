@@ -1,0 +1,39 @@
+<div id="notificationList" class="container">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">
+                    Notifications: <span id="notificationSize" th:text="${notificationSize}"></span>
+                </h4>
+
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+
+                            <th>Message</th>
+
+                            <th>Timestamp</th>
+                        </tr>
+                        </thead>
+                        <tbody id="notificationTableBody">
+                        <tr th:each="notification, stat : ${notificationList}" th:limit="6"
+                            th:data-notification-id="${notification.id}"
+                            th:class="${notification.isRead} ? 'read-notification' : 'unread-notification'">
+                            <td th:text="${stat.index + 1}"></td>
+                            <td th:text="${notification.message}"></td>
+
+                            <td th:text="${notification.relativeTime}"></td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="btn-group" role="group" aria-label="Basic example">
+                <button id="goBack" type="button" class="btn btn-outline-secondary2 btn-md">Go Back</button>
+            </div>
+        </div>
+    </div>
+</div>
