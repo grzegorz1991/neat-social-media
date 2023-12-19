@@ -37,15 +37,16 @@ public interface UserService {
 
     boolean existsByEmail(String email);
 
-     List<UserDTO> getAllUsersDTO();
+    List<UserDTO> getAllUsersDTO();
 
-     void addFriend(UserEntity user, UserEntity friend);
+    void addFriend(UserEntity user, UserEntity friend);
 
-     void removeFriend(UserEntity user, UserEntity friend);
+    void removeFriend(UserEntity user, UserEntity friend);
 
-     Set<UserEntity> getFriends (UserEntity user);
+    Set<UserEntity> getFriends(UserEntity user);
 
-     boolean areFriends(UserEntity user, UserEntity friend);
+    boolean areFriends(UserEntity user, UserEntity friend);
 
+    void updateUserLastSeen(Long userId);
 
 }

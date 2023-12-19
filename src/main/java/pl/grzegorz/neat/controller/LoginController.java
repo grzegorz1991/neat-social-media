@@ -17,6 +17,11 @@ public class LoginController {
     @Autowired
     UserService userService;
 
+//    @GetMapping("/login")
+//    public String login() {
+//        return "login";
+//    }
+
     @GetMapping("/login")
     public String showLoginForm(@RequestParam(value = "error", required = false) String error, Model model) {
         if (error != null) {

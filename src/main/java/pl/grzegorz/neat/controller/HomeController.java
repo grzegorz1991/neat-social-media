@@ -3,6 +3,7 @@ package pl.grzegorz.neat.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -108,6 +109,14 @@ public class HomeController {
 
     @GetMapping("/home/home-fragment")
     public String getDefaultFragment() {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+        UserEntity loggedUser =  userDetails.getUser();
+        userService.updateUserLastSeen(loggedUser.getId());
+
+
         return "/home/home-default";
     }
     private void setRelativeTime(List<MessageEntity> messages) {

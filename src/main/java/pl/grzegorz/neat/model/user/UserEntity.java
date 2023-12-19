@@ -10,6 +10,7 @@ import pl.grzegorz.neat.model.role.RoleEntity;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -71,6 +72,18 @@ public class UserEntity implements UserDetails {
 
     @Column(columnDefinition = "VARCHAR(255) DEFAULT '/images/avatar/avatar1.png'")
     private String imagePath;
+
+    @Column(name = "last_seen")
+    private LocalDateTime lastSeen;
+
+    public LocalDateTime getLastSeen() {
+        return lastSeen;
+    }
+
+    public void setLastSeen(LocalDateTime lastSeen) {
+        System.out.println("last seen updated to: " + lastSeen);
+        this.lastSeen = lastSeen;
+    }
 
     public String getImagePath() {
         return imagePath;
@@ -162,5 +175,26 @@ public class UserEntity implements UserDetails {
 
     public void setSurname(String surname) {
         this.surname = surname;
+    }
+
+    private String relativeTime;
+
+    public String getRelativeTime() {
+        return relativeTime;
+    }
+
+    public void setRelativeTime(String relativeTime) {
+        this.relativeTime = relativeTime;
+    }
+
+    @Column(name = "active")
+    private boolean active;
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

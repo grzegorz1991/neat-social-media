@@ -7,6 +7,7 @@ import pl.grzegorz.neat.model.role.RoleEntity;
 import pl.grzegorz.neat.model.role.RoleRepository;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -209,6 +210,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean areFriends(UserEntity user, UserEntity friend) {
         return user.getFriends().contains(friend) && friend.getFriends().contains(user);
+    }
+
+    @Override
+    public void updateUserLastSeen(Long userId) {
+        UserEntity user = userRepository.findById(userId).orElse(null);
+        if (user != null) {
+            user.setLastSeen(LocalDateTime.now());
+            user.setActive(true);
+            userRepository.save(user);
+        }
     }
 }
 

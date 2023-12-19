@@ -122,6 +122,8 @@ function attachRowListener(selector, clickHandler) {
     });
 }
 
+
+
 function loadDynamicContent(endpoint) {
 
 
@@ -135,6 +137,7 @@ function loadDynamicContent(endpoint) {
             attachRowListener('.clickable-row, .outbox-row', handleOutboxRowClick);
             attachRowListener('.read-message, .unread-message', handleInboxRowClick);
             attachRowListener('.archive-row', handleArchiveRowClick);
+            attachRowListener('.user-row', handleAcquaintancesRowClick);
             fetchUserList();
             updateUnreadMessagesCount();
             updateUnreadMessagesDropdown();
@@ -161,6 +164,19 @@ function handleArchiveRowClick(row) {
     loadArchivedMessagesDetailsFragment(messageId);
     console.log("archive row clicked");
 }
+
+
+function handleAcquaintancesRowClick(row) {
+    const userId = row.dataset.userId;
+    loadAcquintanceProfileDetailsFragment(userId);
+    console.log("clisked" + userId);
+}
+function loadAcquintanceProfileDetailsFragment(userId) {
+    const endpoint = '/home/acquintanceprofile-details-fragment.html';
+    const fullEndpoint = userId ? `${endpoint}?userId=${userId}` : endpoint;
+    return loadDynamicContent(fullEndpoint);
+}
+
 
 function loadArchivedMessagesDetailsFragment(messageId) {
     const endpoint = '/home/message-archived-details-fragment';
@@ -215,12 +231,13 @@ function updateUnreadMessagesDropdown() {
             if (data.length > 0) {
                 // Update the rows with the latest unread messages
                 data.forEach(function (message) {
+
                     var row = `
                         <div class="dropdown-item preview-item" data-message-id="${message.messageId}">
                             
                                 <div class="preview-thumbnail">
-                                    
-                                    <img src="${message.sender.imagePath}" alt="imaget" class="rounded-circle profile-pic">
+                                    <img src="${message.sender.imagePath}" alt="imaget" 
+                                    class="rounded-circle profile-pic ${(message.sender.isActive) ? 'active' : ''}">
                                 </div>
                                 <div class="preview-item-content">
                                     <p class="preview-subject ellipsis mb-1">${message.title}</p>

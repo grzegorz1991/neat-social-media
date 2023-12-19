@@ -3,9 +3,7 @@
         <div class="card">
             <div class="card-body">
 
-                <h4 class="card-title">
-                    Reply
-                </h4>
+                <h4 class="card-title" th:text="'Send Message to ' + ${reciepentName}"></h4>
 
                 <form id="messageForm" class="forms-sample" th:action="@{/send-message}" method="post" onsubmit="handleFormSubmission(event)">
 
@@ -14,14 +12,13 @@
                             <label for="inputTitle">Title</label>
                             <input type="text" class="form-control" id="inputTitle" name="title" placeholder="Title">
                         </div>
+                        <!--
                         <div class="col">
                             <label >Recipient</label>
                             <div id="recipientTypeahead">
-                                <!-- Use th:value to pre-fill the recipient field -->
-
                                 <span class="form-control typeahead" style="width: 100%" th:text="${reciepentName}">Recipient Name</span>
                             </div>
-                        </div>
+                        </div>-->
                     </div>
 
                     <div class="form-group">
