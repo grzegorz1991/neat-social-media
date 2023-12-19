@@ -140,7 +140,9 @@ function loadDynamicContent(endpoint) {
             attachRowListener('.user-row', handleAcquaintancesRowClick);
             fetchUserList();
             updateUnreadMessagesCount();
+            updateUnreadNotificationsCount();
             updateUnreadMessagesDropdown();
+            updateUnreadNotificationsDropdown();
             filterSearchFunction();
         })
         .catch(error => {
@@ -268,6 +270,47 @@ function updateUnreadMessagesDropdown() {
         });
 }
 
+function updateUnreadNotificationsDropdown() {
+    // Make an AJAX request to get the latest unread notifications
+    $.get('/get-latest-unread-notifications')
+        .done(function (data) {
+            // Select the notifications container
+            var notificationsContainer = $('#notificationContainer');
+
+            // Clear the existing notifications in the container
+            notificationsContainer.empty();
+
+            // Check if there are any unread notifications
+            if (data.length > 0) {
+                // Update the rows with the latest unread notifications
+                data.forEach(function (notification) {
+                    var row = `
+                        <a class="dropdown-item preview-item" data-notification-id="${notification.id}">
+                            <div class="preview-thumbnail">
+                                <div class="preview-icon bg-dark rounded-circle">
+                                    <i class="mdi mdi-bell"></i>
+                                </div>
+                            </div>
+                            <div class="preview-item-content">
+                                <p class="preview-subject ellipsis mb-1">${notification.message}</p>
+                                <!-- Add any additional information you want to display -->
+                            </div>
+                            <div class="dropdown-divider"></div>
+                        </a>`;
+
+                    notificationsContainer.append(row);
+                });
+
+                // Attach event listeners after appending new elements
+                attachLatestNotificationsRowListener();
+            }
+        })
+        .fail(function (error) {
+            console.error("Error fetching unread notifications:", error);
+        });
+}
+
+
 function updateUnreadMessagesCount() {
 
     $.get('/get-unread-messages-count', function (data) {
@@ -284,17 +327,36 @@ function updateUnreadMessagesCount() {
     });
 }
 
+function updateUnreadNotificationsCount() {
+
+    $.get('/get-unread-notifications-count', function (data) {
+        // Update the content of the span with the received data
+        $('#unreadNotificationsCount').text(data);
+        console.log("Number is :" + data);
+
+        if (data > 0) {
+            $('#unreadNotificationsCount').addClass('bg-danger');
+        } else {
+            $('#unreadNotificationsCount').removeClass('bg-danger');
+        }
+
+    });
+}
+
 // Call the function when the page loads
 $(document).ready(function () {
+
     updateUnreadMessagesCount();
     updateUnreadMessagesDropdown();
-
+    updateUnreadNotificationsCount();
+    updateUnreadNotificationsDropdown();
     const messageDropdown = $('#messageDropdown');
 
     // Use Bootstrap's show.bs.dropdown event
     messageDropdown.on('click', function () {
 
         updateUnreadMessagesDropdown();
+        updateUnreadNotificationsDropdown();
     });
 });
 

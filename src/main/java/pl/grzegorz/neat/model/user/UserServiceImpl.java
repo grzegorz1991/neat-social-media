@@ -3,6 +3,7 @@ package pl.grzegorz.neat.model.user;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.grzegorz.neat.model.notification.NotificationService;
 import pl.grzegorz.neat.model.role.RoleEntity;
 import pl.grzegorz.neat.model.role.RoleRepository;
 
@@ -19,11 +20,14 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
+    private final NotificationService notificationService;
 
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, NotificationService notificationService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.notificationService = notificationService;
     }
     @Override
     public UserEntity createUser(UserEntity user) {
@@ -142,6 +146,8 @@ public class UserServiceImpl implements UserService {
         RoleEntity defaultRole = roleRepository.findByName("ROLE_USER")
                 .orElseThrow(() -> new RuntimeException("Default role not found: ROLE_USER"));
         user.getRoles().add(defaultRole);
+
+
 
         return userRepository.save(user);
     }

@@ -156,5 +156,6 @@ public class MessageServiceImpl implements MessageService {
     public Page<MessageEntity> getArchivedMessagesByUser(int page, int pageSize, UserEntity user) {
         return messageRepository.findArchivedMessagesByUser(user, PageRequest.of(page, pageSize));
     }
+
 }
 

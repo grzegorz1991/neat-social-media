@@ -7,10 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import pl.grzegorz.neat.model.message.ArchiveMessageDTO;
-import pl.grzegorz.neat.model.message.MessageEntity;
-import pl.grzegorz.neat.model.message.MessageRequest;
-import pl.grzegorz.neat.model.message.MessageService;
+import pl.grzegorz.neat.model.message.*;
 import pl.grzegorz.neat.model.user.CustomUserDetails;
 import pl.grzegorz.neat.model.user.UserDTO;
 import pl.grzegorz.neat.model.user.UserEntity;
@@ -20,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static pl.grzegorz.neat.util.RelativeTimeConverter.convertToLocalDateTime;
 
@@ -283,5 +281,29 @@ public class MessageController {
         List<UserDTO> userList = userService.getAllUsersDTO(); // Adjust the method based on your service layer
         System.out.println(userList);
         return ResponseEntity.ok(userList);
+    }
+
+    @GetMapping("/get-latest-unread-messages")
+    public ResponseEntity<List<MessageDTO>> getLatestUnreadMessages(Authentication authentication) {
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        UserEntity user = userDetails.getUser();
+
+        List<MessageEntity> latestUnreadMessages = messageService.getTop5UnreadMessages(user);
+        setRelativeTime(latestUnreadMessages);
+
+        // Convert MessageEntity to MessageDTO if needed
+        List<MessageDTO> latestUnreadMessagesDTO = latestUnreadMessages.stream()
+                .map(message -> new MessageDTO(message.getId(), message.getTitle(), message.getTimestamp(), message.getRelativeTime(), message.getSender(), message.isMessageRead()))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(latestUnreadMessagesDTO);
+    }
+
+    private void setRelativeTime(List<MessageEntity> messages) {
+        for (MessageEntity message : messages) {
+            LocalDateTime timestamp = message.getTimestamp();
+            String relativeTime = convertToLocalDateTime(timestamp);
+            message.setRelativeTime(relativeTime);
+        }
     }
 }
