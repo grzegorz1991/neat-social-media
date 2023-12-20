@@ -111,4 +111,35 @@ public class NotificationController {
         }
     }
 
+    @PostMapping("/home/set-notification-asread/{notificationId}")
+    public ResponseEntity<Void> handleNotificationClick(
+            @PathVariable Long notificationId,
+            @RequestBody NotificationClickRequest request) {
+        // For simplicity, just log that the notification is clicked
+        System.out.println("Notification clicked for ID: " + notificationId);
+
+        // You can perform additional actions based on the notificationId and request data
+
+        return ResponseEntity.ok().build();
+    }
+    private static class NotificationClickRequest {
+        private String type;
+        private String message;
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+    }
 }

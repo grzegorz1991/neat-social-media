@@ -465,7 +465,7 @@ function showArchiveConfirmation(messageId, archiveTarget  ) {
 function handleLatestNotificationClick(notificationId){
     fetchAndShowNotification(notificationId);
 };
-javascript
+
 
 function fetchAndShowNotification(notificationId) {
     fetch(`/home/get-notification-content/${notificationId}`)
@@ -488,8 +488,29 @@ function fetchAndShowNotification(notificationId) {
 }
 
 function showNotificationContentPopup(notificationDTO) {
-    const { type, message } = notificationDTO;
-    console.log(type + "TYPE");
+    const {notificationId, type, message } = notificationDTO;
+    console.log(type + "TYPE " + notificationId + " ID");
+    sendNotificationClickToBackend(notificationId);
+    // Make a backend call when the user clicks on the notification
+    function sendNotificationClickToBackend(notificationId) {
+        console.log("notificationID" + notificationId);
+        // Replace 'your-backend-endpoint' with the actual URL of your backend endpoint
+        fetch(`/home/set-notification-asread/${notificationId}`, {
+
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            // You can pass additional data in the request body if needed
+            body: JSON.stringify({ type, message }),
+        })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+
+
     // Use the type to determine the behavior
     switch (type) {
         case 'REQUEST':
@@ -530,22 +551,57 @@ function showOtherPopup(message) {
         showConfirmButton: true,
         confirmButtonText: 'OK',
         icon: 'info',
+        iconColor: '#ffab00',
         color: "#495057",
         background: "#495057"
     });
 }
 
 function showRequestPopup(message) {
-    // Custom logic for displaying an info popup
+    // Custom logic for displaying a request popup with three buttons
     Swal.fire({
         title: 'Request Notification',
         html: message,
+        showCancelButton: true,
+        showDenyButton: true,
         showConfirmButton: true,
-        confirmButtonText: 'OK',
+        confirmButtonText: 'Accept',
+        denyButtonText: 'Decline',
+        cancelButtonText: 'Cancel',
         icon: 'info',
+        iconColor: '#00609b',
         color: "#495057",
-        background: "#495057"
+        background: "#495057",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // User clicked Accept
+            handleAcceptRequest();
+        } else if (result.isDenied) {
+            // User clicked Decline
+            handleDeclineRequest();
+        } else {
+            // User clicked Cancel or closed the popup
+            handleCancelRequest();
+        }
     });
+}
+
+// Function to handle Accept request
+function handleAcceptRequest() {
+    console.log('Accepted request');
+    // Add your custom logic here
+}
+
+// Function to handle Decline request
+function handleDeclineRequest() {
+    console.log('Declined request');
+    // Add your custom logic here
+}
+
+// Function to handle Cancel request
+function handleCancelRequest() {
+    console.log('Cancelled request');
+    // Add your custom logic here
 }
 function showInformationPopup(message) {
     // Custom logic for displaying an info popup
@@ -555,21 +611,33 @@ function showInformationPopup(message) {
         showConfirmButton: true,
         confirmButtonText: 'OK',
         icon: 'info',
+        iconColor: '#8f5fe8',
         color: "#495057",
+        iconColor: '#28a745',
         background: "#495057"
     });
 }
 
 function showAlertPopup(message) {
-    // Custom logic for displaying a warning popup
+    // Custom logic for displaying an alert popup with a progress bar
     Swal.fire({
-        title: 'Warning Notification',
+        title: 'Alert Notification',
         html: message,
-        showConfirmButton: true,
-        confirmButtonText: 'OK',
         icon: 'warning',
-        color: "#495057",
-        background: "#495057"
+        iconColor: '#fc424a',
+        showConfirmButton: false, // Hide the default "OK" button
+        timer: 3000, // Auto-close after 3 seconds
+        timerProgressBar: true, // Display a progress bar
+        onBeforeOpen: () => {
+            Swal.showLoading(); // Show loading animation
+        },
+        onClose: () => {
+            Swal.hideLoading(); // Hide loading animation on close
+            // Optional: Add any custom logic to execute when the popup is closed
+            console.log('Alert notification closed');
+        },
+        //color: "#495057",
+        background: "#495057",
     });
 }
 
