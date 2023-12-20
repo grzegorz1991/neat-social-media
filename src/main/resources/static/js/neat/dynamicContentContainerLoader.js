@@ -34,15 +34,12 @@ function attachNavigationListeners() {
 
     navigationItems.forEach(item => {
         const elements = Array.isArray(item) ? item.map(subItem => document.getElementById(subItem)) : [document.getElementById(item)];
-
         elements.forEach(element => {
             if (element) {
                 element.addEventListener('click', () => {
                     const endpoint = Array.isArray(item) ?
                         `${API_BASE_URL}/${element.id.replace('Dash', '').toLowerCase()}-fragment` :
                         `${API_BASE_URL}/${item.replace('Dash', '').toLowerCase()}-fragment`;
-
-
                     loadDynamicContent(endpoint);
                 });
             }
@@ -95,7 +92,6 @@ function attachButtonClickListeners() {
 
         } else if (buttonId === "reply") {
             var recipientId = $('#reply').data('recipient-id');
-            console.log("Reply button clicked with recipient: " + recipientId);
             loadDynamicContent(`/home/replyMessage-fragment?reply=${recipientId}`);
 
 
@@ -107,10 +103,6 @@ function attachButtonClickListeners() {
             const messageId = $('#archiveOutgoingMessage').data('message-id');
             showArchiveConfirmation(messageId, "sender");
         }
-
-
-
-
     }
 }
 
@@ -125,12 +117,10 @@ function attachRowListener(selector, clickHandler) {
 }
 
 
-
 function loadDynamicContent(endpoint) {
 
-
     pageHistory.push(endpoint);
-    console.log(endpoint);
+   // console.log(endpoint);
     fetch(endpoint)
         .then(response => response.text())
         .then(content => {
@@ -155,51 +145,40 @@ function loadDynamicContent(endpoint) {
 function handleInboxRowClick(row) {
     const messageId = row.dataset.messageId;
     loadInboxMessagesDetailsFragment(messageId);
-    console.log("inbox row clicked");
 }
 
 function handleOutboxRowClick(row) {
-    const messageId = row.dataset.messageId;
+   const messageId = row.dataset.messageId;
    loadOutboxMessagesDetailsFragment(messageId);
-    console.log("outbox row clicked");
 }
 function handleArchiveRowClick(row) {
     const messageId = row.dataset.messageId;
     loadArchivedMessagesDetailsFragment(messageId);
-    console.log("archive row clicked");
 }
-
-
 function handleAcquaintancesRowClick(row) {
     const userId = row.dataset.userId;
     loadAcquintanceProfileDetailsFragment(userId);
-    console.log("clisked" + userId);
 }
 function loadAcquintanceProfileDetailsFragment(userId) {
     const endpoint = '/home/acquintanceprofile-details-fragment.html';
     const fullEndpoint = userId ? `${endpoint}?userId=${userId}` : endpoint;
     return loadDynamicContent(fullEndpoint);
 }
-
-
 function loadArchivedMessagesDetailsFragment(messageId) {
     const endpoint = '/home/message-archived-details-fragment';
     const fullEndpoint = messageId ? `${endpoint}?messageId=${messageId}` : endpoint;
     return loadDynamicContent(fullEndpoint);
 }
-
 function loadOutboxMessagesDetailsFragment(messageId) {
     const endpoint = '/home/message-outbox-details-fragment';
     const fullEndpoint = messageId ? `${endpoint}?messageId=${messageId}` : endpoint;
     return loadDynamicContent(fullEndpoint);
 }
-
 function loadInboxMessagesDetailsFragment(messageId) {
     const endpoint = '/home/message-inbox-details-fragment';
     const fullEndpoint = messageId ? `${endpoint}?messageId=${messageId}` : endpoint;
     return loadDynamicContent(fullEndpoint);
 }
-
 function goBack() {
     if (pageHistory.length > 1) {
         const currentEndpoint = pageHistory.pop();
@@ -216,27 +195,16 @@ function goBack() {
     }
 }
 
-
 function updateUnreadMessagesDropdown() {
-
-    // Make an AJAX request to get the latest unread messages
     $.get('/get-latest-unread-messages')
         .done(function (data) {
-
-
             // Select the messages container
             var messagesContainer = $('#messageContainer');
-
-            // Clear the existing messages in the container
             messagesContainer.empty();
-
-
-            // Check if there are any unread messages
             if (data.length > 0) {
-                // Update the rows with the latest unread messages
                 data.forEach(function (message) {
-
                     var row = `
+                        <div class="dropdown-divider"></div>
                         <div class="dropdown-item preview-item" data-message-id="${message.messageId}">
                             
                                 <div class="preview-thumbnail">
@@ -254,15 +222,10 @@ function updateUnreadMessagesDropdown() {
 
                     messagesContainer.append(row);
                 });
-
-                // Attach event listeners after appending new elements
                 attachLatestMessagesRowListener();
             }
-
-            // Remove read messages from the container
             data.forEach(function (message) {
                 if (message.read) {
-
                     messagesContainer.find('[data-message-id="' + message.messageId + '"]').remove();
                 }
             });
@@ -272,24 +235,19 @@ function updateUnreadMessagesDropdown() {
         });
 }
 
+
+
 function updateUnreadNotificationsDropdown() {
-    // Make an AJAX request to get the latest unread notifications
     $.get('/get-latest-unread-notifications')
         .done(function (data) {
 
-
-            // Select the notifications container
             var notificationsContainer = $('#notificationContainer');
-
-            // Clear the existing notifications in the container
-            notificationsContainer.empty();
-
-            // Check if there are any unread notifications
+                notificationsContainer.empty();
             if (data.length > 0) {
-                // Update the rows with the latest unread notifications
                 data.forEach(function (notification) {
                     var iconClass = getBellIconClass(notification.notificationType);
                     var row = `
+                        <div class="dropdown-divider"></div>
                         <a class="dropdown-item preview-item" data-notification-id="${notification.id}">
                             <div class="preview-thumbnail">
                                 <div class="preview-icon bg-dark rounded-circle">
@@ -297,8 +255,7 @@ function updateUnreadNotificationsDropdown() {
                                 </div>
                             </div>
                             <div class="preview-item-content">
-                                <p class="preview-subject ellipsis mb-1">${notification.message}</p>
-                                <!-- Add any additional information you want to display -->
+                                <p class="preview-subject ellipsis mb-1">${notification.message}</p>                                
                             </div>
                             <div class="dropdown-divider"></div>
                         </a>`;
@@ -306,7 +263,6 @@ function updateUnreadNotificationsDropdown() {
                     notificationsContainer.append(row);
                 });
 
-                // Attach event listeners after appending new elements
                 attachLatestNotificationsRowListener();
             }
         })
@@ -317,48 +273,50 @@ function updateUnreadNotificationsDropdown() {
 function getBellIconClass(notificationType) {
     switch (notificationType) {
         case 'ALERT':
-            return 'mdi mdi-alert-circle-outline';
+            return 'mdi mdi-alert-circle-outline text-danger';
         case 'INFORMATION':
-            return 'mdi mdi-information-outline';
-        // Add more cases for other enum values as needed
+            return 'mdi mdi-information-outline text-success';
+        case 'REQUEST':
+            return 'mdi mdi-account-plus text-info';
         default:
-            return 'mdi mdi-newspaper';
+            return 'mdi mdi-newspaper text-warning';
     }
 }
 
 function updateUnreadMessagesCount() {
 
     $.get('/get-unread-messages-count', function (data) {
-        // Update the content of the span with the received data
-        $('#unreadMessagesCount').text(data);
+
+
         $('#unreadMessagesCount2').text(data);
 
         if (data > 0) {
+            $('#displayUnreadMessagesCount').text(data);
             $('#unreadMessagesCount').addClass('bg-success');
         } else {
+            $('#displayUnreadMessagesCount').text('');
             $('#unreadMessagesCount').removeClass('bg-success');
-        }
 
+        }
     });
 }
 
 function updateUnreadNotificationsCount() {
 
     $.get('/get-unread-notifications-count', function (data) {
-        // Update the content of the span with the received data
-        $('#unreadNotificationsCount').text(data);
+
         console.log("Number is :" + data);
 
         if (data > 0) {
+            $('#displayUnreadNotificationsCount').text(data);
             $('#unreadNotificationsCount').addClass('bg-danger');
         } else {
+            $('#displayUnreadNotificationsCount').text('');
             $('#unreadNotificationsCount').removeClass('bg-danger');
         }
 
     });
 }
-
-// Call the function when the page loads
 $(document).ready(function () {
 
     updateUnreadMessagesCount();
@@ -404,62 +362,45 @@ function handleNextInboxButtonClick(currentPage, totalPages) {
 }
 
 function updateOutboxPage(currentPage, totalPages) {
-
-    // Perform an AJAX request to retrieve the next or previous page
-
     $.ajax({
         url: "/home/sentmessage-fragment?page=" + currentPage,
         success: function (data) {
 
-            // Parse the HTML response to extract the table body
             const tableFragment = $(data).find('#messageTableBody');
 
-            // Update the table body with the new messages
             $("#messageTableBody").html(tableFragment.html());
-            //
-            // Update the spans with the new values
             $('#currentPageSpan').text(currentPage);
             $('#totalPagesSpan').text(totalPages);
             let pageNumber = currentPage + 1;
-            //
+
             $('#currentPageSpan2').text(pageNumber);
             $('#totalPagesSpan2').text(totalPages);
-            //
+
             attachRowListener('.clickable-row, .outbox-row', handleOutboxRowClick);
             attachRowListener('.read-message, .unread-message', handleInboxRowClick);
-
         }
-
     });
 }
 
 function updateInboxPage(currentPage, totalPages) {
-
-    // Perform an AJAX request to retrieve the next or previous page
-
     $.ajax({
         url: "/home/showinbox-fragment?page=" + currentPage,
         success: function (data) {
 
-            // Parse the HTML response to extract the table body
             const tableFragment = $(data).find('#messageTableBody');
 
-            // Update the table body with the new messages
             $("#messageTableBody").html(tableFragment.html());
-            //
-            // Update the spans with the new values
+
             $('#currentPageSpan').text(currentPage);
             $('#totalPagesSpan').text(totalPages);
             let pageNumber = currentPage + 1;
-            //
+
             $('#currentPageSpan2').text(pageNumber);
             $('#totalPagesSpan2').text(totalPages);
-            //
+
             attachRowListener('.clickable-row, .outbox-row', handleOutboxRowClick);
             attachRowListener('.read-message, .unread-message', handleInboxRowClick);
-
         }
-
     });
 }
 
@@ -521,6 +462,121 @@ function showArchiveConfirmation(messageId, archiveTarget  ) {
         }
     });
 }
+function handleLatestNotificationClick(notificationId){
+    fetchAndShowNotification(notificationId);
+};
+javascript
+
+function fetchAndShowNotification(notificationId) {
+    fetch(`/home/get-notification-content/${notificationId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error fetching notification content. Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Assuming data is the notificationDTO, you can use it as needed
+            const notificationDTO = data;
+
+            // Display the notification content based on type
+            showNotificationContentPopup(notificationDTO);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
+function showNotificationContentPopup(notificationDTO) {
+    const { type, message } = notificationDTO;
+    console.log(type + "TYPE");
+    // Use the type to determine the behavior
+    switch (type) {
+        case 'REQUEST':
+            showRequestPopup(message);
+            break;
+
+        case 'INFORMATION':
+            showInformationPopup(message);
+            break;
+
+        case 'ALERT':
+            showAlertPopup(message);
+            break;
+        case 'OTHER':
+            showOtherPopup(message);
+            break;
+        // Add more cases as needed for different types
+        default:
+            // Default behavior if type is not recognized
+            Swal.fire({
+                title: 'Notification Content',
+                html: message,
+                showConfirmButton: true,
+                confirmButtonText: 'OK',
+                icon: 'info',
+                color: "#495057",
+                background: "#495057"
+            });
+            break;
+    }
+}
+
+function showOtherPopup(message) {
+    // Custom logic for displaying an info popup
+    Swal.fire({
+        title: 'Other Notification',
+        html: message,
+        showConfirmButton: true,
+        confirmButtonText: 'OK',
+        icon: 'info',
+        color: "#495057",
+        background: "#495057"
+    });
+}
+
+function showRequestPopup(message) {
+    // Custom logic for displaying an info popup
+    Swal.fire({
+        title: 'Request Notification',
+        html: message,
+        showConfirmButton: true,
+        confirmButtonText: 'OK',
+        icon: 'info',
+        color: "#495057",
+        background: "#495057"
+    });
+}
+function showInformationPopup(message) {
+    // Custom logic for displaying an info popup
+    Swal.fire({
+        title: 'Info Notification',
+        html: message,
+        showConfirmButton: true,
+        confirmButtonText: 'OK',
+        icon: 'info',
+        color: "#495057",
+        background: "#495057"
+    });
+}
+
+function showAlertPopup(message) {
+    // Custom logic for displaying a warning popup
+    Swal.fire({
+        title: 'Warning Notification',
+        html: message,
+        showConfirmButton: true,
+        confirmButtonText: 'OK',
+        icon: 'warning',
+        color: "#495057",
+        background: "#495057"
+    });
+}
+
+
+
+
+
 
 function archiveMessage(messageId, archiveTarget ) {
     fetch('/home/archive-message/',
@@ -561,7 +617,14 @@ function showSuccessConfirmation() {
         goBack();
     });
 }
+function attachLatestNotificationsRowListener() {
 
+    $('.preview-item').on('click', function () {
+        var notificationId = $(this).data('notification-id');
+        console.log("notification:" + notificationId);
+        handleLatestNotificationClick(notificationId);
+    });
+}
 function attachLatestMessagesRowListener() {
 
     const latestMessagesRows = document.querySelectorAll('.preview-item');
@@ -578,7 +641,6 @@ function handleLatestMessagesRowClick(row) {
 
     loadInboxMessagesDetailsFragment(messageId);
 }
-
 
 // Function to initialize Typeahead.js
 function initializeRecipientTypeahead() {
@@ -607,8 +669,6 @@ function initializeRecipientTypeahead() {
         console.log("Receiver ID: " + recipientId);
     });
 }
-
-
 // Move the initializeRecipientTypeahead call inside the success callback
 function fetchUserList() {
     $.ajax({

@@ -135,7 +135,7 @@ public class NotificationEntity {
     }
 
     public enum NotificationType {
-        ALERT, INFORMATION, OTHER
+        ALERT, INFORMATION, REQUEST, OTHER
     }
 
 

@@ -1,15 +1,17 @@
 package pl.grzegorz.neat.controller;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import pl.grzegorz.neat.model.message.ArchiveMessageDTO;
 import pl.grzegorz.neat.model.message.MessageDTO;
 import pl.grzegorz.neat.model.message.MessageEntity;
+import pl.grzegorz.neat.model.notification.NotificationDTO;
 import pl.grzegorz.neat.model.notification.NotificationEntity;
 import pl.grzegorz.neat.model.notification.NotificationService;
 import pl.grzegorz.neat.model.user.CustomUserDetails;
@@ -74,4 +76,39 @@ public class NotificationController {
             notification.setRelativeTime(relativeTime);
         }
     }
+
+    // New endpoint to get notification content
+//    @GetMapping("/home/get-notification-content/{notificationId}")
+//    @ResponseBody
+//    public ResponseEntity<String> getNotificationContent(@PathVariable Long notificationId) {
+//        try {
+//            // Replace the following line with your actual logic to get notification content
+//            String notificationContent = notificationService.getNotificationById(notificationId).get().getMessage();
+//            return ResponseEntity.ok()
+//                    .contentType(MediaType.TEXT_PLAIN) // Set the content type to plain text
+//                    .body(notificationContent);
+//        } catch (Exception e) {
+//            // Log the exception details for debugging
+//            e.printStackTrace();
+//
+//            // Handle the exception, e.g., log it or return an error response
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving notification content");
+//        }
+//    }
+
+    @GetMapping("/home/get-notification-content/{notificationId}")
+    @ResponseBody
+    public ResponseEntity<NotificationDTO> getNotificationContent(@PathVariable Long notificationId) {
+        try {
+            NotificationEntity notificationEntity = notificationService.getNotificationById(notificationId).orElseThrow();
+            NotificationDTO notificationDTO = NotificationDTO.fromEntity(notificationEntity);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(notificationDTO);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
 }
