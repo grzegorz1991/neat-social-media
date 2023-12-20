@@ -115,10 +115,7 @@ public class NotificationController {
     public ResponseEntity<Void> handleNotificationClick(
             @PathVariable Long notificationId,
             @RequestBody NotificationClickRequest request) {
-        // For simplicity, just log that the notification is clicked
-        System.out.println("Notification clicked for ID: " + notificationId);
-
-        // You can perform additional actions based on the notificationId and request data
+        notificationService.markNotificationAsRead(notificationId);
 
         return ResponseEntity.ok().build();
     }

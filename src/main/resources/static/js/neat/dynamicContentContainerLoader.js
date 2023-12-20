@@ -58,6 +58,71 @@ function attachLogoClickListener() {
     });
 }
 
+function getAcquinted(recipientId) {
+    // Assuming your backend endpoint URL
+    const endpointUrl = "/sendRequest";
+
+    // Make a POST request to your backend with recipientId
+    fetch(endpointUrl, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            recipientId: recipientId,
+        }),
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.text();
+        })
+        .then(data => {
+            console.log("Request successful:", data);
+
+            // Show SweetAlert confirmation with timeout
+            Swal.fire({
+                icon: "success",
+                title: "Success!",
+                text: data,
+                timer: 2500, // Set the timeout in milliseconds
+                showConfirmButton: false,
+                color: "#495057",
+                background: "#495057",
+            });
+        })
+        .catch(error => {
+            console.error("Error during request:", error);
+            // Add your error handling logic here
+        });
+    updateUnreadNotificationsCount();
+    updateUnreadNotificationsDropdown();
+}
+
+
+function handleGetAcquintedButtonClick(recipientId, recipientName) {
+        console.log(recipientName);
+        Swal.fire({
+            title: "Do you want to send a friend request to " + recipientName + "?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            cancelButtonText: "No",
+            color: "#495057",
+            background: "#495057",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                getAcquinted(recipientId);
+            } else if (result.isDenied) {               
+                
+            } else {                
+               
+            }
+        });
+
+}
+
 function attachButtonClickListeners() {
     document.querySelectorAll("#dynamicContentContainer button").forEach(button => {
         button.addEventListener("click", function (event) {
@@ -102,7 +167,13 @@ function attachButtonClickListeners() {
         } else if (buttonId === "archiveOutgoingMessage"){
             const messageId = $('#archiveOutgoingMessage').data('message-id');
             showArchiveConfirmation(messageId, "sender");
+
+        } else if( buttonId === "getAcquinted"){
+            var recipientId = $('#getAcquinted').data('acquaintance-id');
+            var recipientName = $('#getAcquinted').data('acquaintance-name');
+            handleGetAcquintedButtonClick(recipientId, recipientName);
         }
+
     }
 }
 
@@ -133,8 +204,9 @@ function loadDynamicContent(endpoint) {
             fetchUserList();
             updateUnreadMessagesCount();
             updateUnreadNotificationsCount();
-            updateUnreadMessagesDropdown();
             updateUnreadNotificationsDropdown();
+            updateUnreadMessagesDropdown();
+
             filterSearchFunction();
         })
         .catch(error => {
@@ -491,7 +563,7 @@ function showNotificationContentPopup(notificationDTO) {
     const {notificationId, type, message } = notificationDTO;
     console.log(type + "TYPE " + notificationId + " ID");
     sendNotificationClickToBackend(notificationId);
-    // Make a backend call when the user clicks on the notification
+
     function sendNotificationClickToBackend(notificationId) {
         console.log("notificationID" + notificationId);
         // Replace 'your-backend-endpoint' with the actual URL of your backend endpoint
@@ -514,7 +586,7 @@ function showNotificationContentPopup(notificationDTO) {
     // Use the type to determine the behavior
     switch (type) {
         case 'REQUEST':
-            showRequestPopup(message);
+            showRequestPopup(message, notificationId);
             break;
 
         case 'INFORMATION':
@@ -539,8 +611,11 @@ function showNotificationContentPopup(notificationDTO) {
                 color: "#495057",
                 background: "#495057"
             });
+
             break;
     }
+    updateUnreadNotificationsCount();
+    updateUnreadNotificationsDropdown();
 }
 
 function showOtherPopup(message) {
@@ -555,9 +630,10 @@ function showOtherPopup(message) {
         color: "#495057",
         background: "#495057"
     });
+
 }
 
-function showRequestPopup(message) {
+function showRequestPopup(message, notificationId) {
     // Custom logic for displaying a request popup with three buttons
     Swal.fire({
         title: 'Request Notification',
@@ -575,7 +651,7 @@ function showRequestPopup(message) {
     }).then((result) => {
         if (result.isConfirmed) {
             // User clicked Accept
-            handleAcceptRequest();
+            handleAcceptRequest(notificationId);
         } else if (result.isDenied) {
             // User clicked Decline
             handleDeclineRequest();
@@ -587,21 +663,60 @@ function showRequestPopup(message) {
 }
 
 // Function to handle Accept request
-function handleAcceptRequest() {
-    console.log('Accepted request');
-    // Add your custom logic here
+function handleAcceptRequest(notificationId) {
+
+        const endpointUrl = "/acceptRequest";
+        fetch(endpointUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                notificationId: notificationId,
+            }),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.text();
+            })
+            .then(data => {
+                console.log("Accept request successful:", data);
+
+
+                Swal.fire({
+                    icon: "success",
+                    title: "Success!",
+                    text: data,
+                    showConfirmButton: false, // Hide the default "OK" button
+                    timer: 3000, // Auto-close after 3 seconds
+                    timerProgressBar: true, // Display a progress bar
+                    onBeforeOpen: () => {
+                        Swal.showLoading(); // Show loading animation
+                    },
+                    onClose: () => {
+                        Swal.hideLoading(); // Hide loading animation on close
+                    },
+                    background: "#495057",
+                });
+            })
+            .catch(error => {
+                console.error("Error during accept request:", error);
+            });
+
 }
 
 // Function to handle Decline request
 function handleDeclineRequest() {
     console.log('Declined request');
-    // Add your custom logic here
+
 }
 
 // Function to handle Cancel request
 function handleCancelRequest() {
     console.log('Cancelled request');
-    // Add your custom logic here
+
 }
 function showInformationPopup(message) {
     // Custom logic for displaying an info popup
@@ -616,6 +731,7 @@ function showInformationPopup(message) {
         iconColor: '#28a745',
         background: "#495057"
     });
+
 }
 
 function showAlertPopup(message) {
@@ -633,26 +749,16 @@ function showAlertPopup(message) {
         },
         onClose: () => {
             Swal.hideLoading(); // Hide loading animation on close
-            // Optional: Add any custom logic to execute when the popup is closed
-            console.log('Alert notification closed');
         },
-        //color: "#495057",
         background: "#495057",
     });
 }
-
-
-
-
-
-
 function archiveMessage(messageId, archiveTarget ) {
     fetch('/home/archive-message/',
         {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-
             },
             body: JSON.stringify({messageId, archiveTarget}),
         })
@@ -672,7 +778,6 @@ function archiveMessage(messageId, archiveTarget ) {
 
 function showSuccessConfirmation() {
     Swal.fire({
-
         title: 'Success!',
         text: 'Message archived successfully.',
         showConfirmButton: false,
@@ -686,7 +791,6 @@ function showSuccessConfirmation() {
     });
 }
 function attachLatestNotificationsRowListener() {
-
     $('.preview-item').on('click', function () {
         var notificationId = $(this).data('notification-id');
         console.log("notification:" + notificationId);
@@ -694,11 +798,9 @@ function attachLatestNotificationsRowListener() {
     });
 }
 function attachLatestMessagesRowListener() {
-
     const latestMessagesRows = document.querySelectorAll('.preview-item');
     latestMessagesRows.forEach(function (row) {
         row.addEventListener('click', function () {
-
             handleLatestMessagesRowClick(row);
         });
     });
@@ -706,7 +808,6 @@ function attachLatestMessagesRowListener() {
 
 function handleLatestMessagesRowClick(row) {
     const messageId = row.dataset.messageId;
-
     loadInboxMessagesDetailsFragment(messageId);
 }
 

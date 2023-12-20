@@ -26,6 +26,7 @@ public interface NotificationService {
 
     NotificationEntity createGreetingNotification(UserEntity user);
 
-
     List<NotificationEntity> getTop5UnreadNotifications(UserEntity user);
+
+    NotificationEntity updateNotification(NotificationEntity notification);
 }

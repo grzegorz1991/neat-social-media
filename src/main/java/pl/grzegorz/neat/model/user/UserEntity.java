@@ -1,6 +1,7 @@
 
 package pl.grzegorz.neat.model.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -59,6 +60,7 @@ public class UserEntity implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "friend_id")
     )
+    @JsonIgnore
     private Set<UserEntity> friends = new HashSet<>();
 
     public Set<UserEntity> getFriends() {

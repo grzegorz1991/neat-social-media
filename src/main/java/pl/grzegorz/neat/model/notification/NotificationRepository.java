@@ -26,4 +26,6 @@ public interface NotificationRepository extends JpaRepository<NotificationEntity
 
     @Query("SELECT m FROM NotificationEntity m WHERE m.recipient = :user AND m.isRead = false ORDER BY m.timestamp DESC")
     Page<NotificationEntity> findTop5UnreadMessages(UserEntity user, Pageable pageable);
+
+    NotificationEntity save(NotificationEntity notification);
 }

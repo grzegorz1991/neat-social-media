@@ -57,8 +57,8 @@ public class NotificationServiceImpl  implements NotificationService{
 
     @Override
     public NotificationEntity createFriendRequestNotification(UserEntity sender, UserEntity recipient) {
-        NotificationEntity notification = new NotificationEntity(sender, recipient, NotificationEntity.FriendRequestStatus.PENDING, NotificationEntity.NotificationType.ALERT);
-
+        NotificationEntity notification = new NotificationEntity(sender, recipient, NotificationEntity.FriendRequestStatus.PENDING, NotificationEntity.NotificationType.REQUEST);
+        notification.setMessage("User " + recipient.getUsername() + " sends you a Acquintance request.");
         return notificationRepository.save(notification);
     }
 
@@ -77,5 +77,10 @@ public class NotificationServiceImpl  implements NotificationService{
     public List<NotificationEntity> getTop5UnreadNotifications(UserEntity user) {
         Page<NotificationEntity> unreadNotifiationsPage = notificationRepository.findTop5UnreadMessages(user, PageRequest.of(0, 5));
         return unreadNotifiationsPage.getContent();
+    }
+
+    @Override
+    public NotificationEntity updateNotification(NotificationEntity notification) {
+        return notificationRepository.save(notification);
     }
 }

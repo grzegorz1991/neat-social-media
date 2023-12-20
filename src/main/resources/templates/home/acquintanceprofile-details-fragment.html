@@ -32,11 +32,16 @@
                     </table>
                 </div>
                 <div class="btn-group" role="group" aria-label="Basic example">
-                    <button id="goBack" type="button" class="btn btn-outline-secondary2 btn-md" onclick="goBack()">Go Back</button>
-                    <button id="getAcquinted" type="button" class="btn btn-outline-secondary2 btn-md">get Acquinted</button>
+                    <button id="goBack" type="button" class="btn btn-outline-secondary2 btn-md" onclick="goBack()">Go
+                        Back
+                    </button>
+                    <button id="getAcquinted" type="button" class="btn btn-outline-secondary2 btn-md"
+                            th:data-acquaintance-id="${acquaintance.id}"
+                            th:data-acquaintance-name="${acquaintance.username}">
+                            get Acquinted</button>
                     <button id="reply" type="button" class="btn btn-outline-secondary2 btn-md"
-                            th:data-recipient-id="${acquaintance.id}">
-                        send Message
+                    th:data-recipient-id="${acquaintance.id}">
+                    send Message
                     </button>
                 </div>
             </div>
