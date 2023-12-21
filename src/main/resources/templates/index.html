@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 
 <div th:replace="fragments/head :: head"></div>
 
@@ -138,7 +138,7 @@
                             <h6 class="p-3 mb-0">Messages</h6>
                             <div class="dropdown-divider"></div>
                             <div id="messageContainer"></div>
-                            <a id="showInbox" class="dropdown-item preview-item" href="#">
+                            <a id="showInbox" class="dropdown-item preview-item " href="#">
                                 <p class="p-3 mb-0 text-center">
                                     <span th:text="${newMessagesNumber}"></span> messages
                                     <span id="unreadMessagesCount2" th:text="${unreadMessagesNumber}"></span> unread
@@ -164,7 +164,7 @@
 
                             <div class="dropdown-divider"></div>
 
-                            <a id="notifications" class="dropdown-item preview-item" href="#">
+                            <a id="notifications" class="dropdown-item preview-item " href="#">
                                 <p class="p-3 mb-0 text-center">See all notifications</p>
                             </a>
 
@@ -251,5 +251,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
 <script src="/js/neat/dynamicContentContainerLoader.js"></script>
 <script src="/js/neat/userSearch.js"></script>
+<script src="/js/neat/popups.js"></script>
 </body>
 </html>

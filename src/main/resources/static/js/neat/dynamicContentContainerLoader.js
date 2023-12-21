@@ -4,7 +4,6 @@ const API_BASE_URL = '/home';
 var users = [];
 
 document.addEventListener("DOMContentLoaded", function () {
-
     attachEventListeners();
     loadDynamicContent('/home/home-fragment');
 });
@@ -14,8 +13,6 @@ function attachEventListeners() {
     attachNavigationListeners();
     initializeRecipientTypeahead();
     fetchUserList();
-
-
 }
 
 function attachNavigationListeners() {
@@ -94,7 +91,6 @@ function getAcquinted(recipientId) {
         })
         .catch(error => {
             console.error("Error during request:", error);
-            // Add your error handling logic here
         });
     updateUnreadNotificationsCount();
     updateUnreadNotificationsDropdown();
@@ -120,7 +116,6 @@ function handleGetAcquintedButtonClick(recipientId, recipientName) {
                
             }
         });
-
 }
 
 function attachButtonClickListeners() {
@@ -173,17 +168,26 @@ function attachButtonClickListeners() {
             var recipientName = $('#getAcquinted').data('acquaintance-name');
             handleGetAcquintedButtonClick(recipientId, recipientName);
         }
-
     }
 }
 
-
 function attachRowListener(selector, clickHandler) {
     const clickableRows = document.querySelectorAll(selector);
+    console.log("attach row listener");
     clickableRows.forEach(row => {
-        row.addEventListener('click', () => {
+        // Check if listeners are already attached
+        if (row.dataset.listenersAttached === 'true') {
+            // Remove existing click event listeners
+            console.log("attach row listener --- true");
+            row.removeEventListener('click', row.clickHandler);
+        }
+
+        row.addEventListener('click', row.clickHandler = () => {
             clickHandler(row);
         });
+
+        // Add a flag to indicate that listeners have been attached
+        row.dataset.listenersAttached = 'true';
     });
 }
 
@@ -216,6 +220,7 @@ function loadDynamicContent(endpoint) {
 
 function handleInboxRowClick(row) {
     const messageId = row.dataset.messageId;
+    console.log("handleInboxRowClick");
     loadInboxMessagesDetailsFragment(messageId);
 }
 
@@ -277,7 +282,7 @@ function updateUnreadMessagesDropdown() {
                 data.forEach(function (message) {
                     var row = `
                         <div class="dropdown-divider"></div>
-                        <div class="dropdown-item preview-item" data-message-id="${message.messageId}">
+                        <div class="dropdown-item preview-item preview-message-item" data-message-id="${message.messageId}">
                             
                                 <div class="preview-thumbnail">
                                     <img src="${message.sender.imagePath}" alt="imaget" 
@@ -320,7 +325,7 @@ function updateUnreadNotificationsDropdown() {
                     var iconClass = getBellIconClass(notification.notificationType);
                     var row = `
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item preview-item" data-notification-id="${notification.id}">
+                        <a class="dropdown-item preview-item preview-notification-item" data-notification-id="${notification.id}">
                             <div class="preview-thumbnail">
                                 <div class="preview-icon bg-dark rounded-circle">
                                     <i class="${iconClass}"></i>
@@ -376,9 +381,6 @@ function updateUnreadMessagesCount() {
 function updateUnreadNotificationsCount() {
 
     $.get('/get-unread-notifications-count', function (data) {
-
-        console.log("Number is :" + data);
-
         if (data > 0) {
             $('#displayUnreadNotificationsCount').text(data);
             $('#unreadNotificationsCount').addClass('bg-danger');
@@ -386,7 +388,6 @@ function updateUnreadNotificationsCount() {
             $('#displayUnreadNotificationsCount').text('');
             $('#unreadNotificationsCount').removeClass('bg-danger');
         }
-
     });
 }
 $(document).ready(function () {
@@ -396,10 +397,7 @@ $(document).ready(function () {
     updateUnreadNotificationsCount();
     updateUnreadNotificationsDropdown();
     const messageDropdown = $('#messageDropdown');
-
-    // Use Bootstrap's show.bs.dropdown event
     messageDropdown.on('click', function () {
-
         updateUnreadMessagesDropdown();
         updateUnreadNotificationsDropdown();
     });
@@ -513,32 +511,10 @@ function handleFormSubmission(event) {
         });
 }
 
-function showArchiveConfirmation(messageId, archiveTarget  ) {
-    // Show SweetAlert2 popup
-    Swal.fire({
-        position: top,
-        title: 'Are you sure?',
-        text: 'You won\'t be able to revert this!',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, archive it!',
-        color: "#495057",
-        background: "#495057",
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // If the user confirms, make an AJAX request to the controller endpoint
 
-            archiveMessage(messageId, archiveTarget );
-        }
-    });
-}
 function handleLatestNotificationClick(notificationId){
     fetchAndShowNotification(notificationId);
 };
-
-
 function fetchAndShowNotification(notificationId) {
     fetch(`/home/get-notification-content/${notificationId}`)
         .then(response => {
@@ -548,10 +524,7 @@ function fetchAndShowNotification(notificationId) {
             return response.json();
         })
         .then(data => {
-            // Assuming data is the notificationDTO, you can use it as needed
             const notificationDTO = data;
-
-            // Display the notification content based on type
             showNotificationContentPopup(notificationDTO);
         })
         .catch(error => {
@@ -563,7 +536,6 @@ function showNotificationContentPopup(notificationDTO) {
     const {notificationId, type, message } = notificationDTO;
     console.log(type + "TYPE " + notificationId + " ID");
     sendNotificationClickToBackend(notificationId);
-
     function sendNotificationClickToBackend(notificationId) {
         console.log("notificationID" + notificationId);
         // Replace 'your-backend-endpoint' with the actual URL of your backend endpoint
@@ -580,10 +552,6 @@ function showNotificationContentPopup(notificationDTO) {
                 console.error('Error:', error);
             });
     }
-
-
-
-    // Use the type to determine the behavior
     switch (type) {
         case 'REQUEST':
             showRequestPopup(message, notificationId);
@@ -616,50 +584,6 @@ function showNotificationContentPopup(notificationDTO) {
     }
     updateUnreadNotificationsCount();
     updateUnreadNotificationsDropdown();
-}
-
-function showOtherPopup(message) {
-    // Custom logic for displaying an info popup
-    Swal.fire({
-        title: 'Other Notification',
-        html: message,
-        showConfirmButton: true,
-        confirmButtonText: 'OK',
-        icon: 'info',
-        iconColor: '#ffab00',
-        color: "#495057",
-        background: "#495057"
-    });
-
-}
-
-function showRequestPopup(message, notificationId) {
-    // Custom logic for displaying a request popup with three buttons
-    Swal.fire({
-        title: 'Request Notification',
-        html: message,
-        showCancelButton: true,
-        showDenyButton: true,
-        showConfirmButton: true,
-        confirmButtonText: 'Accept',
-        denyButtonText: 'Decline',
-        cancelButtonText: 'Cancel',
-        icon: 'info',
-        iconColor: '#00609b',
-        color: "#495057",
-        background: "#495057",
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // User clicked Accept
-            handleAcceptRequest(notificationId);
-        } else if (result.isDenied) {
-            // User clicked Decline
-            handleDeclineRequest();
-        } else {
-            // User clicked Cancel or closed the popup
-            handleCancelRequest();
-        }
-    });
 }
 
 // Function to handle Accept request
@@ -704,54 +628,13 @@ function handleAcceptRequest(notificationId) {
             .catch(error => {
                 console.error("Error during accept request:", error);
             });
-
 }
-
-// Function to handle Decline request
 function handleDeclineRequest() {
     console.log('Declined request');
-
 }
-
-// Function to handle Cancel request
 function handleCancelRequest() {
     console.log('Cancelled request');
 
-}
-function showInformationPopup(message) {
-    // Custom logic for displaying an info popup
-    Swal.fire({
-        title: 'Info Notification',
-        html: message,
-        showConfirmButton: true,
-        confirmButtonText: 'OK',
-        icon: 'info',
-        iconColor: '#8f5fe8',
-        color: "#495057",
-        iconColor: '#28a745',
-        background: "#495057"
-    });
-
-}
-
-function showAlertPopup(message) {
-    // Custom logic for displaying an alert popup with a progress bar
-    Swal.fire({
-        title: 'Alert Notification',
-        html: message,
-        icon: 'warning',
-        iconColor: '#fc424a',
-        showConfirmButton: false, // Hide the default "OK" button
-        timer: 3000, // Auto-close after 3 seconds
-        timerProgressBar: true, // Display a progress bar
-        onBeforeOpen: () => {
-            Swal.showLoading(); // Show loading animation
-        },
-        onClose: () => {
-            Swal.hideLoading(); // Hide loading animation on close
-        },
-        background: "#495057",
-    });
 }
 function archiveMessage(messageId, archiveTarget ) {
     fetch('/home/archive-message/',
@@ -775,43 +658,26 @@ function archiveMessage(messageId, archiveTarget ) {
             console.error('Error:', error);
         });
 }
-
-function showSuccessConfirmation() {
-    Swal.fire({
-        title: 'Success!',
-        text: 'Message archived successfully.',
-        showConfirmButton: false,
-        timer: 1500,
-        timerProgressBar: true,
-        icon: 'success',
-        color: "#495057",
-        background: "#495057"
-    }).then(() => {
-        goBack();
-    });
-}
 function attachLatestNotificationsRowListener() {
-    $('.preview-item').on('click', function () {
+    $('.preview-notification-item').on('click', function () {
         var notificationId = $(this).data('notification-id');
         console.log("notification:" + notificationId);
         handleLatestNotificationClick(notificationId);
     });
 }
 function attachLatestMessagesRowListener() {
-    const latestMessagesRows = document.querySelectorAll('.preview-item');
+    const latestMessagesRows = document.querySelectorAll('.preview-message-item');
     latestMessagesRows.forEach(function (row) {
         row.addEventListener('click', function () {
             handleLatestMessagesRowClick(row);
         });
     });
 }
-
 function handleLatestMessagesRowClick(row) {
+    console.log("handle latest message rowclick");
     const messageId = row.dataset.messageId;
     loadInboxMessagesDetailsFragment(messageId);
 }
-
-// Function to initialize Typeahead.js
 function initializeRecipientTypeahead() {
     var usersBloodhound = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('username'),
@@ -838,7 +704,6 @@ function initializeRecipientTypeahead() {
         console.log("Receiver ID: " + recipientId);
     });
 }
-// Move the initializeRecipientTypeahead call inside the success callback
 function fetchUserList() {
     $.ajax({
         url: '/get-user-list',

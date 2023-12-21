@@ -17,11 +17,10 @@ $(document).ready(function () {
 });
 
 function fetchUsers() {
-    console.log("fetching");
     $.get('/get-user-list')
         .done(function (users) {
             populateUserList(users);
-            console.log(users);
+
         })
         .fail(function (error) {
             console.error('Error fetching users:', error);
@@ -30,6 +29,12 @@ function fetchUsers() {
 
 function filterSearchFunction() {
     var input = $('#myInput');
+
+    if (input.length === 0 || input.val() === undefined) {
+        console.error('#myInput not found or has no value');
+        return;
+    }
+
     var filter = input.val().toUpperCase();
     var table = $('.table-hover');
     var rows = table.find('tbody tr');
