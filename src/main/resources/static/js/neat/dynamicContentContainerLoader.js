@@ -1,8 +1,9 @@
 const pageHistory = [];
+const API_BASE_URL = '/home';
 
+var users = [];
 
 document.addEventListener("DOMContentLoaded", function () {
-
     attachEventListeners();
     loadDynamicContent('/home/home-fragment');
 });
@@ -10,6 +11,8 @@ document.addEventListener("DOMContentLoaded", function () {
 function attachEventListeners() {
     attachLogoClickListener();
     attachNavigationListeners();
+    initializeRecipientTypeahead();
+    fetchUserList();
 }
 
 function attachNavigationListeners() {
@@ -18,20 +21,22 @@ function attachNavigationListeners() {
         ['settingsDropdown', 'settingsDash'],
         'newMessageDash',
         'sentMessageDash',
-        'homeDash'
+        'homeDash',
+        'archivedMessageDash',
+        'newAcquaintanceDash' ,
+        'seeAcquaintanceDash',
+        'notificationsDash',
+        'notifications'
     ];
 
     navigationItems.forEach(item => {
         const elements = Array.isArray(item) ? item.map(subItem => document.getElementById(subItem)) : [document.getElementById(item)];
-
         elements.forEach(element => {
             if (element) {
                 element.addEventListener('click', () => {
                     const endpoint = Array.isArray(item) ?
-                        `/home/${element.id.replace('Dash', '').toLowerCase()}-fragment` :
-                        `/home/${item.replace('Dash', '').toLowerCase()}-fragment`;
-
-                    console.log('Clicked on:', endpoint);
+                        `${API_BASE_URL}/${element.id.replace('Dash', '').toLowerCase()}-fragment` :
+                        `${API_BASE_URL}/${item.replace('Dash', '').toLowerCase()}-fragment`;
                     loadDynamicContent(endpoint);
                 });
             }
@@ -50,6 +55,69 @@ function attachLogoClickListener() {
     });
 }
 
+function getAcquinted(recipientId) {
+    // Assuming your backend endpoint URL
+    const endpointUrl = "/sendRequest";
+
+    // Make a POST request to your backend with recipientId
+    fetch(endpointUrl, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            recipientId: recipientId,
+        }),
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.text();
+        })
+        .then(data => {
+            console.log("Request successful:", data);
+
+            // Show SweetAlert confirmation with timeout
+            Swal.fire({
+                icon: "success",
+                title: "Success!",
+                text: data,
+                timer: 2500, // Set the timeout in milliseconds
+                showConfirmButton: false,
+                color: "#495057",
+                background: "#495057",
+            });
+        })
+        .catch(error => {
+            console.error("Error during request:", error);
+        });
+    updateUnreadNotificationsCount();
+    updateUnreadNotificationsDropdown();
+}
+
+
+function handleGetAcquintedButtonClick(recipientId, recipientName) {
+        console.log(recipientName);
+        Swal.fire({
+            title: "Do you want to send a friend request to " + recipientName + "?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            cancelButtonText: "No",
+            color: "#495057",
+            background: "#495057",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                getAcquinted(recipientId);
+            } else if (result.isDenied) {               
+                
+            } else {                
+               
+            }
+        });
+}
+
 function attachButtonClickListeners() {
     document.querySelectorAll("#dynamicContentContainer button").forEach(button => {
         button.addEventListener("click", function (event) {
@@ -61,10 +129,8 @@ function attachButtonClickListeners() {
         const buttonId = button.id;
 
         if (buttonId === "goBack") {
-            console.log("goBack button");
             goBack();
-        }
-        else if (buttonId === "previousOutboxPageButton") {
+        } else if (buttonId === "previousOutboxPageButton") {
             const totalPages = document.querySelector("#totalPagesSpan").textContent;
             const currentPage = document.querySelector("#currentPageSpan").textContent;
             handlePreviousOutboxButtonClick(currentPage, totalPages);
@@ -85,79 +151,111 @@ function attachButtonClickListeners() {
             handleNextInboxButtonClick(currentPage, totalPages);
 
         } else if (buttonId === "reply") {
-            console.log("reply button");
+            var recipientId = $('#reply').data('recipient-id');
+            loadDynamicContent(`/home/replyMessage-fragment?reply=${recipientId}`);
+
 
         } else if (buttonId === "archiveIncomingMessage") {
             const messageId = $('#archiveIncomingMessage').data('message-id');
-            showArchiveConfirmation(messageId);
+            showArchiveConfirmation(messageId , "receiver");
+
+        } else if (buttonId === "archiveOutgoingMessage"){
+            const messageId = $('#archiveOutgoingMessage').data('message-id');
+            showArchiveConfirmation(messageId, "sender");
+
+        } else if( buttonId === "getAcquinted"){
+            var recipientId = $('#getAcquinted').data('acquaintance-id');
+            var recipientName = $('#getAcquinted').data('acquaintance-name');
+            handleGetAcquintedButtonClick(recipientId, recipientName);
+        }
+    }
+}
+
+function attachRowListener(selector, clickHandler) {
+    const clickableRows = document.querySelectorAll(selector);
+    console.log("attach row listener");
+    clickableRows.forEach(row => {
+        // Check if listeners are already attached
+        if (row.dataset.listenersAttached === 'true') {
+            // Remove existing click event listeners
+            console.log("attach row listener --- true");
+            row.removeEventListener('click', row.clickHandler);
         }
 
-    }
-}
-
-function attachOutboxRowListener() {
-
-    const clickableRows = document.querySelectorAll('.clickable-row');
-    clickableRows.forEach(function (row) {
-        row.addEventListener('click', function () {
-            handleOutboxRowClick(row);
+        row.addEventListener('click', row.clickHandler = () => {
+            clickHandler(row);
         });
-    });
 
-    function handleOutboxRowClick(row) {
-        const messageId = row.dataset.messageId;
-        console.log("Clicked on outbox row with message ID: " + messageId);
-        loadOutboxMessagesDetailsFragment(messageId);
-    }
-}
-function attachInboxRowListener() {
-    console.log("attachRowListener");
-    // Add click event listeners to clickable rows
-    const clickableRows = document.querySelectorAll('.read-message, .unread-message');
-    clickableRows.forEach(function (row) {
-        row.addEventListener('click', function () {
-            handleInboxRowClick(row);
-        });
+        // Add a flag to indicate that listeners have been attached
+        row.dataset.listenersAttached = 'true';
     });
-
-    function handleInboxRowClick(row) {
-        const messageId = row.dataset.messageId;
-        console.log("Clicked on inbox row with message ID: " + messageId);
-        loadInboxMessagesDetailsFragment(messageId);
-    }
 }
 
 
 function loadDynamicContent(endpoint) {
-    pageHistory.push(endpoint);
 
+    pageHistory.push(endpoint);
+   // console.log(endpoint);
     fetch(endpoint)
         .then(response => response.text())
         .then(content => {
             document.getElementById("dynamicContentContainer").innerHTML = content;
             attachButtonClickListeners();
-            attachOutboxRowListener();
-            attachInboxRowListener();
+            attachRowListener('.clickable-row, .outbox-row', handleOutboxRowClick);
+            attachRowListener('.read-message, .unread-message', handleInboxRowClick);
+            attachRowListener('.archive-row', handleArchiveRowClick);
+            attachRowListener('.user-row', handleAcquaintancesRowClick);
+            fetchUserList();
             updateUnreadMessagesCount();
-           // updateUnreadMessagesDropdown();
+            updateUnreadNotificationsCount();
+            updateUnreadNotificationsDropdown();
+            updateUnreadMessagesDropdown();
+
+            filterSearchFunction();
         })
         .catch(error => {
             console.error("Error loading dynamic content:", error);
         });
 }
 
+function handleInboxRowClick(row) {
+    const messageId = row.dataset.messageId;
+    console.log("handleInboxRowClick");
+    loadInboxMessagesDetailsFragment(messageId);
+}
+
+function handleOutboxRowClick(row) {
+   const messageId = row.dataset.messageId;
+   loadOutboxMessagesDetailsFragment(messageId);
+}
+function handleArchiveRowClick(row) {
+    const messageId = row.dataset.messageId;
+    loadArchivedMessagesDetailsFragment(messageId);
+}
+function handleAcquaintancesRowClick(row) {
+    const userId = row.dataset.userId;
+    loadAcquintanceProfileDetailsFragment(userId);
+}
+function loadAcquintanceProfileDetailsFragment(userId) {
+    const endpoint = '/home/acquintanceprofile-details-fragment.html';
+    const fullEndpoint = userId ? `${endpoint}?userId=${userId}` : endpoint;
+    return loadDynamicContent(fullEndpoint);
+}
+function loadArchivedMessagesDetailsFragment(messageId) {
+    const endpoint = '/home/message-archived-details-fragment';
+    const fullEndpoint = messageId ? `${endpoint}?messageId=${messageId}` : endpoint;
+    return loadDynamicContent(fullEndpoint);
+}
 function loadOutboxMessagesDetailsFragment(messageId) {
     const endpoint = '/home/message-outbox-details-fragment';
     const fullEndpoint = messageId ? `${endpoint}?messageId=${messageId}` : endpoint;
     return loadDynamicContent(fullEndpoint);
 }
-
 function loadInboxMessagesDetailsFragment(messageId) {
     const endpoint = '/home/message-inbox-details-fragment';
     const fullEndpoint = messageId ? `${endpoint}?messageId=${messageId}` : endpoint;
     return loadDynamicContent(fullEndpoint);
 }
-
 function goBack() {
     if (pageHistory.length > 1) {
         const currentEndpoint = pageHistory.pop();
@@ -175,68 +273,134 @@ function goBack() {
 }
 
 function updateUnreadMessagesDropdown() {
-    console.log("updateUnreadMessages dropdown");
-
-    $.get('/get-latest-unread-messages', function (data) {
-        console.log("Data received:", data);  // Add this log to check the data
-
-        var messagesContainer = $('#messagesContainer');
-        var existingMessages = messagesContainer.find('.preview-container');
-
-        // Check if the content needs an update
-        if (true) {
-            // Clear the existing messages in the container
+    $.get('/get-latest-unread-messages')
+        .done(function (data) {
+            // Select the messages container
+            var messagesContainer = $('#messageContainer');
             messagesContainer.empty();
-            console.log("empty the container");
-            // Update the rows with the latest unread messages
-            data.forEach(function (message) {
-                var row = '<div class="dropdown-item preview-item" data-message-id="' + message.messageId + '">' +
-                    '<div class="preview-thumbnail">' +
-                    '<img src="/images/faces/face3.jpg" alt="image" class="rounded-circle profile-pic">' +
-                    '</div>' +
-                    '<div class="preview-item-content">' +
-                    '<p class="preview-subject ellipsis mb-1">' + message.title + '</p>' +
-                    '<p class="text-muted mb-0">' + message.relativeTime + '</p>' +
-                    '</div>' +
-                    '</div>';
+            if (data.length > 0) {
+                data.forEach(function (message) {
+                    var row = `
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item preview-item preview-message-item" data-message-id="${message.messageId}">
+                            
+                                <div class="preview-thumbnail">
+                                    <img src="${message.sender.imagePath}" alt="imaget" 
+                                    class="rounded-circle profile-pic ${(message.sender.isActive) ? 'active' : ''}">
+                                </div>
+                                <div class="preview-item-content">
+                                    <p class="preview-subject ellipsis mb-1">${message.title}</p>
+                                    <p class="text-muted mb-0">${message.relativeTime}</p>
+                                    
+                                </div>
+                            
+                            <div class="dropdown-divider"></div>
+                        </div>`;
 
-                messagesContainer.append(row);
-            });
-
-            // Attach event listeners after appending new elements
-            attachLatestMessagesRowListener();
-        }
-
-        // Remove read messages from the container
-        data.forEach(function (message) {
-            if (message.read) {
-                console.log("message :" + message.messageId + " is read and will be deleted");
-                messagesContainer.find('[data-message-id="' + message.messageId + '"]').remove();
+                    messagesContainer.append(row);
+                });
+                attachLatestMessagesRowListener();
             }
+            data.forEach(function (message) {
+                if (message.read) {
+                    messagesContainer.find('[data-message-id="' + message.messageId + '"]').remove();
+                }
+            });
+        })
+        .fail(function (error) {
+            console.error("Error fetching unread messages:", error);
         });
-    });
+}
+
+
+
+function updateUnreadNotificationsDropdown() {
+    $.get('/get-latest-unread-notifications')
+        .done(function (data) {
+
+            var notificationsContainer = $('#notificationContainer');
+                notificationsContainer.empty();
+            if (data.length > 0) {
+                data.forEach(function (notification) {
+                    var iconClass = getBellIconClass(notification.notificationType);
+                    var row = `
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item preview-item preview-notification-item" data-notification-id="${notification.id}">
+                            <div class="preview-thumbnail">
+                                <div class="preview-icon bg-dark rounded-circle">
+                                    <i class="${iconClass}"></i>
+                                </div>
+                            </div>
+                            <div class="preview-item-content">
+                                <p class="preview-subject ellipsis mb-1">${notification.message}</p>                                
+                            </div>
+                            <div class="dropdown-divider"></div>
+                        </a>`;
+
+                    notificationsContainer.append(row);
+                });
+
+                attachLatestNotificationsRowListener();
+            }
+        })
+        .fail(function (error) {
+            console.error("Error fetching unread notifications:", error);
+        });
+}
+function getBellIconClass(notificationType) {
+    switch (notificationType) {
+        case 'ALERT':
+            return 'mdi mdi-alert-circle-outline text-danger';
+        case 'INFORMATION':
+            return 'mdi mdi-information-outline text-success';
+        case 'REQUEST':
+            return 'mdi mdi-account-plus text-info';
+        default:
+            return 'mdi mdi-newspaper text-warning';
+    }
 }
 
 function updateUnreadMessagesCount() {
-    console.log("updateMessageCound");
+
     $.get('/get-unread-messages-count', function (data) {
-        // Update the content of the span with the received data
-        $('#unreadMessagesCount').text(data);
+
+
         $('#unreadMessagesCount2').text(data);
 
         if (data > 0) {
+            $('#displayUnreadMessagesCount').text(data);
             $('#unreadMessagesCount').addClass('bg-success');
         } else {
+            $('#displayUnreadMessagesCount').text('');
             $('#unreadMessagesCount').removeClass('bg-success');
-        }
 
+        }
     });
 }
 
-// Call the function when the page loads
+function updateUnreadNotificationsCount() {
+
+    $.get('/get-unread-notifications-count', function (data) {
+        if (data > 0) {
+            $('#displayUnreadNotificationsCount').text(data);
+            $('#unreadNotificationsCount').addClass('bg-danger');
+        } else {
+            $('#displayUnreadNotificationsCount').text('');
+            $('#unreadNotificationsCount').removeClass('bg-danger');
+        }
+    });
+}
 $(document).ready(function () {
+
     updateUnreadMessagesCount();
     updateUnreadMessagesDropdown();
+    updateUnreadNotificationsCount();
+    updateUnreadNotificationsDropdown();
+    const messageDropdown = $('#messageDropdown');
+    messageDropdown.on('click', function () {
+        updateUnreadMessagesDropdown();
+        updateUnreadNotificationsDropdown();
+    });
 });
 
 function handlePreviousOutboxButtonClick(currentPage, totalPages) {
@@ -268,58 +432,45 @@ function handleNextInboxButtonClick(currentPage, totalPages) {
 }
 
 function updateOutboxPage(currentPage, totalPages) {
-
-    // Perform an AJAX request to retrieve the next or previous page
-    console.log(currentPage + " Current Page " + totalPages + " Total Pages at update method");
     $.ajax({
-        url: "/home/messages-outbox-fragment?page=" + currentPage,
+        url: "/home/sentmessage-fragment?page=" + currentPage,
         success: function (data) {
 
-            // Parse the HTML response to extract the table body
             const tableFragment = $(data).find('#messageTableBody');
 
-            // Update the table body with the new messages
             $("#messageTableBody").html(tableFragment.html());
-            //
-            // Update the spans with the new values
             $('#currentPageSpan').text(currentPage);
             $('#totalPagesSpan').text(totalPages);
             let pageNumber = currentPage + 1;
-            //
+
             $('#currentPageSpan2').text(pageNumber);
             $('#totalPagesSpan2').text(totalPages);
-            //
-            attachOutboxRowListener();
-        }
 
+            attachRowListener('.clickable-row, .outbox-row', handleOutboxRowClick);
+            attachRowListener('.read-message, .unread-message', handleInboxRowClick);
+        }
     });
 }
 
 function updateInboxPage(currentPage, totalPages) {
-
-    // Perform an AJAX request to retrieve the next or previous page
-    console.log(currentPage + " Current Page " + totalPages + " Total Pages at update method");
     $.ajax({
-        url: "/home/messages-inbox-fragment?page=" + currentPage,
+        url: "/home/showinbox-fragment?page=" + currentPage,
         success: function (data) {
 
-            // Parse the HTML response to extract the table body
             const tableFragment = $(data).find('#messageTableBody');
 
-            // Update the table body with the new messages
             $("#messageTableBody").html(tableFragment.html());
-            //
-            // Update the spans with the new values
+
             $('#currentPageSpan').text(currentPage);
             $('#totalPagesSpan').text(totalPages);
             let pageNumber = currentPage + 1;
-            //
+
             $('#currentPageSpan2').text(pageNumber);
             $('#totalPagesSpan2').text(totalPages);
-            //
-            attachInboxRowListener();
-        }
 
+            attachRowListener('.clickable-row, .outbox-row', handleOutboxRowClick);
+            attachRowListener('.read-message, .unread-message', handleInboxRowClick);
+        }
     });
 }
 
@@ -360,37 +511,139 @@ function handleFormSubmission(event) {
         });
 }
 
-function showArchiveConfirmation(messageId) {
-    // Show SweetAlert2 popup
-    Swal.fire({
-        position: top,
-        title: 'Are you sure?',
-        text: 'You won\'t be able to revert this!',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, archive it!',
-        color: "#495057",
-        background: "#495057",
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // If the user confirms, make an AJAX request to the controller endpoint
-            console.log("confirmed");
-            archiveMessage(messageId);
-        }
-    });
+
+function handleLatestNotificationClick(notificationId){
+    fetchAndShowNotification(notificationId);
+};
+function fetchAndShowNotification(notificationId) {
+    fetch(`/home/get-notification-content/${notificationId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error fetching notification content. Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            const notificationDTO = data;
+            showNotificationContentPopup(notificationDTO);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
 }
 
-function archiveMessage(messageId) {
+function showNotificationContentPopup(notificationDTO) {
+    const {notificationId, type, message } = notificationDTO;
+    console.log(type + "TYPE " + notificationId + " ID");
+    sendNotificationClickToBackend(notificationId);
+    function sendNotificationClickToBackend(notificationId) {
+        console.log("notificationID" + notificationId);
+        // Replace 'your-backend-endpoint' with the actual URL of your backend endpoint
+        fetch(`/home/set-notification-asread/${notificationId}`, {
+
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            // You can pass additional data in the request body if needed
+            body: JSON.stringify({ type, message }),
+        })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+    switch (type) {
+        case 'REQUEST':
+            showRequestPopup(message, notificationId);
+            break;
+
+        case 'INFORMATION':
+            showInformationPopup(message);
+            break;
+
+        case 'ALERT':
+            showAlertPopup(message);
+            break;
+        case 'OTHER':
+            showOtherPopup(message);
+            break;
+        // Add more cases as needed for different types
+        default:
+            // Default behavior if type is not recognized
+            Swal.fire({
+                title: 'Notification Content',
+                html: message,
+                showConfirmButton: true,
+                confirmButtonText: 'OK',
+                icon: 'info',
+                color: "#495057",
+                background: "#495057"
+            });
+
+            break;
+    }
+    updateUnreadNotificationsCount();
+    updateUnreadNotificationsDropdown();
+}
+
+// Function to handle Accept request
+function handleAcceptRequest(notificationId) {
+
+        const endpointUrl = "/acceptRequest";
+        fetch(endpointUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                notificationId: notificationId,
+            }),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.text();
+            })
+            .then(data => {
+                console.log("Accept request successful:", data);
+
+
+                Swal.fire({
+                    icon: "success",
+                    title: "Success!",
+                    text: data,
+                    showConfirmButton: false, // Hide the default "OK" button
+                    timer: 3000, // Auto-close after 3 seconds
+                    timerProgressBar: true, // Display a progress bar
+                    onBeforeOpen: () => {
+                        Swal.showLoading(); // Show loading animation
+                    },
+                    onClose: () => {
+                        Swal.hideLoading(); // Hide loading animation on close
+                    },
+                    background: "#495057",
+                });
+            })
+            .catch(error => {
+                console.error("Error during accept request:", error);
+            });
+}
+function handleDeclineRequest() {
+    console.log('Declined request');
+}
+function handleCancelRequest() {
+    console.log('Cancelled request');
+
+}
+function archiveMessage(messageId, archiveTarget ) {
     fetch('/home/archive-message/',
         {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-
             },
-            body: JSON.stringify({messageId}),
+            body: JSON.stringify({messageId, archiveTarget}),
         })
         .then(response => {
             if (response.ok) {
@@ -405,36 +658,64 @@ function archiveMessage(messageId) {
             console.error('Error:', error);
         });
 }
-
-function showSuccessConfirmation() {
-    Swal.fire({
-
-        title: 'Success!',
-        text: 'Message archived successfully.',
-        showConfirmButton: false,
-        timer: 1500,
-        timerProgressBar: true,
-        icon: 'success',
-        color: "#495057",
-        background: "#495057"
-    }).then(() => {
-        goBack();
+function attachLatestNotificationsRowListener() {
+    $('.preview-notification-item').on('click', function () {
+        var notificationId = $(this).data('notification-id');
+        console.log("notification:" + notificationId);
+        handleLatestNotificationClick(notificationId);
     });
 }
-
 function attachLatestMessagesRowListener() {
-    console.log("attachLatestMessagesRowListener");
-    const latestMessagesRows = document.querySelectorAll('.preview-item');
+    const latestMessagesRows = document.querySelectorAll('.preview-message-item');
     latestMessagesRows.forEach(function (row) {
         row.addEventListener('click', function () {
-            console.log("lates message row click add" + row.id);
             handleLatestMessagesRowClick(row);
         });
     });
 }
-
 function handleLatestMessagesRowClick(row) {
+    console.log("handle latest message rowclick");
     const messageId = row.dataset.messageId;
-    console.log(messageId + "message Id");
     loadInboxMessagesDetailsFragment(messageId);
+}
+function initializeRecipientTypeahead() {
+    var usersBloodhound = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('username'),
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        local: users
+    });
+
+    $('#recipientTypeahead .typeahead').typeahead({
+        hint: true,
+        highlight: true,
+        minLength: 1
+    }, {
+        name: 'users',
+        displayKey: 'username',
+        source: usersBloodhound
+    });
+
+    // Event handler when a suggestion is selected
+    $('#recipientTypeahead .typeahead').on('typeahead:select', function (event, suggestion) {
+        // Convert the selected user's ID to an integer
+        var recipientId = parseInt(suggestion.id);
+        // Update the hidden input with the converted ID
+        $('#hiddenReceiverId').val(recipientId.toString());
+        console.log("Receiver ID: " + recipientId);
+    });
+}
+function fetchUserList() {
+    $.ajax({
+        url: '/get-user-list',
+        method: 'GET',
+        dataType: 'json',
+        success: function (data) {
+            // Update the users variable with the fetched data
+            users = data;
+            initializeRecipientTypeahead(); // Reinitialize Typeahead.js with updated data
+        },
+        error: function (error) {
+            console.error('Error fetching user list:', error);
+        }
+    });
 }

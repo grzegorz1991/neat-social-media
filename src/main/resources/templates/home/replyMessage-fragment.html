@@ -3,9 +3,7 @@
         <div class="card">
             <div class="card-body">
 
-                <h4 class="card-title">
-                    New Message
-                </h4>
+                <h4 class="card-title" th:text="'Send Message to ' + ${reciepentName}"></h4>
 
                 <form id="messageForm" class="forms-sample" th:action="@{/send-message}" method="post" onsubmit="handleFormSubmission(event)">
 
@@ -14,16 +12,14 @@
                             <label for="inputTitle">Title</label>
                             <input type="text" class="form-control" id="inputTitle" name="title" placeholder="Title">
                         </div>
+                        <!--
                         <div class="col">
-                            <label for="selectRecipient">Recipient</label>
+                            <label >Recipient</label>
                             <div id="recipientTypeahead">
-                                <input type="text" class="form-control typeahead" id="selectRecipient" name="receiverId2" placeholder="Recipient" style="width: 100%">
+                                <span class="form-control typeahead" style="width: 100%" th:text="${reciepentName}">Recipient Name</span>
                             </div>
-                        </div>
-                    </div>    
-
-
-
+                        </div>-->
+                    </div>
 
                     <div class="form-group">
                         <label for="textareaContent">Content</label>
@@ -32,7 +28,7 @@
                     </div>
                     <button type="submit" class="btn btn-primary mr-2">Send Message</button>
                     <button id="goBack" type="button" class="btn btn-dark">Go Back</button>
-                    <input type="hidden" id="hiddenReceiverId" name="receiverId" value="RECEIVER_ID_HERE">
+                    <input type="hidden" id="hiddenReceiverId" name="receiverId" th:value="${replyToRecipient}">
                 </form>
             </div>
         </div>

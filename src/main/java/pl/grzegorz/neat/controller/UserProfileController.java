@@ -30,38 +30,18 @@ public class UserProfileController {
     public UserProfileForm getUserProfileForm() {
         return new UserProfileForm();
     }
-//    @GetMapping("/profile")
-//    public String userProfile(Model model, Authentication authentication) {
-//        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-//        UserEntity user = userDetails.getUser();
-//
-////        // Create a UserProfileForm and set its values
-////        UserProfileForm userProfileForm = new UserProfileForm();
-////        userProfileForm.setName(user.getName());
-////        userProfileForm.setSurname(user.getSurname());
-////        userProfileForm.setEmail(user.getEmail());
-//
-//        // Add user details to the model
-//        model.addAttribute("user", user);
-//       // model.addAttribute("userProfileForm", userProfileForm);
-//        return "profile";
-//    }
+
 
     @PostMapping("/profile/update")
     public String updateUserProfile(@ModelAttribute UserProfileForm userProfileForm, Authentication authentication, RedirectAttributes redirectAttributes,Model model) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         UserEntity user = userDetails.getUser();
-
         // Update user details based on the form data
         user.setName(userProfileForm.getName());
         user.setSurname(userProfileForm.getSurname());
         user.setEmail(userProfileForm.getEmail());
-
-        System.out.println("Password pre-change");
-
         // Save the updated user
         userService.updateUser(user);
-
         return "redirect:/home";
     }
 

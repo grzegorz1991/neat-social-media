@@ -3,12 +3,14 @@ package pl.grzegorz.neat.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import pl.grzegorz.neat.model.message.MessageDTO;
 import pl.grzegorz.neat.model.message.MessageEntity;
 import pl.grzegorz.neat.model.message.MessageService;
+import pl.grzegorz.neat.model.notification.NotificationService;
 import pl.grzegorz.neat.model.user.CustomUserDetails;
 import pl.grzegorz.neat.model.user.UserEntity;
 import pl.grzegorz.neat.model.user.UserProfileForm;
@@ -27,9 +29,12 @@ public class HomeController {
     private final MessageService messageService;
     private final UserService userService;
 
-    public HomeController(MessageService messageService, UserService userService) {
+    private final NotificationService notificationService;
+
+    public HomeController(MessageService messageService, UserService userService, NotificationService notificationService) {
         this.messageService = messageService;
         this.userService = userService;
+        this.notificationService = notificationService;
     }
 
     @GetMapping("/")
@@ -47,7 +52,10 @@ public class HomeController {
 
         UserEntity userByUsername = userService.getUserByUsername(username);
         int numberofMessages = messageService.getMessagesForUser(userByUsername).size();
-        int numbweofUnreadMessages = messageService.getNumberOfUnreadMessages(userByUsername);
+        int inboxSize = messageService.getAllNonArchivedMessagesByReceiver(userByUsername).size();
+        int numberOfUnreadMessages = messageService.getNumberOfUnreadMessages(userByUsername);
+        int numberOfUnreadNotifications = notificationService.getUnreadNotificationsForUser(userByUsername.getId()).size();
+        String avatarURL = userByUsername.getImagePath();
 
         List<MessageEntity> unreadList =messageService.getTop5UnreadMessages( userByUsername);
 
@@ -56,10 +64,11 @@ public class HomeController {
             String relativeTime = convertToLocalDateTime(timestamp);
             message.setRelativeTime(relativeTime);
         }
-
+        model.addAttribute("avatar", avatarURL);
         model.addAttribute("unread5MessageList", unreadList);
-        model.addAttribute("unreadMessagesNumber", numbweofUnreadMessages);
-        model.addAttribute("newMessagesNumber", numberofMessages);
+        model.addAttribute("unreadMessagesNumber", numberOfUnreadMessages);
+model.addAttribute("unreadNotificationsCount",numberOfUnreadNotifications);
+        model.addAttribute("newMessagesNumber", inboxSize);
         model.addAttribute("username", username);
         model.addAttribute("name", name);
         model.addAttribute("surname", surname);
@@ -88,31 +97,19 @@ public class HomeController {
     }
 
 
-    @GetMapping("/get-latest-unread-messages")
-    public ResponseEntity<List<MessageDTO>> getLatestUnreadMessages(Authentication authentication) {
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        UserEntity user = userDetails.getUser();
 
-        List<MessageEntity> latestUnreadMessages = messageService.getTop5UnreadMessages(user);
-        setRelativeTime(latestUnreadMessages);
-
-        // Convert MessageEntity to MessageDTO if needed
-        List<MessageDTO> latestUnreadMessagesDTO = latestUnreadMessages.stream()
-                .map(message -> new MessageDTO(message.getId(), message.getTitle(), message.getTimestamp(), message.getRelativeTime(), message.getSender(), message.isMessageRead()))
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(latestUnreadMessagesDTO);
-    }
 
     @GetMapping("/home/home-fragment")
     public String getDefaultFragment() {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+        UserEntity loggedUser =  userDetails.getUser();
+        userService.updateUserLastSeen(loggedUser.getId());
+
+
         return "/home/home-default";
     }
-    private void setRelativeTime(List<MessageEntity> messages) {
-        for (MessageEntity message : messages) {
-            LocalDateTime timestamp = message.getTimestamp();
-            String relativeTime = convertToLocalDateTime(timestamp);
-            message.setRelativeTime(relativeTime);
-        }
-    }
+
 }

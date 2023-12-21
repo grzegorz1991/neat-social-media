@@ -1,0 +1,46 @@
+<!-- Dynamic content file -->
+<div th:fragment="dynamicContent" id="dynamicContent">
+
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Add new Acquaintance</h4>
+
+            <input type="text" class="form-control" id="myInput" onkeyup="filterSearchFunction()" placeholder="Search for names..">
+
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>User</th>
+                        <th>Name</th>
+
+                        <th>E-mail</th>
+                        <th>Last Seen</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr th:each="user, stat: ${users}" class="user-row" th:data-user-id="${user.id}">
+
+                        <td th:text="${stat.index + 1}"></td>
+
+                        <td>
+                            <div class="avatar-container">
+                                <img class="img-xs rounded-circle" th:src="${user.imagePath}" alt="">
+                                <span th:if="${user.isActive}" class="status-dot"></span>
+                            </div>
+                            <span th:text="${user.username}" class="username"></span>
+                        </td>
+
+                        <td th:text="${user.name + ' ' + user.surname}"></td>
+
+                        <td th:text="${user.email}"></td>
+                        <td th:text="${user.relativeTime}"/></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        </div>
+    </div>

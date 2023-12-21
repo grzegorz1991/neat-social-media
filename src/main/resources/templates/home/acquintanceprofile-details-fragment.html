@@ -1,0 +1,50 @@
+<!-- Dynamic content file for user details -->
+<div th:fragment="userDetails" id="userDetails">
+
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">User Profile</h4>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Name</th>
+
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>
+                                <div class="avatar-container">
+                                    <img class="img-xs rounded-circle" th:src="${acquaintance.imagePath}" alt="">
+                                    <span th:if="${acquaintance.isActive}" class="status-dot"></span>
+                                </div>
+                                <span th:text="${acquaintance.username}" class="username"></span>
+                            </td>
+
+                            <td th:text="${acquaintance.email}"></td>
+                            <td th:text="${acquaintance.name + ' ' + acquaintance.surname}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="btn-group" role="group" aria-label="Basic example">
+                    <button id="goBack" type="button" class="btn btn-outline-secondary2 btn-md" onclick="goBack()">Go
+                        Back
+                    </button>
+                    <button id="getAcquinted" type="button" class="btn btn-outline-secondary2 btn-md"
+                            th:data-acquaintance-id="${acquaintance.id}"
+                            th:data-acquaintance-name="${acquaintance.username}">
+                            get Acquinted</button>
+                    <button id="reply" type="button" class="btn btn-outline-secondary2 btn-md"
+                    th:data-recipient-id="${acquaintance.id}">
+                    send Message
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

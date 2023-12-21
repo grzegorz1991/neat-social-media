@@ -1,16 +1,13 @@
 package pl.grzegorz.neat.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import pl.grzegorz.neat.model.user.UserEntity;
+import pl.grzegorz.neat.model.notification.NotificationService;
 import pl.grzegorz.neat.model.user.UserRegistrationForm;
 import pl.grzegorz.neat.model.user.UserService;
-
-import java.util.Collections;
 
 @Controller
 public class RegistrationController {
@@ -19,10 +16,13 @@ public class RegistrationController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
+    private final NotificationService notificationService;
+
     @Autowired
-    public RegistrationController(UserService userService, PasswordEncoder passwordEncoder) {
+    public RegistrationController(UserService userService, PasswordEncoder passwordEncoder, NotificationService notificationService) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
+        this.notificationService = notificationService;
     }
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
@@ -58,7 +58,9 @@ public class RegistrationController {
         String encode = passwordEncoder.encode(registrationForm.getPassword());
         userService.registerUser(registrationForm.getUsername(), registrationForm.getEmail(),
                 encode, registrationForm.getName(), registrationForm.getSurname());
-            System.out.println(encode + "registerController hashed password");
+        userService.getUserByUsername(registrationForm.getUsername());
+        notificationService.createGreetingNotification(userService.getUserByUsername(registrationForm.getUsername()));
+
 
         return "redirect:/login";
     }

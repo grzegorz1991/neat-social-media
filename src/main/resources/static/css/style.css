@@ -20469,7 +20469,7 @@ div.tagsinput {
         min-width: 14px;
         height: 14px;
         font-size: .5rem;
-        color: #ffffff;
+        color: #3c9b1c;
         bottom: 16px;
         right: -5px;
         line-height: 1;
@@ -20481,7 +20481,7 @@ div.tagsinput {
         left: 66%;
         width: 7px;
         height: 7px;
-        color: #ffffff;
+        color: #6e7982;
         border-radius: 100%;
         text-align: center;
         font-size: .625rem;
@@ -21247,4 +21247,61 @@ div.tagsinput {
 }
 .custom-background-class {
   background-color: #495057; /* Set your desired background color */
+}
+.avatar-container {
+  position: relative;
+  display: inline-block; /* Keeps the container inline with the text */
+}
+
+.status-dot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 7px;
+  height: 7px;
+  background-color: #00d25b; /* Set your desired color */
+  border-radius: 50%;
+  border: 2px #495057; /* Add a border with your desired properties */
+  display: inline-block;
+}
+
+.username {
+  vertical-align: middle; /* Align the text vertically with the image */
+  margin-left: 5px; /* Add some space between the image and text */
+}
+
+.profile-pic.active {
+  position: relative;
+}
+
+.profile-pic.active::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  background-color: green; /* Set your desired color */
+  border-radius: 50%;
+}
+
+.profile-pic.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  background-color: green; /* Set your desired color */
+  border-radius: 50%;
+}
+
+.unread-count-badge{
+  position: absolute;
+  top: 45%;
+  right: -69%;
+
+  color: #767e85;
+  padding: 2px 6px;
+  border-radius: 50%;
 }

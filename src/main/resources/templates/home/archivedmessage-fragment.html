@@ -2,9 +2,11 @@
     <div class="col-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
+
                 <h4 class="card-title">
-                    Inbox Messages : <span id="inboxSize" th:text="${inboxSize}"></span>
+                    Archived Messages
                 </h4>
+
                 <span id="currentPageSpan" th:text="${currentPage}" style="display: none;"></span>
                 <span id="totalPagesSpan" th:text="${totalPages}" style="display: none;"></span>
                 <div class="table-responsive">
@@ -12,17 +14,22 @@
                         <thead>
                         <tr>
                             <th>#</th>
+
+                            <th>Sender</th>
                             <th>Receiver</th>
                             <th>Title</th>
                             <th>Status</th>
                             <th>Timestamp</th>
+                            <th> Box </th>
                         </tr>
                         </thead>
                         <tbody id="messageTableBody">
-                        <tr th:each="message, stat : ${messages}" th:limit="6"
-                            th:data-message-id="${message.id}"
-                            th:class="${message.isMessageRead} ? 'read-message' : 'unread-message'">
+                        <tr th:each="message, stat : ${messages}" th:limit="6" class="archive-row"
+                            data-toggle="collapse" th:data-target="'#accordion-' + ${message.id}"
+                            th:data-message-id="${message.id}">
                             <td th:text="${(currentPage * 6) + stat.index + 1}"></td>
+
+                            <td th:text="${message.sender.name}"></td>
                             <td th:text="${message.receiver.name}"></td>
                             <td th:text="${message.title}"></td>
                             <td>
@@ -30,6 +37,14 @@
                                 <div th:unless="${message.isMessageRead}" th:text="Unread"></div>
                             </td>
                             <td th:text="${message.relativeTime}"></td>
+                            <td>
+                                <div th:if="${message.senderArchived and message.sender.id == user.id}">
+                                    Outbox
+                                </div>
+                                <div th:unless="${message.senderArchived and message.sender.id == user.id}">
+                                    Inbox
+                                </div>
+                            </td>
                         </tr>
                         <tr>
                             <td colspan="5" style="padding: 0;">
@@ -44,9 +59,9 @@
                 </div>
             </div>
             <div class="btn-group" role="group" aria-label="Basic example">
-                <button id="previousInboxPageButton" type="button" class="btn btn-outline-secondary2 btn-md">Previous
+                <button id="previousOutboxPageButton" type="button" class="btn btn-outline-secondary2 btn-md">Previous
                 </button>
-                <button id="nextInboxPageButton" type="button" class="btn btn-outline-secondary2 btn-md">Next</button>
+                <button id="nextOutboxPageButton" type="button" class="btn btn-outline-secondary2 btn-md">Next</button>
                 <button id="goBack" type="button" class="btn btn-outline-secondary2 btn-md">Go Back</button>
             </div>
             <div class="text-right">

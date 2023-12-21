@@ -1,8 +1,10 @@
 package pl.grzegorz.neat.model.user;
 
+import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public interface UserService {
@@ -34,4 +36,17 @@ public interface UserService {
     boolean existsByUsername(String username);
 
     boolean existsByEmail(String email);
+
+    List<UserDTO> getAllUsersDTO();
+
+    void addFriend(UserEntity user, UserEntity friend);
+
+    void removeFriend(UserEntity user, UserEntity friend);
+
+    Set<UserEntity> getFriends(UserEntity user);
+
+    boolean areFriends(UserEntity user, UserEntity friend);
+
+    void updateUserLastSeen(Long userId);
+
 }
