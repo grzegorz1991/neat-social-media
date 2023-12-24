@@ -73,10 +73,10 @@ public class AcquaintanceController {
     public String getSeeAcquaintanceFragment(Model model, Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         UserEntity currentUser = userDetails.getUser();
-        Set<UserEntity> acquintanceSet = userService.getFriends(currentUser);
-
+        Set<UserEntity> acquintanceSet = userService.getUserById(currentUser.getId()).getFriends();
         model.addAttribute("acquintance",acquintanceSet );
 
+        System.out.println(acquintanceSet);
 
         return SEE_ACQUAINTANCE_FRAGMENT;
     }

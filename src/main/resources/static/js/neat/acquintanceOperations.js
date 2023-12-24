@@ -38,8 +38,12 @@ $(document).on('click', '.unfriend-button', function() {
                     color: "#495057",
                     background: "#495057",
                 }).then(() => {
-                    loadDynamicContent('/home/seeacquaintance-fragment');
-                    console.log("GGOGO");
+                    fetch('/home/seeacquaintance-fragment')
+                        .then(response => response.text())
+                        .then(data => {
+                            // Update the content of the specific container with the new data
+                            $('#dynamicContent').html(data);
+                        });
                 });
             })
             .catch(error => {
