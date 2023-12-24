@@ -18,10 +18,7 @@ import pl.grzegorz.neat.model.user.UserEntity;
 import pl.grzegorz.neat.model.user.UserService;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static pl.grzegorz.neat.util.RelativeTimeConverter.convertToLocalDateTime;
 
@@ -45,7 +42,7 @@ public class AcquaintanceController {
     }
 
     @GetMapping(SEE_ACQUAINTANCE_PROFILE_DETAILS_FRAGMENT)
-    public String gerAcquintanceProfileDetails(@RequestParam(defaultValue = "0") int userId, Model model, Authentication authentication){
+    public String gerAcquintanceProfileDetails(@RequestParam(defaultValue = "0") int userId, Model model, Authentication authentication) {
 
 
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -62,6 +59,18 @@ public class AcquaintanceController {
     public String getNewAcquaintanceFragment(Model model, Authentication authentication) {
         List<UserEntity> userList = userService.getAllUsers();
         //Remove your own user from the list
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        UserEntity currentUser = userDetails.getUser();
+
+        Iterator<UserEntity> iterator = userList.iterator();
+        while (iterator.hasNext()) {
+            UserEntity user = iterator.next();
+            if (user.getId().equals(currentUser.getId())) {
+                iterator.remove();
+            }
+        }
+
+
         setRelativeTime(userList);
 
 
@@ -74,7 +83,12 @@ public class AcquaintanceController {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         UserEntity currentUser = userDetails.getUser();
         Set<UserEntity> acquintanceSet = userService.getUserById(currentUser.getId()).getFriends();
-        model.addAttribute("acquintance",acquintanceSet );
+        List<UserEntity> acquaintanceList = new ArrayList<>(userService.getUserById(currentUser.getId()).getFriends());
+
+        setRelativeTime(acquaintanceList);
+
+        model.addAttribute("acquaintance", acquaintanceList);
+
 
         System.out.println(acquintanceSet);
 
@@ -84,18 +98,16 @@ public class AcquaintanceController {
     private void setRelativeTime(List<UserEntity> users) {
         for (UserEntity user : users) {
             String relativeTime = "never";
-
             if (user.getLastSeen() != null) {
                 LocalDateTime timestamp = user.getLastSeen();
                 relativeTime = convertToLocalDateTime(timestamp);
-
             }
             user.setRelativeTime(relativeTime);
         }
     }
 
     @PostMapping("/sendRequest")
-    public ResponseEntity<String> sendFriendRequest(@RequestBody Map<String, String> requestPayload,Authentication authentication) {
+    public ResponseEntity<String> sendFriendRequest(@RequestBody Map<String, String> requestPayload, Authentication authentication) {
         String recipientId = requestPayload.get("recipientId");
         int acquintanceId = Integer.parseInt(recipientId);
 
@@ -117,7 +129,7 @@ public class AcquaintanceController {
 
         userService.removeFriend(currentUser, acquaintance);
 
-        return ResponseEntity.ok(currentUser.getUsername() +"broke Ties  with: " + acquaintanceId + " name:" + acquaintance.getUsername());
+        return ResponseEntity.ok(currentUser.getUsername() + "broke Ties  with: " + acquaintanceId + " name:" + acquaintance.getUsername());
     }
 
 

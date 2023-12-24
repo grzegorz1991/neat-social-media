@@ -10,24 +10,37 @@
                         <thead>
                         <tr>
                             <th>Username</th>
+                            <th>Name and Surname</th>
                             <th>Email</th>
+                            <th>Last time active</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
                         <tbody>
                         <!-- Use Thymeleaf iteration to loop through acquaintances -->
-                        <tr th:each="acquaintance : ${acquintance}">
-                            <td th:text="${acquaintance.name}"></td>
-                            <td th:text="${acquaintance.email}"></td>
+                        <tr th:each="acquaintance : ${acquaintance}">
+
                             <td>
-                                <!-- Add buttons for each action
-                                <button class="btn btn-info btn-sm" th:onclick="'sendMessage(\'' + ${acquaintance.name} + '\')'">Send Message</button>
-                                <button class="btn btn-warning btn-sm" th:onclick="'unfriend(\'' + ${acquaintance.name} + '\')'">Unfriend</button>
-                                <button class="btn btn-success btn-sm" th:onclick="'addToFavorites(\'' + ${acquaintance.name} + '\')'">Add to Favorites</button>
-                                -->
+                                <div class="avatar-container">
+                                    <img class="img-xs rounded-circle" th:src="${acquaintance.imagePath}" alt="">
+                                    <span th:if="${acquaintance.isActive}" class="status-dot"></span>
+                                </div>
+                                <span th:text="${acquaintance.username}" class="username"></span>
+                            </td>
+
+
+
+                            <td th:text="${acquaintance.name + ' ' + acquaintance.surname}"></td>
+
+
+                            <td th:text="${acquaintance.email}"></td>
+
+                            <td th:text="${acquaintance.relativeTime}"/></td>
+
+                            <td>
                                 <button  class="btn btn-outline-secondary2 btn-md reply-button"
                                         th:data-recipient-id="${acquaintance.id}">
-                                    Reply
+                                    Send message
                                 </button>
 
                                 <button class="btn btn-outline-secondary2 btn-md unfriend-button" th:data-acquaintance-id="${acquaintance.id}">Break ties</button>
