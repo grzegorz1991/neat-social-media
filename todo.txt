@@ -1,5 +1,7 @@
 - Improve notifications, notification popups, workflow + draw proper charts for documentation
 
+
+- Create userGropus
 - Create user profile creator (choose things and such)
 - DEBUG, REFACTOR, MAKE IT SHINE
 - JUNIT Project and get ready for deployment.
