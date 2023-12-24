@@ -1,5 +1,6 @@
 package pl.grzegorz.neat.controller;
 
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import static pl.grzegorz.neat.util.RelativeTimeConverter.convertToLocalDateTime;
 
@@ -69,6 +71,12 @@ public class AcquaintanceController {
 
     @GetMapping(SEE_ACQUAINTANCE_FRAGMENT)
     public String getSeeAcquaintanceFragment(Model model, Authentication authentication) {
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        UserEntity currentUser = userDetails.getUser();
+        Set<UserEntity> acquintanceSet = userService.getUserById(currentUser.getId()).getFriends();
+        model.addAttribute("acquintance",acquintanceSet );
+
+        System.out.println(acquintanceSet);
 
         return SEE_ACQUAINTANCE_FRAGMENT;
     }
@@ -90,12 +98,28 @@ public class AcquaintanceController {
     public ResponseEntity<String> sendFriendRequest(@RequestBody Map<String, String> requestPayload,Authentication authentication) {
         String recipientId = requestPayload.get("recipientId");
         int acquintanceId = Integer.parseInt(recipientId);
+
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         UserEntity currentUser = userDetails.getUser();
         UserEntity acquintance = userService.getUserById(acquintanceId);
         notificationService.createFriendRequestNotification(currentUser, acquintance);
         return ResponseEntity.ok("Friend request sent successfully to user with ID: " + recipientId);
     }
+
+    @PostMapping("/breakTies")
+    public ResponseEntity<String> breakTiesWithAcquaintance(@RequestBody Map<String, String> requestPayload, Authentication authentication) {
+        //getting the acquiantance entity
+        String acquaintanceId = requestPayload.get("acquaintanceId");
+        UserEntity acquaintance = userService.getUserById(Integer.parseInt(acquaintanceId));
+        //getting current user entity
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        UserEntity currentUser = userDetails.getUser();
+
+        userService.removeFriend(currentUser, acquaintance);
+
+        return ResponseEntity.ok(currentUser.getUsername() +"broke Ties  with: " + acquaintanceId + " name:" + acquaintance.getUsername());
+    }
+
 
     @PostMapping("/acceptRequest")
     public ResponseEntity<String> acceptFriendRequest(@RequestBody Map<String, String> requestPayload) {

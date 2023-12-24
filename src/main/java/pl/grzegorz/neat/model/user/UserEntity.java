@@ -54,7 +54,7 @@ public class UserEntity implements UserDetails {
     )
     private Set<RoleEntity> roles = new HashSet<>(); // Ensure roles is never null
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "user_friends",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -83,7 +83,7 @@ public class UserEntity implements UserDetails {
     }
 
     public void setLastSeen(LocalDateTime lastSeen) {
-        System.out.println("last seen updated to: " + lastSeen);
+
         this.lastSeen = lastSeen;
     }
 

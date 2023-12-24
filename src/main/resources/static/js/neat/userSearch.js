@@ -31,7 +31,7 @@ function filterSearchFunction() {
     var input = $('#myInput');
 
     if (input.length === 0 || input.val() === undefined) {
-        console.error('#myInput not found or has no value');
+
         return;
     }
 

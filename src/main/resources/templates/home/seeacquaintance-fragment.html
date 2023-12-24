@@ -1,5 +1,48 @@
 <!-- Dynamic content file -->
 <div th:fragment="dynamicContent" id="dynamicContent">
-    <p>See Aquaintances</p>
 
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Friendly list</h4>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!-- Use Thymeleaf iteration to loop through acquaintances -->
+                        <tr th:each="acquaintance : ${acquintance}">
+                            <td th:text="${acquaintance.name}"></td>
+                            <td th:text="${acquaintance.email}"></td>
+                            <td>
+                                <!-- Add buttons for each action
+                                <button class="btn btn-info btn-sm" th:onclick="'sendMessage(\'' + ${acquaintance.name} + '\')'">Send Message</button>
+                                <button class="btn btn-warning btn-sm" th:onclick="'unfriend(\'' + ${acquaintance.name} + '\')'">Unfriend</button>
+                                <button class="btn btn-success btn-sm" th:onclick="'addToFavorites(\'' + ${acquaintance.name} + '\')'">Add to Favorites</button>
+                                -->
+                                <button  class="btn btn-outline-secondary2 btn-md reply-button"
+                                        th:data-recipient-id="${acquaintance.id}">
+                                    Reply
+                                </button>
+
+                                <button class="btn btn-outline-secondary2 btn-md unfriend-button" th:data-acquaintance-id="${acquaintance.id}">Break ties</button>
+
+                            </td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="btn-group" role="group" aria-label="Basic example">
+                    <button id="goBack" type="button" class="btn btn-outline-secondary2 btn-md">Go Back</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

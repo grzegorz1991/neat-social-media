@@ -29,12 +29,14 @@ public class UserServiceImpl implements UserService {
         this.passwordEncoder = passwordEncoder;
         this.notificationService = notificationService;
     }
+
     @Override
     public UserEntity createUser(UserEntity user) {
         // Set default role or roles as needed
         List<String> defaultRoles = List.of("ROLE_USER");
         return createUser(user, defaultRoles);
     }
+
     @Override
     public UserEntity createUser(UserEntity user, List<String> roles) {
 
@@ -63,7 +65,10 @@ public class UserServiceImpl implements UserService {
     public UserEntity getUserById(int id) {
         return userRepository.getById((long) id);
     }
-
+    @Override
+    public UserEntity getUserById(long id) {
+        return userRepository.getById(id);
+    }
     @Override
     public UserEntity updateUser(UserEntity user) {
         UserEntity existingUser = userRepository.findById(user.getId())
@@ -76,7 +81,7 @@ public class UserServiceImpl implements UserService {
         existingUser.setName(user.getName());
         existingUser.setSurname(user.getSurname());
 
-        if(user.getPassword() != null) {
+        if (user.getPassword() != null) {
             existingUser.setPassword(user.getPassword());
         }
         return userRepository.save(existingUser);
@@ -97,7 +102,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(Long userId) {
-    // Check if the user exists
+        // Check if the user exists
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
 
@@ -148,29 +153,28 @@ public class UserServiceImpl implements UserService {
         user.getRoles().add(defaultRole);
 
 
-
         return userRepository.save(user);
     }
 
 
     @Override
-        @Transactional
-        public void updateUserRole(Long userId, List<String> roleNames) {
-            UserEntity user = userRepository.findById(userId)
-                    .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+    @Transactional
+    public void updateUserRole(Long userId, List<String> roleNames) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
 
-            // Clear existing roles
-            user.getRoles().clear();
+        // Clear existing roles
+        user.getRoles().clear();
 
-            // Set new roles
-            roleNames.forEach(roleName -> {
-                RoleEntity role = roleRepository.findByName(roleName)
-                        .orElseThrow(() -> new RuntimeException("Role not found: " + roleName));
-                user.getRoles().add(role);
-            });
+        // Set new roles
+        roleNames.forEach(roleName -> {
+            RoleEntity role = roleRepository.findByName(roleName)
+                    .orElseThrow(() -> new RuntimeException("Role not found: " + roleName));
+            user.getRoles().add(role);
+        });
 
-            userRepository.save(user);
-        }
+        userRepository.save(user);
+    }
 
     @Override
     public boolean existsByUsername(String username) {
@@ -200,12 +204,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void removeFriend(UserEntity user, UserEntity friend) {
-        user.getFriends().remove(friend);
-        friend.getFriends().remove(user);
+        try {
+            // Remove the friend from the user's friend list
+            UserEntity user1 = getUserById(user.getId());
+            UserEntity friend1 = getUserById(friend.getId());
 
-        userRepository.save(user);
-        userRepository.save(friend);
+            user1.getFriends().remove(friend1);
+            friend1.getFriends().remove(user1);
+
+            userRepository.save(user1);
+            userRepository.save(friend1);
+          //  user.getFriends().remove(friend);
+         //   userRepository.save(user);
+
+            // Remove the user from the friend's friend list
+          //  friend.getFriends().remove(user);
+         //   userRepository.save(friend);
+        } catch (Exception e) {
+            // Log the exception or handle it appropriately
+            e.printStackTrace();
+        }
     }
 
     @Override
