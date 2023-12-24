@@ -15,7 +15,7 @@ public class ScheduledTasks {
     @Autowired
     private UserRepository userRepository;
 
-    @Scheduled(fixedRate = 60000) // Run every minute, adjust as needed
+    @Scheduled(fixedRate = 300000) // Run every minute, adjust as needed
     public void updateLastSeen() {
         // Get users who logged in within the last 5 minutes
         LocalDateTime thresholdTime = LocalDateTime.now().minusMinutes(5);
@@ -35,6 +35,5 @@ public class ScheduledTasks {
                     user.setActive(false);
                     userRepository.save(user);
                 });
-        System.out.println("TIME 1 min");
     }
 }

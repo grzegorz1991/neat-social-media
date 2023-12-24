@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import static pl.grzegorz.neat.util.RelativeTimeConverter.convertToLocalDateTime;
 
@@ -69,6 +71,12 @@ public class AcquaintanceController {
 
     @GetMapping(SEE_ACQUAINTANCE_FRAGMENT)
     public String getSeeAcquaintanceFragment(Model model, Authentication authentication) {
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        UserEntity currentUser = userDetails.getUser();
+        Set<UserEntity> acquintanceSet = userService.getFriends(currentUser);
+
+        model.addAttribute("acquintance",acquintanceSet );
+
 
         return SEE_ACQUAINTANCE_FRAGMENT;
     }
@@ -96,6 +104,30 @@ public class AcquaintanceController {
         notificationService.createFriendRequestNotification(currentUser, acquintance);
         return ResponseEntity.ok("Friend request sent successfully to user with ID: " + recipientId);
     }
+
+    @PostMapping("/breakTies")
+    public ResponseEntity<String> breakTiesWithAcquintance(@RequestBody Map<String, String> requestPayload,Authentication authentication) {
+
+        String acquaintanceMappedId = requestPayload.get("acquaintanceId");
+
+
+
+        int acquaintanceId = Integer.parseInt(acquaintanceMappedId);
+
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+        UserEntity currentUser = userDetails.getUser();
+
+
+        UserEntity acquintance = userService.getUserById(acquaintanceId);
+
+
+
+        userService.removeFriend(currentUser, acquintance);
+
+        return ResponseEntity.ok("Breaking Ties successfull with ID: " + acquaintanceId);
+    }
+
 
     @PostMapping("/acceptRequest")
     public ResponseEntity<String> acceptFriendRequest(@RequestBody Map<String, String> requestPayload) {

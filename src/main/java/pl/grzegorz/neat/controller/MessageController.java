@@ -278,8 +278,8 @@ public class MessageController {
 
     @GetMapping("/get-user-list")
     public ResponseEntity<List<UserDTO>> getUserList() {
-        List<UserDTO> userList = userService.getAllUsersDTO(); // Adjust the method based on your service layer
-        System.out.println(userList);
+       List<UserDTO> userList = userService.getAllUsersDTO(); // Adjust the method based on your service layer
+
         return ResponseEntity.ok(userList);
     }
 

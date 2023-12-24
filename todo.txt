@@ -5,3 +5,15 @@
 - JUNIT Project and get ready for deployment.
 
 * Create real purpose of app
+
+
+-Allow users to customize their profiles with profile pictures, bio, and other personal information.
+-Implement a feature for users to showcase their projects, skills, or achievements.
+-Include a timeline or activity feed to display user interactions and updates.
+-Allow users to customize their notification preferences.
+-Introduce the concept of groups or communities where users with similar interests can join and participate in discussions.
+-Implement group messaging and allow users to create their own groups.
+-Enable users to share content such as images, articles, or links with their friends or in groups.
+-Implement a comment system for shared content.
+-Enhance the privacy settings to allow users to control who can see their profile, messages, and activities.
+

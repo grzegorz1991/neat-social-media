@@ -2,6 +2,7 @@ package pl.grzegorz.neat.model.user;
 
 import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
