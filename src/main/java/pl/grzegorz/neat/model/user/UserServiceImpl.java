@@ -65,7 +65,10 @@ public class UserServiceImpl implements UserService {
     public UserEntity getUserById(int id) {
         return userRepository.getById((long) id);
     }
-
+    @Override
+    public UserEntity getUserById(long id) {
+        return userRepository.getById(id);
+    }
     @Override
     public UserEntity updateUser(UserEntity user) {
         UserEntity existingUser = userRepository.findById(user.getId())
@@ -204,13 +207,21 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void removeFriend(UserEntity user, UserEntity friend) {
         try {
-            System.out.println("Before save user");
-            user.getFriends().remove(friend);
-            friend.getFriends().remove(user);
-            userRepository.save(user);
-            System.out.println("After save user");
-            userRepository.save(friend);
-            System.out.println("After save friend");
+            // Remove the friend from the user's friend list
+            UserEntity user1 = getUserById(user.getId());
+            UserEntity friend1 = getUserById(friend.getId());
+
+            user1.getFriends().remove(friend1);
+            friend1.getFriends().remove(user1);
+
+            userRepository.save(user1);
+            userRepository.save(friend1);
+          //  user.getFriends().remove(friend);
+         //   userRepository.save(user);
+
+            // Remove the user from the friend's friend list
+          //  friend.getFriends().remove(user);
+         //   userRepository.save(friend);
         } catch (Exception e) {
             // Log the exception or handle it appropriately
             e.printStackTrace();

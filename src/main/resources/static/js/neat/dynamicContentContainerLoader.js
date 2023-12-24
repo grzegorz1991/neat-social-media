@@ -173,12 +173,12 @@ function attachButtonClickListeners() {
 
 function attachRowListener(selector, clickHandler) {
     const clickableRows = document.querySelectorAll(selector);
-    console.log("attach row listener");
+
     clickableRows.forEach(row => {
         // Check if listeners are already attached
         if (row.dataset.listenersAttached === 'true') {
             // Remove existing click event listeners
-            console.log("attach row listener --- true");
+
             row.removeEventListener('click', row.clickHandler);
         }
 

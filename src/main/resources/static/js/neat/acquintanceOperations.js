@@ -38,8 +38,7 @@ $(document).on('click', '.unfriend-button', function() {
                     color: "#495057",
                     background: "#495057",
                 }).then(() => {
-
-                    goBack();
+                    loadDynamicContent('/home/seeacquaintance-fragment');
                     console.log("GGOGO");
                 });
             })
