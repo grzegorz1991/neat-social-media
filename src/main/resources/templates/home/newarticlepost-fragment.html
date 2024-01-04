@@ -1,0 +1,35 @@
+
+    <div th:fragment="dynamicContent" id="dynamicContent">
+
+        <div id="newArticleForm" class="container">
+            <div class="col-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+
+                        <h4 class="card-title">
+                            New Article
+                        </h4>
+
+                        <form id="articleForm" class="forms-sample" action="/create-article" method="post" onsubmit="handleArticleSubmission(event)">
+
+                            <div class="form-group row">
+                                <div class="col">
+                                    <label for="articleTitle">Title</label>
+                                    <input type="text" class="form-control" id="articleTitle" name="title" placeholder="Title">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="articleContent">Content</label>
+                                <textarea class="form-control" id="articleContent" name="content" rows="4" placeholder="Article Content"></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary mr-2">Create Article</button>
+                            <button id="articleGoBack" type="button" class="btn btn-dark">Go Back</button>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

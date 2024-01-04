@@ -123,6 +123,50 @@
 
                 <ul class="navbar-nav navbar-nav-right">
 
+
+                    <li class="nav-item dropdown d-none d-lg-block">
+                        <a class="nav-link btn btn-success create-new-button" id="createbuttonDropdown" data-toggle="dropdown" aria-expanded="false" href="#">New Post</a>
+                        <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="createbuttonDropdown">
+
+
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item preview-item" id="newPostEventAnnouncement">
+                                <div class="preview-thumbnail">
+                                    <div class="preview-icon bg-dark rounded-circle">
+                                        <i class="mdi mdi-file-outline text-primary"></i>
+                                    </div>
+                                </div>
+                                <div class="preview-item-content" >
+                                    <p class="preview-subject ellipsis mb-1">Event Announcement</p>
+                                </div>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item preview-item" id="newPostMediaPost">
+                                <div class="preview-thumbnail">
+                                    <div class="preview-icon bg-dark rounded-circle">
+                                        <i class="mdi mdi-web text-info"></i>
+                                    </div>
+                                </div>
+                                <div class="preview-item-content" >
+                                    <p class="preview-subject ellipsis mb-1">Media Post</p>
+                                </div>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item preview-item" id="newArticlePost">
+                                <div class="preview-thumbnail">
+                                    <div class="preview-icon bg-dark rounded-circle">
+                                        <i class="mdi mdi-layers text-danger"></i>
+                                    </div>
+                                </div>
+                                <div class="preview-item-content" >
+                                    <p class="preview-subject ellipsis mb-1">Article</p>
+                                </div>
+                            </a>
+
+                        </div>
+                    </li>
+
+
                     <li class="nav-item dropdown border-left">
                         <a class="nav-link count-indicator dropdown-toggle " id="messageDropdown" href="#"
                            data-toggle="dropdown" aria-expanded="false">
@@ -131,7 +175,7 @@
                                   th:if="${unreadMessagesNumber} > 0"></span>
                             <span id="displayUnreadMessagesCount" class="unread-count-badge"></span>
                         </a>
-                        <!-- model.addAttribute("unread5MessageList", unreadList); -->
+
                         <div id="messageDropdownContent"
                              class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
                              aria-labelledby="messageDropdown">
@@ -253,5 +297,6 @@
 <script src="/js/neat/userSearch.js"></script>
 <script src="/js/neat/popups.js"></script>
 <script src="/js/neat/acquintanceOperations.js"></script>
+<script src="/js/neat/newMediaPost.js"></script>
 </body>
 </html>

@@ -26,7 +26,11 @@ function attachNavigationListeners() {
         'newAcquaintanceDash' ,
         'seeAcquaintanceDash',
         'notificationsDash',
-        'notifications'
+        'notifications',
+        'newPostEventAnnouncement',
+        'newPostMediaPost',
+        'newArticlePost'
+
     ];
 
     navigationItems.forEach(item => {
