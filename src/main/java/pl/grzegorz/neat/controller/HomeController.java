@@ -1,16 +1,17 @@
 package pl.grzegorz.neat.controller;
 
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import pl.grzegorz.neat.model.message.MessageDTO;
 import pl.grzegorz.neat.model.message.MessageEntity;
 import pl.grzegorz.neat.model.message.MessageService;
 import pl.grzegorz.neat.model.notification.NotificationService;
+import pl.grzegorz.neat.model.post.PostEntity;
+import pl.grzegorz.neat.model.post.PostService;
+import pl.grzegorz.neat.model.post.PostUtil;
 import pl.grzegorz.neat.model.user.CustomUserDetails;
 import pl.grzegorz.neat.model.user.UserEntity;
 import pl.grzegorz.neat.model.user.UserProfileForm;
@@ -18,7 +19,6 @@ import pl.grzegorz.neat.model.user.UserService;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static pl.grzegorz.neat.util.RelativeTimeConverter.convertToLocalDateTime;
 
@@ -31,16 +31,20 @@ public class HomeController {
 
     private final NotificationService notificationService;
 
-    public HomeController(MessageService messageService, UserService userService, NotificationService notificationService) {
+    private final PostService postService;
+
+    public HomeController(MessageService messageService, UserService userService, NotificationService notificationService, PostService postService) {
         this.messageService = messageService;
         this.userService = userService;
         this.notificationService = notificationService;
+        this.postService = postService;
     }
 
     @GetMapping("/")
     public String landingPage() {
         return "redirect:/home";
     }
+
     @GetMapping("/home")
     public String getHomePage(Model model, Authentication authentication) {
 
@@ -57,7 +61,7 @@ public class HomeController {
         int numberOfUnreadNotifications = notificationService.getUnreadNotificationsForUser(userByUsername.getId()).size();
         String avatarURL = userByUsername.getImagePath();
 
-        List<MessageEntity> unreadList =messageService.getTop5UnreadMessages( userByUsername);
+        List<MessageEntity> unreadList = messageService.getTop5UnreadMessages(userByUsername);
 
         for (MessageEntity message : unreadList) {
             LocalDateTime timestamp = message.getTimestamp();
@@ -67,7 +71,7 @@ public class HomeController {
         model.addAttribute("avatar", avatarURL);
         model.addAttribute("unread5MessageList", unreadList);
         model.addAttribute("unreadMessagesNumber", numberOfUnreadMessages);
-model.addAttribute("unreadNotificationsCount",numberOfUnreadNotifications);
+        model.addAttribute("unreadNotificationsCount", numberOfUnreadNotifications);
         model.addAttribute("newMessagesNumber", inboxSize);
         model.addAttribute("username", username);
         model.addAttribute("name", name);
@@ -90,26 +94,30 @@ model.addAttribute("unreadNotificationsCount",numberOfUnreadNotifications);
         model.addAttribute("userProfileForm", userProfileForm);
         return "/home/settings";
     }
+
     @GetMapping("/home/settings-fragment")
     public String getSettingsDashFragment() {
 
         return "redirect:/home/settingsdropdown-fragment";
     }
 
-
-
-
     @GetMapping("/home/home-fragment")
-    public String getDefaultFragment() {
+    public String getDefaultFragment(Model model) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
         CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
-        UserEntity loggedUser =  userDetails.getUser();
+        UserEntity loggedUser = userDetails.getUser();
         userService.updateUserLastSeen(loggedUser.getId());
 
+        List<PostEntity> posts = postService.getNewPosts();
+        PostUtil.setRelativeTime(posts);
+        PostUtil.filterOldPosts(posts, 1440);
+        model.addAttribute("posts", posts);
 
-        return "/home/home-default";
+
+        return "/home/default/home-default";
     }
+
 
 }

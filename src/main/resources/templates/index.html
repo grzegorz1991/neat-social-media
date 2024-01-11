@@ -268,6 +268,12 @@
 
             <div class="content-wrapper" id="dynamicContentContainer"></div>
 
+            <!-- The overlay and popup for the form -->
+            <div id="overlay"></div>
+            <div id="popup">
+                <!-- The form will be loaded here using AJAX -->
+            </div>
+
             <div th:replace="fragments/footer :: footer"></div>
         </div>
     </div>
@@ -298,5 +304,6 @@
 <script src="/js/neat/popups.js"></script>
 <script src="/js/neat/acquintanceOperations.js"></script>
 <script src="/js/neat/newMediaPost.js"></script>
+<script src="/js/neat/postPopup.js"></script>
 </body>
 </html>

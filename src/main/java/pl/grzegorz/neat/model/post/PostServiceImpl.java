@@ -38,4 +38,9 @@ public class PostServiceImpl implements PostService{
     public void deletePost(Long postId) {
         postRepository.deleteById(postId);
     }
+
+    @Override
+    public List<PostEntity> getNewPosts() {
+        return postRepository.findAllOrderByCreatedAtDesc();
+    }
 }

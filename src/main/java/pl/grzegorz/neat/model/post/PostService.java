@@ -9,6 +9,7 @@ import java.util.List;
 public interface PostService {
     List<PostEntity> getAllPosts();
 
+    List<PostEntity> getNewPosts();
     PostEntity getPostById(Long postId);
 
     PostEntity createPost(PostEntity post);

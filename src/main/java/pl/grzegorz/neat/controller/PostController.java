@@ -6,12 +6,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import pl.grzegorz.neat.model.message.MessageEntity;
 import pl.grzegorz.neat.model.post.PostEntity;
 import pl.grzegorz.neat.model.post.PostService;
 import pl.grzegorz.neat.model.user.CustomUserDetails;
 import pl.grzegorz.neat.model.user.UserEntity;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
+import static pl.grzegorz.neat.util.RelativeTimeConverter.convertToLocalDateTime;
 
 
 @Controller

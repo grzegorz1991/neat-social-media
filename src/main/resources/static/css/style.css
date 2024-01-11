@@ -21324,7 +21324,10 @@ div.tagsinput {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: #fff;
-  padding: 20px;
+  background-color: #191c24;
+  padding: 20px; /* Adjust the padding to give more space inside */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  width: 400px; /* Set the width to make it larger */
+  max-width: 80%; /* Set a maximum width to ensure it's not too wide on larger screens */
+  height: auto; /* Allow the height to adjust based on content */
 }

@@ -1,10 +1,22 @@
-<!-- Dynamic content file -->
-<div th:fragment="dynamicContent" id="dynamicContent">
-    <p>new article
-    <form th:action="@{/savepost}" th:object="${post}" method="post">
-        <label for="content">Content:</label>
-        <textarea id="content" name="content" th:field="*{content}" required></textarea>
-        <br/>
-        <button type="submit">Create Post</button>
-    </form>
+<div class="col-12 grid-margin stretch-card">
+
+    <div class="card-body">
+        <h4 class="card-title text-center mb-3">
+            New Post
+        </h4>
+        <form id="postForm" th:action="@{/savepost}" th:object="${post}" method="post">
+
+            <div class="form-group">
+                <label for="content" class="text-muted">Content:</label>
+                <textarea id="content" name="content" th:field="*{content}" class="form-control" required
+                          placeholder="Type your content here..."></textarea>
+            </div>
+
+
+                <button type="submit" class="btn btn-outline-secondary2 btn-md">Create Post</button>
+                <button id="closePopupButton" onclick="closeNewArticlePopup()" class="btn btn-outline-secondary2 btn-md">Close</button>
+
+
+        </form>
+    </div>
 </div>
