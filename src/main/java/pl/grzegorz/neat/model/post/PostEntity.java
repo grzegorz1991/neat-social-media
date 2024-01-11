@@ -26,9 +26,6 @@ public class PostEntity {
     @Column(nullable = false)
     private String content;
 
-    @Lob
-    @Column(name = "image", columnDefinition = "LONGBLOB")
-    private byte[] image;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
