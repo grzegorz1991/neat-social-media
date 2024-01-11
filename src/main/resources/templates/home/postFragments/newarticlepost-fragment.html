@@ -1,0 +1,52 @@
+<head>
+    <script>
+        window.addEventListener('DOMContentLoaded', (event) => {
+            console.log("123");
+        });
+    </script>
+
+</head>
+<div class="col-12 grid-margin stretch-card">
+    <div class="card-body">
+        <h4 class="card-title text-center mb-3">New Post</h4>
+        <form id="postForm" th:action="@{/savepost}" th:object="${post}" method="post">
+            <div class="form-group">
+                <label for="content" class="text-muted">Content:</label>
+                <textarea id="content" name="content" th:field="*{content}" class="form-control" required
+                          placeholder="Type your content here..."></textarea>
+                <img id="displayedImageFile" src="" alt="Selected Image">
+            </div>
+            <div class="form-group">
+                <label for="inputImageFile" class="text-muted">Upload Image:</label>
+                <input type="file" id="inputImageFile" class="file-upload-default" style="display: none;">
+                <div class="input-group col-xs-12">
+                    <input type="text" class="form-control file-upload-info" disabled placeholder="No file chosen">
+                    <span class="input-group-append">
+                        <button class="file-upload-browse btn btn-primary" type="button"
+                                onclick="document.getElementById('inputImageFile').click();">Browse</button>
+                    </span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="imageUpload" class="text-muted">File Upload:</label>
+                <input type="file" id="imageUpload" name="img[]" class="file-upload-default" style="display: none;">
+                <div class="input-group col-xs-12">
+                    <input type="text" class="form-control file-upload-info" disabled placeholder="No file chosen">
+                    <span class="input-group-append">
+                        <button class="file-upload-browse btn btn-primary" type="button"
+                                onclick="document.getElementById('imageUpload').click();">Browse</button>
+                    </span>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-outline-secondary2 btn-md">Create Post</button>
+            <button id="closePopupButton" onclick="closeNewArticlePopup()" class="btn btn-outline-secondary2 btn-md">
+                Close
+            </button>
+        </form>
+    </div>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', (event) => {
+        console.log("123");
+    });
+</script>

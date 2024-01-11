@@ -27,6 +27,7 @@ function attachNavigationListeners() {
         'seeAcquaintanceDash',
         'notificationsDash',
         'notifications'
+
     ];
 
     navigationItems.forEach(item => {
@@ -171,6 +172,9 @@ function attachButtonClickListeners() {
     }
 }
 
+
+
+
 function attachRowListener(selector, clickHandler) {
     const clickableRows = document.querySelectorAll(selector);
 
@@ -201,6 +205,7 @@ function loadDynamicContent(endpoint) {
         .then(content => {
             document.getElementById("dynamicContentContainer").innerHTML = content;
             attachButtonClickListeners();
+
             attachRowListener('.clickable-row, .outbox-row', handleOutboxRowClick);
             attachRowListener('.read-message, .unread-message', handleInboxRowClick);
             attachRowListener('.archive-row', handleArchiveRowClick);
@@ -718,4 +723,11 @@ function fetchUserList() {
             console.error('Error fetching user list:', error);
         }
     });
+}
+function toggleCardVisibility(button) {
+    // Find the parent card element
+    var card = button.closest('.card');
+
+    // Toggle the 'd-none' class to hide or show the card
+    card.classList.toggle('d-none');
 }
